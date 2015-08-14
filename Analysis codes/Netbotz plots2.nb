@@ -1,0 +1,1198 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 10.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     38239,       1189]
+NotebookOptionsPosition[     33861,       1034]
+NotebookOutlinePosition[     34245,       1051]
+CellTagsIndexPosition[     34202,       1048]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[TextData[{
+ "Netbotz data plots\n",
+ StyleBox["Reads Netbotz text files ", "Subtitle"]
+}], "Title"],
+
+Cell["http : // www4.rcf.bnl.gov/~hneal/NetBotzData.txt", "Text"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Execute the next expression to input the most recent Netbotz file from the \
+server\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"infile", "=", 
+   RowBox[{
+   "URLExecute", "[", 
+    "\"\<http://www4.rcf.bnl.gov/~hneal/NetBotzData.txt\>\"", "]"}]}], 
+  ";"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"fileinfull", "=", 
+  "\"\<NetBotzData.txt\>\""}], "\[IndentingNewLine]", 
+ RowBox[{"fileinroot", "=", 
+  RowBox[{"FileBaseName", "[", "fileinfull", "]"}]}], "\n", 
+ RowBox[{
+  RowBox[{"fileinS", "=", "fileinroot"}], ";", 
+  RowBox[{"filein", "=", "fileinS"}], ";"}]}], "Input"],
+
+Cell[BoxData["\<\"NetBotzData.txt\"\>"], "Output"],
+
+Cell[BoxData["\<\"NetBotzData\"\>"], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"infile", "[", 
+  RowBox[{"[", "2", "]"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"\<\"Thu Feb  5 22:03:01 EST 2015 NetBotzRackMonitor450\"\>", 
+   ",", "\<\"EthernetLinkStatus=Up\"\>", ",", "\<\"A-LinkBusPower=OK\"\>", 
+   ",", "\<\"SensorPod\"\>", ",", "\<\"DewPoint=33.980000\"\>", 
+   ",", "\<\"Humidity=29.000000\"\>", ",", "\<\"Temperature=67.460000\"\>", 
+   ",", "\<\"SensorPod9268414\"\>", ",", "\<\"Particles=3.000000\"\>", 
+   ",", "\<\"DewPoint=38.300000\"\>", ",", "\<\"Audio=1.000000\"\>", 
+   ",", "\<\"AirFlow=0.000000\"\>", ",", "\<\"Humidity=32.000000\"\>", 
+   ",", "\<\"Temperature=69.440000\"\>", ",", "\<\"CameraPod9180293\"\>", 
+   ",", "\<\"Speakers=Notconnected\"\>", 
+   ",", "\<\"ExternalMic=Notconnected\"\>", 
+   ",", "\<\"CameraMotion=NoMotion\"\>", ",", "\<\"DoorSwitch=N/A\"\>", 
+   ",", "\<\"\"\>"}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"datain", "=", "infile"}], ";"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"datain", "[", 
+   RowBox[{"[", "1", "]"}], "]"}], "//", "TableForm"}]], "Input"],
+
+Cell[BoxData[
+ TagBox[
+  TagBox[GridBox[{
+     {"\<\"Thu Feb  5 21:53:01 EST 2015 NetBotzRackMonitor450\"\>"},
+     {"\<\"EthernetLinkStatus=Up\"\>"},
+     {"\<\"A-LinkBusPower=OK\"\>"},
+     {"\<\"SensorPod\"\>"},
+     {"\<\"DewPoint=47.660000\"\>"},
+     {"\<\"Humidity=49.000000\"\>"},
+     {"\<\"Temperature=67.640000\"\>"},
+     {"\<\"SensorPod9268414\"\>"},
+     {"\<\"Particles=3.000000\"\>"},
+     {"\<\"DewPoint=51.440000\"\>"},
+     {"\<\"Audio=1.000000\"\>"},
+     {"\<\"AirFlow=0.000000\"\>"},
+     {"\<\"Humidity=56.000000\"\>"},
+     {"\<\"Temperature=68.000000\"\>"},
+     {"\<\"CameraPod9180293\"\>"},
+     {"\<\"Speakers=Notconnected\"\>"},
+     {"\<\"ExternalMic=Notconnected\"\>"},
+     {"\<\"CameraMotion=NoMotion\"\>"},
+     {"\<\"DoorSwitch=N/A\"\>"},
+     {"\<\"\"\>"}
+    },
+    GridBoxAlignment->{
+     "Columns" -> {{Left}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+      "RowsIndexed" -> {}},
+    GridBoxSpacings->{"Columns" -> {
+        Offset[0.27999999999999997`], {
+         Offset[0.5599999999999999]}, 
+        Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+        Offset[0.2], {
+         Offset[0.4]}, 
+        Offset[0.2]}, "RowsIndexed" -> {}}],
+   Column],
+  Function[BoxForm`e$, 
+   TableForm[BoxForm`e$]]]], "Output"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Execute this section to input Netbotz file that has already been downloaded \
+to this computer.\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+  "filepathfull", " ", "=", " ", 
+   "\"\</Users/takacs/Desktop/NetBotzData.txt\>\""}], ";"}]], "Input",
+ CellAutoOverwrite->False],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"filepathfull", "=", 
+  RowBox[{"Input", "[", 
+   RowBox[{
+   "\"\<Enter full path to Netbotz text file\>\"", ",", "filepathfull"}], 
+   "]"}]}]], "Input"],
+
+Cell[BoxData["$Canceled"], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"SetDirectory", "[", 
+  RowBox[{"DirectoryName", "[", "filepathfull", "]"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SetDirectory", "[", 
+  RowBox[{"DirectoryName", "[", "$Canceled", "]"}], "]"}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"fnames", "=", 
+   RowBox[{"FileNames", "[", "\"\<*.txt\>\"", "]"}]}], ";", 
+  RowBox[{
+   RowBox[{"Table", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"i", ",", 
+       RowBox[{"fnames", "[", 
+        RowBox[{"[", "i", "]"}], "]"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", 
+       RowBox[{"Length", "[", "fnames", "]"}]}], "}"}]}], "]"}], "//", 
+   "TableForm"}]}]], "Input"],
+
+Cell[BoxData[
+ TagBox[GridBox[{
+    {"1", "\<\"BPRAlist1000.txt\"\>"},
+    {"2", "\<\"idealGauss.txt\"\>"},
+    {"3", "\<\"MetroLog.txt\"\>"},
+    {"4", "\<\"sampledGauss.txt\"\>"},
+    {"5", "\<\"temp.txt\"\>"}
+   },
+   GridBoxAlignment->{
+    "Columns" -> {{Left}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+     "RowsIndexed" -> {}},
+   GridBoxSpacings->{"Columns" -> {
+       Offset[0.27999999999999997`], {
+        Offset[2.0999999999999996`]}, 
+       Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+       Offset[0.2], {
+        Offset[0.4]}, 
+       Offset[0.2]}, "RowsIndexed" -> {}}],
+  Function[BoxForm`e$, 
+   TableForm[BoxForm`e$]]]], "Output"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"nf", "=", 
+  RowBox[{"Input", "[", 
+   RowBox[{"\"\<Enter index of file desired\>\"", ",", "nf"}], 
+   "]"}]}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"fileinfull", " ", "=", 
+  RowBox[{"fnames", "[", 
+   RowBox[{"[", "nf", "]"}], "]"}]}], "\n", 
+ RowBox[{"fileinroot", "=", 
+  RowBox[{"FileBaseName", "[", "fileinfull", "]"}]}], "\n", 
+ RowBox[{
+  RowBox[{"fileinS", "=", "fileinroot"}], ";", 
+  RowBox[{"filein", "=", "fileinS"}], ";"}]}], "Input",
+ CellAutoOverwrite->False],
+
+Cell[BoxData["\<\"NetBotzData.txt\"\>"], "Output"],
+
+Cell[BoxData["\<\"NetBotzData\"\>"], "Output"]
+}, Closed]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{"Read", " ", "in", " ", "raw", " ", "data", " ", "here"}], "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"datain", "=", 
+    RowBox[{"Import", "[", 
+     RowBox[{"fileinfull", ",", "\"\<Lines\>\""}], "]"}]}], ";"}]}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"datain", "[", 
+   RowBox[{"[", "1", "]"}], "]"}], "//", "TableForm"}]], "Input"],
+
+Cell[BoxData[
+ TagBox["\<\"Thu Feb  5 21:53:01 EST 2015 \
+NetBotzRackMonitor450,EthernetLinkStatus=Up,A-LinkBusPower=OK,SensorPod,\
+DewPoint=47.660000,Humidity=49.000000,Temperature=67.640000,SensorPod9268414,\
+Particles=3.000000,DewPoint=51.440000,Audio=1.000000,AirFlow=0.000000,\
+Humidity=56.000000,Temperature=68.000000,CameraPod9180293,Speakers=\
+Notconnected,ExternalMic=Notconnected,CameraMotion=NoMotion,DoorSwitch=N/A,\"\
+\>",
+  Function[BoxForm`e$, 
+   TableForm[BoxForm`e$]]]], "Output"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Continue here after file input", "Subsubsection"],
+
+Cell["Clean up uneven length records", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"datain", "[", 
+     RowBox[{"[", "1", "]"}], "]"}], ",", 
+    RowBox[{"datain", "[", 
+     RowBox[{"[", 
+      RowBox[{"-", "1"}], "]"}], "]"}]}], "}"}], "//", "TableForm"}]], "Input"],
+
+Cell[BoxData[
+ InterpretationBox[GridBox[{
+    {"\<\"Thu Feb  5 21:53:01 EST 2015 NetBotzRackMonitor450\"\>", \
+"\<\"EthernetLinkStatus=Up\"\>", "\<\"A-LinkBusPower=OK\"\>", \
+"\<\"SensorPod\"\>", "\<\"DewPoint=47.660000\"\>", \
+"\<\"Humidity=49.000000\"\>", "\<\"Temperature=67.640000\"\>", \
+"\<\"SensorPod9268414\"\>", "\<\"Particles=3.000000\"\>", \
+"\<\"DewPoint=51.440000\"\>", "\<\"Audio=1.000000\"\>", "\<\"AirFlow=0.000000\
+\"\>", "\<\"Humidity=56.000000\"\>", "\<\"Temperature=68.000000\"\>", \
+"\<\"CameraPod9180293\"\>", "\<\"Speakers=Notconnected\"\>", \
+"\<\"ExternalMic=Notconnected\"\>", "\<\"CameraMotion=NoMotion\"\>", \
+"\<\"DoorSwitch=N/A\"\>", "\<\"\"\>", "\<\"\"\>"},
+    {"\<\"Wed Mar 25 12:03:01 EDT 2015 NetBotzRackMonitor450\"\>", \
+"\<\"EthernetLinkStatus=Up\"\>", "\<\"A-LinkBusPower=OK\"\>", \
+"\<\"SensorPod\"\>", "\<\"DewPoint=48.020000\"\>", \
+"\<\"Humidity=44.000000\"\>", "\<\"Temperature=71.240000\"\>", \
+"\<\"SensorPod9268414\"\>", "\<\"Particles=3.000000\"\>", \
+"\<\"Particles=3.000000\"\>", "\<\"DewPoint=50.360000\"\>", \
+"\<\"Audio=1.000000\"\>", "\<\"AirFlow=0.000000\"\>", "\<\"Humidity=45.000000\
+\"\>", "\<\"Temperature=73.040000\"\>", "\<\"CameraPod9180293\"\>", \
+"\<\"Speakers=Notconnected\"\>", "\<\"ExternalMic=Notconnected\"\>", \
+"\<\"CameraMotion=NoMotion\"\>", "\<\"DoorSwitch=N/A\"\>", "\<\"\"\>"}
+   },
+   GridBoxAlignment->{
+    "Columns" -> {{Left}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+     "RowsIndexed" -> {}},
+   GridBoxSpacings->{"Columns" -> {
+       Offset[0.27999999999999997`], {
+        Offset[2.0999999999999996`]}, 
+       Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+       Offset[0.2], {
+        Offset[0.4]}, 
+       Offset[0.2]}, "RowsIndexed" -> {}}],
+  TableForm[{{
+    "Thu Feb  5 21:53:01 EST 2015 NetBotzRackMonitor450", 
+     "EthernetLinkStatus=Up", "A-LinkBusPower=OK", "SensorPod", 
+     "DewPoint=47.660000", "Humidity=49.000000", "Temperature=67.640000", 
+     "SensorPod9268414", "Particles=3.000000", "DewPoint=51.440000", 
+     "Audio=1.000000", "AirFlow=0.000000", "Humidity=56.000000", 
+     "Temperature=68.000000", "CameraPod9180293", "Speakers=Notconnected", 
+     "ExternalMic=Notconnected", "CameraMotion=NoMotion", "DoorSwitch=N/A", 
+     ""}, {"Wed Mar 25 12:03:01 EDT 2015 NetBotzRackMonitor450", 
+     "EthernetLinkStatus=Up", "A-LinkBusPower=OK", "SensorPod", 
+     "DewPoint=48.020000", "Humidity=44.000000", "Temperature=71.240000", 
+     "SensorPod9268414", "Particles=3.000000", "Particles=3.000000", 
+     "DewPoint=50.360000", "Audio=1.000000", "AirFlow=0.000000", 
+     "Humidity=45.000000", "Temperature=73.040000", "CameraPod9180293", 
+     "Speakers=Notconnected", "ExternalMic=Notconnected", 
+     "CameraMotion=NoMotion", "DoorSwitch=N/A", ""}}]]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"datain", "[", 
+  RowBox[{"[", 
+   RowBox[{
+    RowBox[{"-", "1"}], ",", "15"}], "]"}], "]"}]], "Input"],
+
+Cell[BoxData["\<\"Temperature=73.040000\"\>"], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Length", "[", 
+  RowBox[{"datain", "[", 
+   RowBox[{"[", 
+    RowBox[{"-", "1"}], "]"}], "]"}], "]"}]], "Input"],
+
+Cell[BoxData["21"], "Output"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"mlen", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"Length", "[", "#", "]"}], "&"}], ",", "datain"}], "]"}]}], 
+  ";"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"mlen", "[", 
+  RowBox[{"[", "3", "]"}], "]"}]], "Input"],
+
+Cell[BoxData["20"], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Tally", "[", "mlen", "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"20", ",", "1896"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "5"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"21", ",", "2665"}], "}"}]}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"datain2", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"StringSplit", "[", 
+       RowBox[{"#", ",", "\"\<,\>\""}], "]"}], "&"}], ",", "datain"}], 
+    "]"}]}], ";"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"datain2", "//", "Length"}]], "Input"],
+
+Cell[BoxData["4566"], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"datain2", "[", 
+  RowBox[{"[", 
+   RowBox[{
+    RowBox[{"-", "2"}], ";;", 
+    RowBox[{"-", "1"}]}], "]"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{
+     "{", "\<\"Wed Mar 25 11:48:01 EDT 2015 NetBotzRackMonitor450\"\>", "}"}],
+      ",", 
+     RowBox[{"{", "\<\"EthernetLinkStatus=Up\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"A-LinkBusPower=OK\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"SensorPod\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"DewPoint=35.240000\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"Humidity=27.000000\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"Temperature=71.060000\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"SensorPod9268414\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"Particles=3.000000\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"Particles=3.000000\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"DewPoint=40.640000\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"Audio=1.000000\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"AirFlow=0.000000\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"Humidity=31.000000\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"Temperature=73.220000\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"CameraPod9180293\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"Speakers=Notconnected\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"ExternalMic=Notconnected\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"CameraMotion=NoMotion\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"DoorSwitch=N/A\"\>", "}"}], ",", 
+     RowBox[{"{", "}"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{
+     "{", "\<\"Wed Mar 25 12:03:01 EDT 2015 NetBotzRackMonitor450\"\>", "}"}],
+      ",", 
+     RowBox[{"{", "\<\"EthernetLinkStatus=Up\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"A-LinkBusPower=OK\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"SensorPod\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"DewPoint=48.020000\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"Humidity=44.000000\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"Temperature=71.240000\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"SensorPod9268414\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"Particles=3.000000\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"Particles=3.000000\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"DewPoint=50.360000\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"Audio=1.000000\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"AirFlow=0.000000\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"Humidity=45.000000\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"Temperature=73.040000\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"CameraPod9180293\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"Speakers=Notconnected\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"ExternalMic=Notconnected\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"CameraMotion=NoMotion\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"DoorSwitch=N/A\"\>", "}"}], ",", 
+     RowBox[{"{", "}"}]}], "}"}]}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+One of the records is short, so it kills the output. Need to check record \
+length.\
+\>", "Text"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"dat", "=", 
+   RowBox[{"Reap", "[", 
+    RowBox[{"Do", "[", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Length", "[", 
+           RowBox[{"datain2", "[", 
+            RowBox[{"[", "i", "]"}], "]"}], "]"}], "==", "20"}], ",", 
+         RowBox[{"Sow", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"Take", "[", 
+              RowBox[{
+               RowBox[{"datain2", "[", 
+                RowBox[{"[", "i", "]"}], "]"}], ",", 
+               RowBox[{"{", "1", "}"}]}], "]"}], ",", 
+             RowBox[{"Take", "[", 
+              RowBox[{
+               RowBox[{"datain2", "[", 
+                RowBox[{"[", "i", "]"}], "]"}], ",", 
+               RowBox[{"{", "7", "}"}]}], "]"}], ",", 
+             RowBox[{"Take", "[", 
+              RowBox[{
+               RowBox[{"datain2", "[", 
+                RowBox[{"[", "i", "]"}], "]"}], ",", 
+               RowBox[{"{", "14", "}"}]}], "]"}]}], "}"}], "//", "Flatten"}], 
+          "]"}]}], "]"}], ";", "\[IndentingNewLine]", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Length", "[", 
+           RowBox[{"datain2", "[", 
+            RowBox[{"[", "i", "]"}], "]"}], "]"}], "==", "21"}], ",", 
+         RowBox[{"Sow", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"Take", "[", 
+              RowBox[{
+               RowBox[{"datain2", "[", 
+                RowBox[{"[", "i", "]"}], "]"}], ",", 
+               RowBox[{"{", "1", "}"}]}], "]"}], ",", 
+             RowBox[{"Take", "[", 
+              RowBox[{
+               RowBox[{"datain2", "[", 
+                RowBox[{"[", "i", "]"}], "]"}], ",", 
+               RowBox[{"{", "7", "}"}]}], "]"}], ",", 
+             RowBox[{"Take", "[", 
+              RowBox[{
+               RowBox[{"datain2", "[", 
+                RowBox[{"[", "i", "]"}], "]"}], ",", 
+               RowBox[{"{", "15", "}"}]}], "]"}]}], "}"}], "//", "Flatten"}], 
+          "]"}]}], "]"}]}], "\[IndentingNewLine]", "\[IndentingNewLine]", ",", 
+      RowBox[{"{", 
+       RowBox[{"i", ",", 
+        RowBox[{"Length", "[", "datain2", "]"}]}], "}"}]}], "]"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"dat", "=", 
+    RowBox[{"Flatten", "[", 
+     RowBox[{
+      RowBox[{"Drop", "[", 
+       RowBox[{"dat", ",", "1"}], "]"}], ",", "2"}], "]"}]}], ";"}], 
+  RowBox[{"(*", 
+   RowBox[{
+   "Get", " ", "rid", " ", "of", " ", "the", " ", "Null", " ", "at", " ", 
+    "the", " ", "front"}], "*)"}]}]}], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"dat", "[", 
+  RowBox[{"[", 
+   RowBox[{"-", "1"}], "]"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"\<\"Wed Mar 25 12:03:01 EDT 2015 NetBotzRackMonitor450\"\>", 
+   ",", "\<\"Temperature=71.240000\"\>", 
+   ",", "\<\"Temperature=73.040000\"\>"}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"dat", "[", 
+  RowBox[{"[", 
+   RowBox[{"1", ",", "1"}], "]"}], "]"}]], "Input"],
+
+Cell[BoxData["\<\"Thu Feb  5 21:53:01 EST 2015 NetBotzRackMonitor450\"\>"], \
+"Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"StringDrop", "[", 
+  RowBox[{
+   RowBox[{"dat", "[", 
+    RowBox[{"[", 
+     RowBox[{"1", ",", "1"}], "]"}], "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"-", "22"}], ",", 
+     RowBox[{"-", "1"}]}], "}"}]}], "]"}]], "Input"],
+
+Cell[BoxData["\<\"Thu Feb  5 21:53:01 EST 2015\"\>"], "Output"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"dropf", "[", "listel_", "]"}], ":=", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"StringDrop", "[", 
+      RowBox[{
+       RowBox[{"Take", "[", 
+        RowBox[{"listel", ",", "1"}], "]"}], ",", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"-", "22"}], ",", 
+         RowBox[{"-", "1"}]}], "}"}]}], "]"}], ",", 
+     RowBox[{"StringDrop", "[", 
+      RowBox[{
+       RowBox[{"Take", "[", 
+        RowBox[{"listel", ",", 
+         RowBox[{"{", "2", "}"}]}], "]"}], ",", "12"}], "]"}], ",", 
+     RowBox[{"StringDrop", "[", 
+      RowBox[{
+       RowBox[{"Take", "[", 
+        RowBox[{"listel", ",", 
+         RowBox[{"{", "3", "}"}]}], "]"}], ",", "12"}], "]"}]}], "}"}], "//", 
+   "Flatten"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"dat2", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"dropf", "[", "#", "]"}], "&"}], ",", "dat"}], "]"}]}], 
+  ";"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"dat2", "[", 
+  RowBox[{"[", 
+   RowBox[{"1", ";;", "3"}], "]"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"\<\"Thu Feb  5 21:53:01 EST 2015\"\>", ",", "\<\"67.640000\"\>", 
+     ",", "\<\"68.000000\"\>"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"Thu Feb  5 22:03:01 EST 2015\"\>", ",", "\<\"67.460000\"\>", 
+     ",", "\<\"69.440000\"\>"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"Thu Feb  5 22:18:01 EST 2015\"\>", ",", "\<\"67.640000\"\>", 
+     ",", "\<\"69.440000\"\>"}], "}"}]}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"dat2", "[", 
+   RowBox[{"[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"-", "100"}], ";;", 
+      RowBox[{"-", "1"}]}], ",", "1"}], "]"}], "]"}], ";"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"DateString", "[", 
+  RowBox[{
+   RowBox[{"dat2", "[", 
+    RowBox[{"[", 
+     RowBox[{"1", ",", "1"}], "]"}], "]"}], ",", "\"\<DateTime\>\""}], 
+  "]"}]], "Input"],
+
+Cell[BoxData["\<\"Thursday 5 February 2015 21:53:01\"\>"], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"AbsoluteTime", "[", 
+  RowBox[{"dat2", "[", 
+   RowBox[{"[", 
+    RowBox[{"1", ",", "1"}], "]"}], "]"}], "]"}]], "Input"],
+
+Cell[BoxData["3632161981"], "Output"]
+}, Open  ]],
+
+Cell["Set default pts here", "Text"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"offsetFromEnd", "=", "0"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"npts", "=", "600"}], ";"}]}], "Input"],
+
+Cell[CellGroupData[{
+
+Cell["Iterate to tune the plot from here", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"{", 
+   RowBox[{"npts", ",", "offsetFromEnd"}], "}"}], "=", 
+  RowBox[{"Input", "[", 
+   RowBox[{"\"\<Enter npts and offset from end\>\"", ",", 
+    RowBox[{"{", 
+     RowBox[{"npts", ",", "offsetFromEnd"}], "}"}]}], " ", "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"200", ",", "0"}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"temp", "=."}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"time", "=", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"Take", "[", 
+      RowBox[{"dat2", ",", "All", ",", "1"}], "]"}], "[", 
+     RowBox[{"[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"-", "offsetFromEnd"}], "-", "npts"}], ";;", 
+       RowBox[{
+        RowBox[{"-", "1"}], "-", "offsetFromEnd"}]}], "]"}], "]"}], "//", 
+    "Flatten"}]}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Temp1", "=", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{"Take", "[", 
+       RowBox[{"dat2", ",", "All", ",", 
+        RowBox[{"{", "2", "}"}]}], "]"}], "[", 
+      RowBox[{"[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"-", "offsetFromEnd"}], "-", "npts"}], ";;", 
+        RowBox[{
+         RowBox[{"-", "1"}], "-", "offsetFromEnd"}]}], "]"}], "]"}], "//", 
+     "Flatten"}], "//", "ToExpression"}]}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Temp2", "=", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{"Take", "[", 
+       RowBox[{"dat2", ",", "All", ",", 
+        RowBox[{"{", "3", "}"}]}], "]"}], "[", 
+      RowBox[{"[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"-", "offsetFromEnd"}], "-", "npts"}], ";;", 
+        RowBox[{
+         RowBox[{"-", "1"}], "-", "offsetFromEnd"}]}], "]"}], "]"}], "//", 
+     "Flatten"}], "//", "ToExpression"}]}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"(*", 
+  RowBox[{"temp1", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"AbsoluteTime", "[", "#", "]"}], "&"}], ",", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"Take", "[", 
+        RowBox[{"dat2", ",", "All", ",", "1"}], "]"}], "[", 
+       RowBox[{"[", 
+        RowBox[{"1", ";;", "10"}], "]"}], "]"}], "//", "Flatten"}]}], "]"}]}],
+   "*)"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"temp2", "=", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{"Take", "[", 
+       RowBox[{"dat2", ",", "All", ",", 
+        RowBox[{"{", "2", "}"}]}], "]"}], "[", 
+      RowBox[{"[", 
+       RowBox[{
+        RowBox[{"-", "100"}], ";;", 
+        RowBox[{"-", "1"}]}], "]"}], "]"}], "//", "Flatten"}], "//", 
+    "ToExpression"}]}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"timetemp1", "=", 
+   RowBox[{"Transpose", "[", 
+    RowBox[{"{", 
+     RowBox[{"time", ",", "Temp1"}], "}"}], "]"}]}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"timetemp2", "=", 
+   RowBox[{"Transpose", "[", 
+    RowBox[{"{", 
+     RowBox[{"time", ",", "Temp2"}], "}"}], "]"}]}], ";"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"dlplot", "=", 
+  RowBox[{"DateListPlot", "[", 
+   RowBox[{"{", 
+    RowBox[{"timetemp1", ",", "timetemp2"}], "}"}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ GraphicsBox[{{}, {{}, {}, 
+    {RGBColor[0.368417, 0.506779, 0.709798], PointSize[0.011111111111111112`],
+      AbsoluteThickness[1.6], LineBox[CompressedData["
+1:eJxdlglMVUcUQF+0aQ3amlSUxHWwqeKatKiJVho0UroowgeU5aMggiAiH7Ei
+u+yICigCfhAdwCUuRW2i1aaaLy5R45qo2Fbbmm42aJcotklL25lJmvS8lxBy
+cubed2fmzrzvuyzDkdTPsqxL6k//tyzx5XyfnjndHa4AL5+wQMuSHyxQ/Djs
+5OjygZrFZ2Q5OUTxuV4/Z+1Y41tD6F9eiHyicCHGy59tfmko/Q2yCAyjP6q5
+M/hhrvdU430d9Fsd9P3CwXJNON//bTjjwyP4/vMRXJ9pkfR7I+mHLmL+ikUY
+73lu8ysW8/3dZPFuFPOfjKKfEM14dzTze8XQ58bQ98Rw/2Jj6a/G0s92sj8+
+IstRcYpNa1nG15A9f8cxPmOJYm+9Qc9CdfzXZBG6VPEEZ21X7yPjPWTxRjzj
+2+LpX01gfAlZPLX5xGX0t8lyXqLiAC+1Qg+MP55I//py+kay58Uk5s9Ogpc/
+2nxUMud3KZl+5gr6A2QxPIW+OoX786fNp6Uy/n4q93f+SvrTK5FPTknj/u5K
+Y/5XVtEXkeUvNh+fzv6/mU4/ZzXjj63m+RibQb8tg/3d38XzkeXC+MDvbD4i
+k/kvZLK+6WsUl/eoBEHG7yPLYVmK/fWTZXylZr39AdXmfPxOFilrFavbqzO4
+zcTfI4v3PqQ/pXmPKqf7nPET1ylWs1EVGN+sWXWPn/OG8QOzMV7mZTP/Y7J0
+rqe/RpYBOYqfq+XpajC+MwfzkaNzOf9asvxHc6Y+EKHGu/K4ft+QRVi+4ma3
+emYafzaf9/+bBbz/2wswXgwpZP7SQtb3jCyXFykeowMKjb9ThHpl0AbWd4Is
+xxVzfk3FzP9SCf16zQ69gbfM+XlUwv6LLuX8Lpfy/bPKmP9gGfOPKKffRBZ/
+lbP+VRXM/4AsF1Ry/c9Ucn+mVrH+3WQ5eCPP5way/HUj4xOqeb5vkcXcTfQf
+k8Vrm5m/nixe2ML1XbuF/nubj6xhfRdr6GfUggP3k6VPHde3qo7+jzr2b+pW
++s/J4v1t9J+SxaR67k9LPf2g7dzffLJ4sp39E9fA/rnewPP/diPvjyONuC/k
+mCb6OrK0dtBnkuVDm3e4FV+7qp7Dxne56f2bwZ6OZowX3i3MX9aC+1T02nzS
+TsbfJct3Whn/SSvuYzl+F+/vHZqT9fOD8QN2/3cf/Gb6J0ez+f3QZ+r/iSxi
+pOI8/QH+wsRfkYgXb7Ux/yGyGNmO8XJzO78ffe3Mn94BFl918PsSsud/8f8C
+S1+vPQ==
+      "]]}, 
+    {RGBColor[0.880722, 0.611041, 0.142051], PointSize[0.011111111111111112`],
+      AbsoluteThickness[1.6], LineBox[CompressedData["
+1:eJxdlWlMVUcUgF/QqMGqScWauI5t6l4Tl7ZxwTyNW6sg7yHKqggC4sZDVOCh
+YEEBAdkXQZEBbJuqtWqiYlPNq7aNNVo0cd+Je3CNa+I6M7/63ZsQ8uW758w5
+c2fO6xeV4Izxstlsx9Sf/m+zicszurdOeDkwvOhIhcNus8npfoq9zze6fPM0
+iz/86If6K25x++yaWm98rT99p5n06WT5aCbeF/MC6JvJwu6g36355An17DS+
+nxMsS8jCK5B+eSDz37T4wFn0f5HlqCDm/zGIvttsxmeTPS8tPm4O48+TxbRg
++qZgrj8ohL6aLLxD6d2h3P9Wiw8Loz8RhvMgx4XT/0qWvSMU913f6mhKN74w
+AvGe9xafMFfxSP0kmfjrc+kD5tF7NE/TBccZPzySvj6S/tP5YJlJFs80q+pf
+DAw3PjqK/kwU/aRosNgXzfxfLqCvJHvaxdAna070VTsUYOLvWnxwLNc/Fsv6
+Rsex/1/i6HsspM8jizcWvzie/ko8voecsYj+EFl+tZjfbytZdl7C+ZJBlo8t
+PnIp/SmymLCM528PWXyeQF+awPvRxkWfRLbfsvhZicz/dyLvz9fLFTf10Q0b
+/5PmbS71gY8a/1mSYvM5m43P0ZymwlsumfPxSnOsfu4Yv3CF4kH6AHRw6vgL
+mp16gafGf7cS8fKgZo1uH/2+GLxKsd4u729NfA1ZdEymT0tGPvFAsz6erncm
+f3gK6hEnU7g/vqmKj6r2iiYavyuV8X3crL+ILD+42b8rjf3dSKN3rMZ+yj/J
+YsQa+oY17K9rOvNnpTP/c7JckEF/NoPxk9cy/36y7P8D46vIsn0mfUom9/de
+Jud/SBZ/v/7NwnkTY9ax/+1k0XM968sni7cWvySb/mo2z7dfDtc/TJbDcnk/
+6siyywb2t3YD79cTspifx/05TRYT8zk/9ubTf1HA+LIC5m+7keuvIIvbG7n/
+QYX0/xTSf1OEfu0/k2X3Yu5fbjH9a4uPL6G/WEL/fSn972QxpIx+M1l8Uk6/
+upz5H5bzfERU8Pz+R5bjK+l/q+T971vF+VJMlrZN9Ilk2WLxzmrMQ3mkGvNI
+jKxR/MChChiivaexhvPTZzPj15HFC4uP2aK4plo9Icaf28L6ptRiPXGgFu/L
+AVt5PzdpNun9je9Qh/lqT61DvOc+WYRKxh8ni7H19DvIolcD6yto4Hx/Z/FL
+Gxl/jSz9t/0v/iN+XeXx
+      "]]}}, {}},
+  AspectRatio->NCache[GoldenRatio^(-1), 0.6180339887498948],
+  Axes->{False, False},
+  AxesLabel->{None, None},
+  AxesOrigin->{3.636094681*^9, 66.97400000000002},
+  DisplayFunction->Identity,
+  Frame->{{True, True}, {True, True}},
+  FrameLabel->{{None, None}, {None, None}},
+  FrameTicks->{{Automatic, Automatic}, {{{3.636144*^9, 
+       FormBox["\"Mar 24\"", TraditionalForm], {0.01, 0}}, {3.6362304*^9, 
+       FormBox["\"Mar 25\"", TraditionalForm], {0.01, 0}}, {3.6361008*^9, 
+       FormBox[
+        InterpretationBox[
+         StyleBox[
+          GraphicsBox[{}, ImageSize -> {0, 0}, BaselinePosition -> Baseline], 
+          "CacheGraphics" -> False], 
+         Spacer[{0, 0}]], TraditionalForm], {0.005, 0}}, {3.6361224*^9, 
+       FormBox[
+        InterpretationBox[
+         StyleBox[
+          GraphicsBox[{}, ImageSize -> {0, 0}, BaselinePosition -> Baseline], 
+          "CacheGraphics" -> False], 
+         Spacer[{0, 0}]], TraditionalForm], {0.005, 0}}, {3.6361656*^9, 
+       FormBox[
+        InterpretationBox[
+         StyleBox[
+          GraphicsBox[{}, ImageSize -> {0, 0}, BaselinePosition -> Baseline], 
+          "CacheGraphics" -> False], 
+         Spacer[{0, 0}]], TraditionalForm], {0.005, 0}}, {3.6361872*^9, 
+       FormBox[
+        InterpretationBox[
+         StyleBox[
+          GraphicsBox[{}, ImageSize -> {0, 0}, BaselinePosition -> Baseline], 
+          "CacheGraphics" -> False], 
+         Spacer[{0, 0}]], TraditionalForm], {0.005, 0}}, {3.6362088*^9, 
+       FormBox[
+        InterpretationBox[
+         StyleBox[
+          GraphicsBox[{}, ImageSize -> {0, 0}, BaselinePosition -> Baseline], 
+          "CacheGraphics" -> False], 
+         Spacer[{0, 0}]], TraditionalForm], {0.005, 0}}, {3.636252*^9, 
+       FormBox[
+        InterpretationBox[
+         StyleBox[
+          GraphicsBox[{}, ImageSize -> {0, 0}, BaselinePosition -> Baseline], 
+          "CacheGraphics" -> False], 
+         Spacer[{0, 0}]], TraditionalForm], {0.005, 0}}, {3.6362736*^9, 
+       FormBox[
+        InterpretationBox[
+         StyleBox[
+          GraphicsBox[{}, ImageSize -> {0, 0}, BaselinePosition -> Baseline], 
+          "CacheGraphics" -> False], 
+         Spacer[{0, 0}]], TraditionalForm], {0.005, 0}}}, {{3.636144*^9, 
+       FormBox[
+        InterpretationBox[
+         StyleBox[
+          GraphicsBox[{}, ImageSize -> {0, 0}, BaselinePosition -> Baseline], 
+          "CacheGraphics" -> False], 
+         Spacer[{0, 0}]], TraditionalForm], {0.01, 0}}, {3.6362304*^9, 
+       FormBox[
+        InterpretationBox[
+         StyleBox[
+          GraphicsBox[{}, ImageSize -> {0, 0}, BaselinePosition -> Baseline], 
+          "CacheGraphics" -> False], 
+         Spacer[{0, 0}]], TraditionalForm], {0.01, 0}}, {3.6361008*^9, 
+       FormBox[
+        InterpretationBox[
+         StyleBox[
+          GraphicsBox[{}, ImageSize -> {0, 0}, BaselinePosition -> Baseline], 
+          "CacheGraphics" -> False], 
+         Spacer[{0, 0}]], TraditionalForm], {0.005, 0}}, {3.6361224*^9, 
+       FormBox[
+        InterpretationBox[
+         StyleBox[
+          GraphicsBox[{}, ImageSize -> {0, 0}, BaselinePosition -> Baseline], 
+          "CacheGraphics" -> False], 
+         Spacer[{0, 0}]], TraditionalForm], {0.005, 0}}, {3.6361656*^9, 
+       FormBox[
+        InterpretationBox[
+         StyleBox[
+          GraphicsBox[{}, ImageSize -> {0, 0}, BaselinePosition -> Baseline], 
+          "CacheGraphics" -> False], 
+         Spacer[{0, 0}]], TraditionalForm], {0.005, 0}}, {3.6361872*^9, 
+       FormBox[
+        InterpretationBox[
+         StyleBox[
+          GraphicsBox[{}, ImageSize -> {0, 0}, BaselinePosition -> Baseline], 
+          "CacheGraphics" -> False], 
+         Spacer[{0, 0}]], TraditionalForm], {0.005, 0}}, {3.6362088*^9, 
+       FormBox[
+        InterpretationBox[
+         StyleBox[
+          GraphicsBox[{}, ImageSize -> {0, 0}, BaselinePosition -> Baseline], 
+          "CacheGraphics" -> False], 
+         Spacer[{0, 0}]], TraditionalForm], {0.005, 0}}, {3.636252*^9, 
+       FormBox[
+        InterpretationBox[
+         StyleBox[
+          GraphicsBox[{}, ImageSize -> {0, 0}, BaselinePosition -> Baseline], 
+          "CacheGraphics" -> False], 
+         Spacer[{0, 0}]], TraditionalForm], {0.005, 0}}, {3.6362736*^9, 
+       FormBox[
+        InterpretationBox[
+         StyleBox[
+          GraphicsBox[{}, ImageSize -> {0, 0}, BaselinePosition -> Baseline], 
+          "CacheGraphics" -> False], 
+         Spacer[{0, 0}]], TraditionalForm], {0.005, 0}}}}},
+  GridLines->{None, None},
+  GridLinesStyle->Directive[
+    GrayLevel[0.5, 0.4]],
+  Method->{},
+  PlotRange->{{3.636094681*^9, 3.636273781*^9}, {67.28, 73.4}},
+  PlotRangeClipping->True,
+  PlotRangePadding->{{
+     Scaled[0.02], 
+     Scaled[0.02]}, {
+     Scaled[0.05], 
+     Scaled[0.05]}},
+  Ticks->{None, None}]], "Output"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"filepath", "=", 
+  RowBox[{"Input", "[", 
+   RowBox[{"\"\<Input Filepath to desired directory\>\"", ",", "filepath"}], 
+   "]"}]}]], "Input"],
+
+Cell[BoxData["filepath"], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{"Button", "[", 
+   RowBox[{"\"\<Export Temp plot\>\"", ",", 
+    RowBox[{
+     RowBox[{"SetDirectory", "[", 
+      RowBox[{"DirectoryName", "[", 
+       RowBox[{"filepath", ",", "1"}], "]"}], "]"}], ";", 
+     RowBox[{"Export", "[", 
+      RowBox[{
+       RowBox[{"\"\<RoomTemp_\>\"", "<>", 
+        RowBox[{"ToString", "[", "npts", "]"}], "<>", "\"\<_\>\"", "<>", 
+        RowBox[{"ToString", "[", "offsetFromEnd", "]"}], "<>", 
+        "\"\<.tiff\>\""}], ",", "dlplot", ",", 
+       RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+       RowBox[{"ImageResolution", "->", "100"}]}], "]"}], ";", 
+     RowBox[{"ResetDirectory", "[", "]"}]}], ",", 
+    RowBox[{"Method", "->", "\"\<Queued\>\""}]}], "]"}],
+  FontColor->RGBColor[1, 0, 1]]], "Input"],
+
+Cell[BoxData[
+ ButtonBox["\<\"Export Temp plot\"\>",
+  Appearance->Automatic,
+  ButtonFunction:>(SetDirectory[
+     DirectoryName[$CellContext`filepath, 1]]; Export[
+     StringJoin["RoomTemp_", 
+      ToString[$CellContext`npts], "_", 
+      ToString[$CellContext`offsetFromEnd], ".tiff"], $CellContext`dlplot, 
+     "ImageEncoding" -> "LZW", ImageResolution -> 100]; ResetDirectory[]),
+  Evaluator->Automatic,
+  Method->"Queued"]], "Output"]
+}, Open  ]]
+}, Open  ]]
+},
+CellGrouping->Manual,
+WindowSize->{740, 627},
+WindowMargins->{{-1000, Automatic}, {Automatic, 50}},
+FrontEndVersion->"10.0 for Mac OS X x86 (32-bit, 64-bit Kernel) (December 4, \
+2014)",
+StyleDefinitions->"MyStyle01.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 104, 3, 113, "Title"],
+Cell[665, 25, 65, 0, 42, "Text"],
+Cell[CellGroupData[{
+Cell[755, 29, 107, 3, 42, "Text"],
+Cell[865, 34, 175, 6, 26, "Input"],
+Cell[CellGroupData[{
+Cell[1065, 44, 302, 7, 73, "Input"],
+Cell[1370, 53, 50, 0, 25, "Output"],
+Cell[1423, 55, 46, 0, 25, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1506, 60, 82, 2, 26, "Input"],
+Cell[1591, 64, 808, 13, 106, "Output"]
+}, Open  ]],
+Cell[2414, 80, 77, 2, 25, "Input"],
+Cell[CellGroupData[{
+Cell[2516, 86, 115, 3, 26, "Input"],
+Cell[2634, 91, 1285, 36, 341, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[3968, 133, 119, 3, 42, "Text"],
+Cell[4090, 138, 166, 5, 26, "Input"],
+Cell[CellGroupData[{
+Cell[4281, 147, 178, 5, 26, "Input"],
+Cell[4462, 154, 36, 0, 25, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4535, 159, 116, 2, 26, "Input"],
+Cell[4654, 163, 114, 2, 26, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4805, 170, 436, 14, 42, "Input"],
+Cell[5244, 186, 683, 19, 90, "Output"]
+}, Open  ]],
+Cell[5942, 208, 145, 4, 26, "Input"],
+Cell[CellGroupData[{
+Cell[6112, 216, 350, 9, 73, "Input"],
+Cell[6465, 227, 50, 0, 25, "Output"],
+Cell[6518, 229, 46, 0, 25, "Output"]
+}, Closed]],
+Cell[6579, 232, 290, 8, 39, "Input"],
+Cell[CellGroupData[{
+Cell[6894, 244, 115, 3, 26, "Input"],
+Cell[7012, 249, 498, 9, 106, "Output"]
+}, Open  ]]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[7559, 264, 55, 0, 34, "Subsubsection"],
+Cell[7617, 266, 46, 0, 42, "Text"],
+Cell[CellGroupData[{
+Cell[7688, 270, 249, 8, 26, "Input"],
+Cell[7940, 280, 2806, 48, 55, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[10783, 333, 127, 4, 26, "Input"],
+Cell[10913, 339, 56, 0, 26, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[11006, 344, 136, 4, 26, "Input"],
+Cell[11145, 350, 29, 0, 25, "Output"]
+}, Open  ]],
+Cell[11189, 353, 192, 7, 26, "Input"],
+Cell[CellGroupData[{
+Cell[11406, 364, 80, 2, 26, "Input"],
+Cell[11489, 368, 29, 0, 25, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[11555, 373, 61, 1, 26, "Input"],
+Cell[11619, 376, 238, 8, 26, "Output"]
+}, Open  ]],
+Cell[11872, 387, 238, 8, 26, "Input"],
+Cell[CellGroupData[{
+Cell[12135, 399, 61, 1, 26, "Input"],
+Cell[12199, 402, 31, 0, 25, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[12267, 407, 148, 5, 26, "Input"],
+Cell[12418, 414, 2715, 52, 234, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[15170, 471, 107, 3, 42, "Text"],
+Cell[15280, 476, 2663, 73, 186, "Input"],
+Cell[CellGroupData[{
+Cell[17968, 553, 98, 3, 26, "Input"],
+Cell[18069, 558, 204, 4, 42, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[18310, 567, 103, 3, 26, "Input"],
+Cell[18416, 572, 87, 1, 25, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[18540, 578, 260, 9, 26, "Input"],
+Cell[18803, 589, 63, 0, 25, "Output"]
+}, Open  ]],
+Cell[18881, 592, 762, 24, 58, "Input"],
+Cell[19646, 618, 188, 7, 26, "Input"],
+Cell[CellGroupData[{
+Cell[19859, 629, 105, 3, 26, "Input"],
+Cell[19967, 634, 479, 11, 58, "Output"]
+}, Open  ]],
+Cell[20461, 648, 197, 7, 26, "Input"],
+Cell[CellGroupData[{
+Cell[20683, 659, 187, 6, 26, "Input"],
+Cell[20873, 667, 68, 0, 26, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[20978, 672, 145, 4, 26, "Input"],
+Cell[21126, 678, 37, 0, 25, "Output"]
+}, Open  ]],
+Cell[21178, 681, 36, 0, 42, "Text"],
+Cell[21217, 683, 154, 4, 42, "Input"],
+Cell[CellGroupData[{
+Cell[21396, 691, 50, 0, 42, "Text"],
+Cell[CellGroupData[{
+Cell[21471, 695, 275, 7, 26, "Input"],
+Cell[21749, 704, 75, 2, 26, "Output"]
+}, Open  ]],
+Cell[21839, 709, 66, 2, 26, "Input"],
+Cell[21908, 713, 397, 13, 26, "Input"],
+Cell[22308, 728, 474, 15, 42, "Input"],
+Cell[22785, 745, 474, 15, 42, "Input"],
+Cell[23262, 762, 405, 13, 26, "Input"],
+Cell[23670, 777, 388, 13, 26, "Input"],
+Cell[24061, 792, 170, 5, 26, "Input"],
+Cell[24234, 799, 170, 5, 26, "Input"],
+Cell[CellGroupData[{
+Cell[24429, 808, 158, 4, 26, "Input"],
+Cell[24590, 814, 7700, 168, 242, "Output"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[32351, 989, 165, 4, 26, "Input"],
+Cell[32519, 995, 35, 0, 26, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[32591, 1000, 796, 18, 74, "Input"],
+Cell[33390, 1020, 443, 10, 39, "Output"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
