@@ -1,0 +1,2 @@
+git tag -a $1 -m '$1 tag for OGP acq and analysis scripts'
+git push origin $1
