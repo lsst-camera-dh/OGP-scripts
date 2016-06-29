@@ -1,0 +1,14 @@
+# APPROVED PRODUCTION ROUTINES USED FOR THIS TAG
+# DATE: 20160629
+# UPDATED BY: homer
+# ROUTINE                       | DESCRIPTION
+# ==========================================================================
+LatPos_ITL_160620.RTN           | ITL Lateral position
+LatPos_e2V_160622.RTN           | e2V Lateral position
+e2V_Flat_AbsHgt_160629.RTN      | e2V Flatness and Absolute Height Metrology
+e2V_EdgeScan_160629.RTN         | e2V Edge Scan Metrology
+ITL_Flatness_injig_160620.RTN   | ITL Flatness in-jig
+ITL_EdgeScan_injig_160603.RTN   | ITL Edge Scan in-jig
+ITL_AbsZ_160517.RTN             | ITL Absolute Height out-of-jig on MF01b
+ITL_Flatness_MF01b_160517.RTN   | ITL Flatness out-of-jig on MF01b
+ITL_EdgeScan_MF01b_160516.RTN   | ITL Edge Scan out-of-jig on MF01b
