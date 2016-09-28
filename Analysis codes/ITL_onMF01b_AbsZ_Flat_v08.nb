@@ -1,0 +1,5003 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 9.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[    163392,       4995]
+NotebookOptionsPosition[    143124,       4454]
+NotebookOutlinePosition[    144387,       4498]
+CellTagsIndexPosition[    144118,       4488]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell["ITL sensor on MF01b - Flatness, AbsHgt", "Title"],
+
+Cell["PZ Takacs", "Subsubtitle"],
+
+Cell["ITLonMF01b_AbsZ_Flat_v08.nb", "Subtitle"],
+
+Cell["Extracted from SurfAnal10b", "Subtitle"],
+
+Cell[CellGroupData[{
+
+Cell["Version history", "Section"],
+
+Cell["\<\
+
+2016.07.11 - v.08 - Handles \[OpenCurlyDoubleQuote]Contour\
+\[CloseCurlyDoubleQuote] and \[OpenCurlyDoubleQuote]Plane\
+\[CloseCurlyDoubleQuote] data points in .DAT files.
+2016.07.09 - v.07 - Corrected for MCS OGP RTN coordinate system
+2016.02.22 - Created fitbasis function and moved to nb init section. Added \
+loop to clean up outliers from SUT with higher order basis fit.
+2015.08.19 - v03 -Added statistics report TXT file output. Added CleanSlate \
+to reset system during Init.
+2015.08.17 - Rename to indicate this produces results for both AbsZ and \
+Flatness from measurements made with sensor on MF01b fixture, rather than on \
+shipping jig. Automatic export of all data products. Changed product file \
+names to conform to eTraveler convention.
+2015.06.22 - Modify for ITL sensor on MF01b for abs hgt and flatness. Edge \
+scan does not enter into this analysis.
+2014.11.21 - ver. 4 Customize for production CCD flatness and height \
+measurement. Include upstemcal offset factor for absolute height correction.
+\
+\>", "Subsubtitle"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+1.1 Start here. Initialize - resets the system to pristine state each time, \
+deleting  In/Out numbers and output cells. Do this first, then execute 1.2 \
+and rest of nb.
+NOTE: This section leaves you at the end of the nb. You need to scroll back \
+up here to continue.\
+\>", "Section",
+ CellTags->"Full restart here"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", "  ", 
+   RowBox[{
+    RowBox[{
+    "**", "**", "**", "**", "**", "**", "CleanNotebookInOut", "**", "**", "**",
+      "**", "**", "**", "**", "**", "**", "**"}], "*"}], "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"ClearAll", "[", "CleanNotebookInOut", "]"}], ";"}], 
+   "\[IndentingNewLine]", "\n", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"CleanNotebookInOut", "::", "usage"}], "=", 
+     "\"\<CleanNotebookInOut[] removes\nthe In and Out CellLabels from the \
+notebook in which it is\nevaluated and resets the line number to 1.  If the\n\
+RemoveOutput option is set to True then all Output cells in\nthe notebook are \
+deleted as well.\>\""}], ";"}], "\n", "\n", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"Options", "[", "CleanNotebookInOut", "]"}], "=", 
+     RowBox[{"{", 
+      RowBox[{"RemoveOutput", "\[Rule]", "False"}], "}"}]}], 
+    ";"}]}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"CleanNotebookInOut", "[", 
+    RowBox[{"opts___", "?", "OptionQ"}], "]"}], ":=", 
+   RowBox[{"Module", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+      "nb", ",", "theNotebook", ",", "revisedNotebook", ",", "removeOutput"}],
+       "}"}], ",", 
+     RowBox[{
+      RowBox[{"removeOutput", "=", 
+       RowBox[{"RemoveOutput", "/.", 
+        RowBox[{"Flatten", "[", 
+         RowBox[{"{", 
+          RowBox[{"opts", ",", 
+           RowBox[{"Options", "[", "CleanNotebookInOut", "]"}]}], "}"}], 
+         "]"}]}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"$Line", "=", "0"}], ";", "\[IndentingNewLine]", 
+      RowBox[{"nb", "=", 
+       RowBox[{"SelectedNotebook", "[", "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"theNotebook", "=", 
+       RowBox[{"NotebookGet", "[", "nb", "]"}]}], ";", "\[IndentingNewLine]", 
+      
+      RowBox[{"revisedNotebook", "=", 
+       RowBox[{"theNotebook", "/.", 
+        RowBox[{
+         RowBox[{"Cell", "[", 
+          RowBox[{"x___", ",", 
+           RowBox[{"CellLabel", "\[Rule]", "_"}], ",", "y___"}], "]"}], 
+         "\[RuleDelayed]", 
+         RowBox[{"Cell", "[", 
+          RowBox[{"x", ",", "y"}], "]"}]}]}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"NotebookPut", "[", 
+       RowBox[{"revisedNotebook", ",", "nb"}], "]"}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"If", "[", 
+       RowBox[{"removeOutput", ",", 
+        RowBox[{"FrontEndExecute", "[", 
+         RowBox[{"FrontEndToken", "[", "\"\<DeleteGeneratedCells\>\"", "]"}], 
+         "]"}]}], "]"}], ";"}]}], "]"}]}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"CleanNotebookInOut", "[", 
+  RowBox[{"RemoveOutput", "\[Rule]", "True"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"?", "CleanNotebookInOut"}]], "Input"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["1.2 Set nb items", "Section"],
+
+Cell["\<\
+Data and time of last saved modification. This is an Initialization cell that \
+executes automatically whenever the nb is opened.\
+\>", "Text",
+ CellChangeTimes->{{3.446131848655753*^9, 3.446131858917453*^9}, {
+  3.446137264759386*^9, 3.446137266332767*^9}, {3.446137346018297*^9, 
+  3.44613737617555*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"autoOutput", "=", "True"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{"autoOutput", "=", 
+    RowBox[{"Input", "[", 
+     RowBox[{
+     "\"\<Set autoOutput flag to False to suppress automatic output of data \
+product files. \\nUseful when checking or redoing a calculation to avoid \
+overwriting existing files.\\nDefault = True\>\"", ",", "autoOutput"}], 
+     "]"}]}], "*)"}]}]}], "Input"],
+
+Cell[BoxData[
+ RowBox[{"nb", "=", 
+  RowBox[{"EvaluationNotebook", "[", "]"}]}]], "Input",
+ CellAutoOverwrite->False],
+
+Cell[BoxData[
+ RowBox[{"DateString", "[", 
+  RowBox[{
+   RowBox[{"\"\<FileModificationTime\>\"", "/.", 
+    RowBox[{"NotebookInformation", "[", "]"}]}], ",", 
+   RowBox[{"TimeZone", "->", "0"}]}], "]"}]], "Input",
+ CellAutoOverwrite->False,
+ CellChangeTimes->{{3.445874966493102*^9, 3.4458749784889708`*^9}, {
+   3.445875037268758*^9, 3.445875100082447*^9}, {3.4458751485534067`*^9, 
+   3.4458751511117163`*^9}, {3.445875216915934*^9, 3.445875242570963*^9}, {
+   3.445875378437434*^9, 3.445875401114954*^9}, 3.445875458892804*^9, {
+   3.44587557913221*^9, 3.44587559106078*^9}, {3.445875627487088*^9, 
+   3.4458756403413153`*^9}}],
+
+Cell[BoxData[{
+ RowBox[{"Off", "[", 
+  RowBox[{"General", "::", "\"\<spell1\>\""}], "]"}], "\n", 
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"<<", "\"\<BarCharts`\>\""}], ";", 
+    RowBox[{"<<", "\"\<Histograms`\>\""}], ";", 
+    RowBox[{
+     RowBox[{"<<", "\"\<PieCharts`\>\""}], "\n", 
+     RowBox[{"<<", "\"\<LinearRegression`\>\""}]}]}], "*)"}]}]}], "Input",
+ CellAutoOverwrite->False],
+
+Cell[BoxData[
+ RowBox[{"<<", "ComputationalGeometry`"}]], "Input"],
+
+Cell[BoxData["$SystemID"], "Input",
+ CellChangeTimes->{{3.4160021152075243`*^9, 3.416002130753045*^9}}],
+
+Cell[BoxData["$OperatingSystem"], "Input",
+ CellChangeTimes->{{3.416002115207933*^9, 3.416002130753488*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Conversion factors to meters for numbers in the indicated units:\
+\>", "Subsubsection"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"mm", "=", 
+   RowBox[{"10.", "^", 
+    RowBox[{"-", "3"}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"micron", "=", 
+   RowBox[{"10.", "^", 
+    RowBox[{"-", "6"}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"\[Micro]m", "=", 
+   RowBox[{"10.", "^", 
+    RowBox[{"-", "6"}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"nm", "=", 
+   RowBox[{"10.", "^", 
+    RowBox[{"-", "9"}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Angstroms", "=", 
+   RowBox[{"10.", "^", 
+    RowBox[{"-", "10"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"micronsToAngstroms", "=", 
+   RowBox[{"10", "^", "4"}]}], ";"}]}], "Input",
+ CellAutoOverwrite->False]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"hrange", "[", 
+   RowBox[{"binlist_", ",", "min_", ",", "max_"}], "]"}], ":=", 
+  RowBox[{"Quantile", "[", 
+   RowBox[{"binlist", ",", 
+    RowBox[{"{", 
+     RowBox[{"min", ",", "max"}], "}"}]}], "]"}]}]], "Input"],
+
+Cell["\<\
+MAKE SURE THE FOURIER OPTIONS ARE SET CORRECTLY EACH TIME THE FT IS DONE.\
+\>", "Text",
+ CellChangeTimes->{{3.4127080426338873`*^9, 3.412708073368338*^9}, {
+  3.416002115210246*^9, 3.416002130754343*^9}}],
+
+Cell["\<\
+Define the biased stddev functiion. The built in StdDev fcn has n-1 in the \
+denom. Change it to n.\
+\>", "Text",
+ CellChangeTimes->{{3.411244601232059*^9, 3.4112446126083603`*^9}, {
+  3.411401892850431*^9, 3.411401941242345*^9}, {3.416002115210606*^9, 
+  3.416002130754509*^9}}],
+
+Cell["\<\
+See that one must subtract the mean from the input data first, before \
+squaring, in order to compute the standard deviation correctly. This is a 1D \
+detrend.\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"detrend", "[", 
+   RowBox[{"anylist_", ",", "order_Integer"}], "]"}], ":=", 
+  RowBox[{"Block", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"npts", ",", "xlist", ",", "fitlist", ",", "x"}], "}"}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{"If", "[", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"order", ">=", "0"}], ",", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"xlist", "=", 
+        RowBox[{"Table", "[", 
+         RowBox[{
+          SuperscriptBox["x", "i"], ",", 
+          RowBox[{"{", 
+           RowBox[{"i", ",", "0", ",", "order"}], "}"}]}], "]"}]}], ";", "\n",
+        "\t\t", 
+       RowBox[{"npts", "=", 
+        RowBox[{"Length", "[", "anylist", "]"}]}], ";", "\n", "\t\t", 
+       RowBox[{"func", "=", 
+        RowBox[{"Fit", "[", 
+         RowBox[{"anylist", ",", "xlist", ",", "x"}], "]"}]}], ";", "\n", 
+       "\t\t", 
+       RowBox[{"fitlist", "=", 
+        RowBox[{"{", "}"}]}], ";", "\n", "\t\t", 
+       RowBox[{"Do", "[", 
+        RowBox[{
+         RowBox[{"AppendTo", "[", 
+          RowBox[{"fitlist", ",", "func"}], "]"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"x", ",", "1", ",", "npts"}], "}"}]}], "]"}], ";", "\n", 
+       "\t\t", 
+       RowBox[{"Return", "[", 
+        RowBox[{"anylist", "-", "fitlist"}], "]"}]}], ",", 
+      "\[IndentingNewLine]", 
+      RowBox[{"Return", "[", "anylist", "]"}]}], "\[IndentingNewLine]", 
+     "]"}]}], "\[IndentingNewLine]", "]"}]}]], "Input",
+ CellChangeTimes->{{3.416002115213029*^9, 3.416002131151075*^9}},
+ AspectRatioFixed->True],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Add a point digitizer to a plot. Results are put into vector \"res\".\
+\>", "Subsubsection",
+ CellChangeTimes->{{3.4123536743985023`*^9, 3.4123537089052973`*^9}, {
+  3.416002115629663*^9, 3.416002131161873*^9}}],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{
+   RowBox[{"locatePts", "[", "plotname_", "]"}], ":=", "\[IndentingNewLine]", 
+   
+   RowBox[{"Block", "[", " ", 
+    RowBox[{
+     RowBox[{"{", "}"}], ",", " ", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"res", " ", "=", " ", 
+       RowBox[{"{", "}"}]}], ";", " ", "\n", 
+      RowBox[{"Dynamic", "[", "res", "]"}], ";", " ", "\n", "  ", 
+      RowBox[{"EventHandler", "[", " ", "\n", "         ", 
+       RowBox[{"plotname", ",", " ", 
+        RowBox[{"{", 
+         RowBox[{"\"\<MouseDown\>\"", " ", ":>", 
+          RowBox[{"(", " ", 
+           RowBox[{"AppendTo", "[", 
+            RowBox[{"res", ",", " ", 
+             RowBox[{"MousePosition", "[", "\"\<Graphics\>\"", "]"}]}], "]"}],
+            ")"}]}], "}"}]}], " ", "\n", "        ", "]"}]}]}], " ", "]"}]}],
+  FontFamily->"Arial",
+  FontWeight->"Plain"]], "Input",
+ CellChangeTimes->{{3.416002115629848*^9, 3.416002131162106*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+The following tick function rescales the axes labels from the default [xmin, \
+xmax] range by offsetting the starting point by b and scaling the tick value \
+by m. 
+Note that you need to specify the AxesOrigin in terms of the unshifted \
+function.\
+\>", "Subsubsection",
+ CellChangeTimes->{{3.4160021156301613`*^9, 3.416002131162328*^9}}],
+
+Cell[BoxData[
+ RowBox[{"$TextStyle", "=", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"FontFamily", "\[Rule]", "Arial"}], ",", 
+    RowBox[{"FontSize", "\[Rule]", "10"}]}], "}"}]}]], "Input",
+ CellChangeTimes->{{3.4123695656164*^9, 3.4123695691646137`*^9}, {
+  3.412369655031846*^9, 3.4123696561967983`*^9}, {3.41270549425765*^9, 
+  3.41270550381952*^9}, {3.416002115630471*^9, 3.4160021311625566`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Style", "[", 
+  RowBox[{"PlotLabel", ",", 
+   RowBox[{"DefaultOptions", "->", 
+    RowBox[{"{", 
+     RowBox[{"FontFamily", "->", "Arial"}], "}"}]}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.412705739454899*^9, 3.412705835393314*^9}, {
+  3.416002115630872*^9, 3.416002131162959*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"tickf", "[", 
+   RowBox[{"min_", ",", "max_", ",", "m_", ",", "b_", ",", "step_"}], "]"}], ":=",
+   " ", 
+  RowBox[{"Table", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"i", ",", 
+      RowBox[{"m", " ", 
+       RowBox[{"(", 
+        RowBox[{"i", "-", "b"}], ")"}]}]}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"i", ",", "min", ",", "max", ",", "step"}], "}"}]}], 
+   "]"}]}]], "Input",
+ CellChangeTimes->{{3.416002115631175*^9, 3.416002131163348*^9}}],
+
+Cell["File name conventions", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"filename", "=."}], ";", 
+  RowBox[{"filenamefull", "=."}], ";", 
+  RowBox[{"fnames", "=."}], ";", 
+  RowBox[{"plotname", "=."}], ";", 
+  RowBox[{"filepath", "=."}], ";", 
+  RowBox[{"filepathfull", "=."}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"filein", "=."}], ";", 
+  RowBox[{"fileinroot", "=."}], ";", 
+  RowBox[{"fileinS", "=."}], ";"}]], "Input"],
+
+Cell["\<\
+Define surface fitbasis choices.  Chebychev requires actual XYplane region \
+extents.\
+\>", "Subsubsection"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"xs", "[", 
+    RowBox[{"x_", ",", "xmax_", ",", "xmin_"}], "]"}], ":=", 
+   RowBox[{
+    RowBox[{"2", "/", 
+     RowBox[{"(", 
+      RowBox[{"xmax", "-", "xmin"}], ")"}]}], " ", 
+    RowBox[{"(", 
+     RowBox[{"x", "-", "xmin", "-", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"xmax", "-", "xmin"}], ")"}], "/", "2"}]}], ")"}]}]}], 
+  ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"setfitbasis", "[", "fitnumflag_", "]"}], ":=", 
+  RowBox[{"Switch", "[", 
+   RowBox[{"fitnumflag", ",", "\[IndentingNewLine]", "0", ",", 
+    RowBox[{"(*", 
+     RowBox[{"Piston", " ", "only"}], "*)"}], 
+    RowBox[{
+     RowBox[{"fitbasis", "=", 
+      RowBox[{"{", "1", "}"}]}], ";", 
+     RowBox[{"fitidxS$", "=", "\"\<0\>\""}], ";", 
+     RowBox[{"fitidxS$", "=", "\"\<0\>\""}], ";", 
+     RowBox[{"Print", "[", "\"\<Piston only fit\>\"", "]"}]}], ",", 
+    "\[IndentingNewLine]", "1", ",", " ", 
+    RowBox[{"(*", 
+     RowBox[{"Pure", " ", "Plane"}], "*)"}], 
+    RowBox[{
+     RowBox[{"fitbasis", "=", 
+      RowBox[{"{", 
+       RowBox[{"1", ",", "x", ",", "y"}], "}"}]}], ";", 
+     RowBox[{"fitidxS$", "=", "\"\<S1,1\>\""}]}], 
+    RowBox[{"(*", 
+     RowBox[{"fitord$", "=", 
+      RowBox[{"StringTake", "[", 
+       RowBox[{
+        RowBox[{"TS", "[", "fitbasis", "]"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"2", ",", 
+          RowBox[{"-", "2"}]}], "}"}]}], "]"}]}], "*)"}], ",", 
+    "\[IndentingNewLine]", "2", ",", 
+    RowBox[{"(*", 
+     RowBox[{"Pure", " ", "Sphere"}], "*)"}], 
+    RowBox[{
+     RowBox[{"fitbasis", "=", 
+      RowBox[{"{", 
+       RowBox[{"1", ",", "x", ",", "y", ",", 
+        RowBox[{"x", " ", "y"}], ",", 
+        RowBox[{
+         RowBox[{"x", "^", "2"}], "+", 
+         RowBox[{"y", "^", "2"}]}]}], "}"}]}], ";", 
+     RowBox[{"fitidxS$", "=", "\"\<Ssph\>\""}]}], 
+    RowBox[{"(*", 
+     RowBox[{"fitord$", "=", 
+      RowBox[{"StringTake", "[", 
+       RowBox[{
+        RowBox[{"TS", "[", 
+         RowBox[{"fitbasis", "//", "InputForm"}], "]"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"2", ",", 
+          RowBox[{"-", "2"}]}], "}"}]}], "]"}]}], "*)"}], ",", 
+    "\[IndentingNewLine]", "3", ",", 
+    RowBox[{"(*", 
+     RowBox[{"General", " ", "cartesian", " ", "polynomial"}], "*)"}], 
+    RowBox[{
+     RowBox[{"fitidxS$", "=", 
+      RowBox[{
+      "InputString", "[", 
+       "\"\<Enter x and y order numbers of 2D surface fit desired, separated \
+by a comma, i.e. 1,2\>\"", "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"sp", "=", 
+      RowBox[{
+       RowBox[{"StringSplit", "[", 
+        RowBox[{"fitidxS$", ",", "\"\<,\>\""}], "]"}], "//", 
+       "ToExpression"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"ordx", "=", 
+      RowBox[{"sp", "[", 
+       RowBox[{"[", "1", "]"}], "]"}]}], ";", 
+     RowBox[{"ordy", "=", 
+      RowBox[{"sp", "[", 
+       RowBox[{"[", "2", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"fitidxS$", "=", 
+      RowBox[{"\"\<S\>\"", "<>", "fitidxS$"}]}], ";", "\n", 
+     RowBox[{"(*", 
+      RowBox[{
+       RowBox[{"fitord$", "=", 
+        RowBox[{"StringTake", "[", 
+         RowBox[{
+          RowBox[{"TS", "[", "sp", "]"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"2", ",", 
+            RowBox[{"-", "2"}]}], "}"}]}], "]"}]}], ";"}], "*)"}], "\n", 
+     RowBox[{"fitbasis", "=", 
+      RowBox[{"{", "}"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"Do", "[", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"i", "+", "j"}], ">", 
+          RowBox[{"ordx", "+", "ordy"}]}], ",", "Null", ",", 
+         RowBox[{"AppendTo", "[", 
+          RowBox[{"fitbasis", ",", 
+           RowBox[{
+            RowBox[{"x", "^", "i"}], " ", 
+            RowBox[{"y", "^", "j"}]}]}], "]"}]}], "]"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"i", ",", "0", ",", "ordx"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"j", ",", "ordy", ",", "0", ",", 
+         RowBox[{"-", "1"}]}], "}"}]}], "]"}]}], ",", "\[IndentingNewLine]", 
+    "4", ",", 
+    RowBox[{"(*", 
+     RowBox[{"Chebychev", " ", "poly"}], "*)"}], 
+    RowBox[{
+     RowBox[{"fitidxS$", "=", 
+      RowBox[{
+      "InputString", "[", 
+       "\"\<Enter x and y order numbers of 2D surface fit desired, separated \
+by a comma, i.e. 1,2\>\"", "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"xmin", ",", "xmax"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"ymin", ",", "ymax"}], "}"}]}], "}"}], "=", 
+      RowBox[{"Input", "[", 
+       RowBox[{
+       "\"\<Enter {{xmin,xmax},{ymin,ymax}} for Chebychev region\>\"", ",", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"xmin", ",", "xmax"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"ymin", ",", "ymax"}], "}"}]}], "}"}]}], "]"}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"sp", "=", 
+      RowBox[{
+       RowBox[{"StringSplit", "[", 
+        RowBox[{"fitidxS$", ",", "\"\<,\>\""}], "]"}], "//", 
+       "ToExpression"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"ordx", "=", 
+      RowBox[{"sp", "[", 
+       RowBox[{"[", "1", "]"}], "]"}]}], ";", 
+     RowBox[{"ordy", "=", 
+      RowBox[{"sp", "[", 
+       RowBox[{"[", "2", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"fitidxS$", "=", 
+      RowBox[{"\"\<S\>\"", "<>", "\"\<Chb\>\"", "<>", "fitidxS$"}]}], ";", 
+     "\n", 
+     RowBox[{"(*", 
+      RowBox[{
+       RowBox[{"fitord$", "=", 
+        RowBox[{"StringTake", "[", 
+         RowBox[{
+          RowBox[{"TS", "[", "sp", "]"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"2", ",", 
+            RowBox[{"-", "2"}]}], "}"}]}], "]"}]}], ";"}], "*)"}], "\n", 
+     RowBox[{"(*", 
+      RowBox[{
+      "compute", " ", "the", " ", "required", " ", "xlen", " ", "and", " ", 
+       "ylen", " ", "for", " ", "this", " ", "case"}], "*)"}], 
+     "\[IndentingNewLine]", 
+     RowBox[{"xlen", "=", 
+      RowBox[{
+       RowBox[{"xmax", "-", "xmin"}], "//", "N"}]}], ";", 
+     RowBox[{"ylen", "=", 
+      RowBox[{
+       RowBox[{"ymax", "-", "ymin"}], "//", "N"}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"fitbasis", "=", 
+      RowBox[{"{", "}"}]}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+     RowBox[{"fitbasis", "=", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Table", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{
+            RowBox[{
+             RowBox[{"HoldForm", "[", 
+              RowBox[{"ChebyshevT", "[", 
+               RowBox[{"ii", ",", 
+                RowBox[{"xs", "[", 
+                 RowBox[{"x", ",", "xmax", ",", "xmin"}], "]"}]}], "]"}], 
+              "]"}], " ", 
+             RowBox[{"HoldForm", "[", 
+              RowBox[{"ChebyshevT", "[", 
+               RowBox[{"jj", ",", 
+                RowBox[{"xs", "[", 
+                 RowBox[{"y", ",", "ymax", ",", "ymin"}], "]"}]}], "]"}], 
+              "]"}]}], "/.", 
+            RowBox[{"ii", "\[Rule]", "i"}]}], "/.", 
+           RowBox[{"jj", "->", "j"}]}], ",", 
+          RowBox[{"{", 
+           RowBox[{"i", ",", "0", ",", "ordx"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"j", ",", "0", ",", "ordy"}], "}"}]}], "]"}], "//", 
+        "Flatten"}], "//", "ReleaseHold"}]}], ";"}]}], "\[IndentingNewLine]", 
+   "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "Cell"}], "]"}]], "Input",
+ CellAutoOverwrite->False]
+}, Closed]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["2.0 Read in data file and set directory.", "Section"],
+
+Cell[BoxData[
+ RowBox[{"filepathfull", " "}]], "Input",
+ CellAutoOverwrite->False],
+
+Cell[BoxData[
+ RowBox[{"filepathfull", "=", 
+  RowBox[{"Input", "[", 
+   RowBox[{
+   "\"\<Do Insert->FilePath and navigate to desired data file and select to \
+enter here.\>\"", ",", "filepathfull"}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SetDirectory", "[", 
+  RowBox[{"DirectoryName", "[", "filepathfull", "]"}], "]"}]], "Input"],
+
+Cell["\<\
+Use the filename form appropriate for the computer platform, either MacOSX or \
+Windows\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "Cell"}], "]"}]], "Input",
+ CellAutoOverwrite->False],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"If", "[", 
+   RowBox[{
+    RowBox[{"$OperatingSystem", "==", "\"\<Windows\>\""}], ",", 
+    RowBox[{"sep$", "=", "\"\<\\\\\>\""}], ",", 
+    RowBox[{"sep$", "=", "\"\</\>\""}]}], "]"}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"manualcalcFlag", "=", "False"}], ";"}], " ", 
+  RowBox[{"(*", 
+   RowBox[{"set", " ", "for", " ", "automated", " ", "analysis"}], 
+   "*)"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"manualcalcFlag", "=", "True"}], ";"}], "*)"}], " ", 
+  RowBox[{"(*", 
+   RowBox[{
+   "to", " ", "stop", " ", "automated", " ", "analysis", " ", "with", " ", 
+    "default", " ", "parameters"}], "*)"}]}]], "Input",
+ CellChangeTimes->{{3.64401191212829*^9, 3.644011917846917*^9}}],
+
+Cell["\<\
+Enter upstemcal offset value here, for later correction of CCD absolute \
+height relative to REF plane.\
+\>", "Subsection"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"upstemcal", "=", "2.1"}], ";"}], 
+  RowBox[{"(*", " ", 
+   RowBox[{"from", " ", "160607", " ", "cal", " ", "runs"}], " ", 
+   "*)"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"upstemcal", "=", 
+  RowBox[{"Input", "[", 
+   RowBox[{
+   "\"\<Enter upstemcal offset factor here. Default = 0\>\"", ",", 
+    "upstemcal"}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "Cell"}], "]"}]], "Input",
+ CellAutoOverwrite->False],
+
+Cell["\<\
+Read in OGP  txt format. Contours. This is treated as FREEFORM data, i.e. no \
+set nrows or ncols.\
+\>", "Subsection"],
+
+Cell["\<\
+Data is in the form of a big list of triplets in units of mm. The X,Y \
+coordinate is included with the z-value. Note that this is NOT a rectangular \
+data array, so can't use the array plot functions unless the data is padded \
+to make a grid, which is not possible with OGP freefom data.\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{"SetDirectory", "[", 
+  RowBox[{"DirectoryName", "[", "filepathfull", "]"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"datain", "=."}], ";", 
+   RowBox[{"datain2", "=."}], ";", 
+   RowBox[{"datainXYZSR", "=."}], ";", 
+   RowBox[{"skipnum", "=."}], ";", 
+   RowBox[{"nRows", "=."}], ";", 
+   RowBox[{"nCols", "=."}], ";", 
+   RowBox[{"delx", "=."}], ";", " ", 
+   RowBox[{"dely", "=."}], ";"}], 
+  RowBox[{"(*", 
+   RowBox[{"nominal", " ", "scan", " ", "values"}], " ", "*)"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"fnames", "=", 
+   RowBox[{"FileNames", "[", "\"\<*.DAT\>\"", "]"}]}], ";", 
+  RowBox[{"ftable", "=", 
+   RowBox[{
+    RowBox[{"Table", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"i", ",", 
+        RowBox[{"fnames", "[", 
+         RowBox[{"[", "i", "]"}], "]"}]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"i", ",", 
+        RowBox[{"Length", "[", "fnames", "]"}]}], "}"}]}], "]"}], "//", 
+    "TableForm"}]}]}]], "Input",
+ CellAutoOverwrite->False,
+ CellChangeTimes->{{3.649288201899702*^9, 3.649288205896268*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Pick the OGP file from the list", "Subsubsection",
+ CellTags->"pick MST file num"],
+
+Cell[BoxData[
+ RowBox[{"inst$", "=", "\"\<OGP\>\""}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "Cell"}], "]"}]], "Input",
+ CellAutoOverwrite->False]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"nf", "=", 
+  RowBox[{"Input", "[", 
+   RowBox[{
+    RowBox[{"\"\<Enter index of desired file in the list (0=Abort):\\n\>\"", "<>", 
+     RowBox[{"ToString", "[", "ftable", "]"}]}], ",", "nf"}], 
+   "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{
+   RowBox[{"nf", "<", "1"}], ",", 
+   RowBox[{
+    RowBox[{
+    "MessageDialog", "[", 
+     "\"\<Incorrect file number. Abort the run, please.\>\"", "]"}], ";", 
+    RowBox[{"Interrupt", "[", "]"}], ";", 
+    RowBox[{"Abort", "[", "]"}]}]}], "]"}]], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"fileinfull", " ", "=", 
+  RowBox[{"fnames", "[", 
+   RowBox[{"[", "nf", "]"}], "]"}]}], "\n", 
+ RowBox[{"fileinroot", "=", 
+  RowBox[{"FileBaseName", "[", "fileinfull", "]"}]}], "\n", 
+ RowBox[{
+  RowBox[{"fileinS", "=", "fileinroot"}], ";"}]}], "Input",
+ CellAutoOverwrite->False],
+
+Cell["There is no separate REF file, so set filein to fileinS", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"filein", "=", "fileinS"}], ";", 
+  RowBox[{"datain", "=", 
+   RowBox[{"Import", "[", 
+    RowBox[{"fileinfull", ",", "\"\<Data\>\""}], "]"}]}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "Cell"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"If", "[", 
+   RowBox[{"manualcalcFlag", ",", 
+    RowBox[{"Interrupt", "[", "]"}]}], " ", "]"}], 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "Stop", " ", "here", " ", "to", " ", "execute", " ", "next", " ", 
+    "expressons", " ", "individually", " ", "as", " ", "needed", " ", "to", 
+    " ", "clean", " ", "up", " ", "data"}], " ", "*)"}]}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell["Create subdir for data file output", "Text"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Directory", "[", "]"}], "  ", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "This", " ", "is", " ", "the", " ", "current", " ", "default", " ", 
+    "directory"}], " ", "*)"}]}], "\n", 
+ RowBox[{"workdir", "=", 
+  RowBox[{"filein", "<>", "\"\<_files\>\""}]}]}], "Input"],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{
+   RowBox[{"!", 
+    RowBox[{"DirectoryQ", "[", "workdir", "]"}]}], ",", 
+   RowBox[{
+    RowBox[{"CreateDirectory", "[", "workdir", "]"}], ";", 
+    RowBox[{"Print", "[", "\"\<New work dir created\>\"", "]"}]}], ",", 
+   RowBox[{"Print", "[", 
+    RowBox[{
+    "workdir", "<>", "\"\< already exists. Using it for output.\>\""}], 
+    "]"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SetDirectory", "[", "workdir", "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "Cell"}], "]"}]], "Input"]
+}, Open  ]],
+
+Cell["\<\
+Strip out all of the Contour record, nulls and EORs, making one long list of \
+points.\
+\>", "Text"],
+
+Cell[BoxData[{
+ RowBox[{"Length", "[", "datain", "]"}], "\n", 
+ RowBox[{
+  RowBox[{"Count", "[", 
+   RowBox[{"datain", ",", 
+    RowBox[{"{", "}"}]}], "]"}], " ", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "Counts", " ", "the", " ", "number", " ", "of", " ", "blank", " ", 
+    "records", " ", "in", " ", "the", " ", "file"}], "*)"}]}]}], "Input"],
+
+Cell[CellGroupData[{
+
+Cell["Strip out all but the Contour points", "Text",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"Length", "[", "datain", "]"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"Dimensions", "[", "datain", "]"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"datain", "[", 
+  RowBox[{"[", 
+   RowBox[{"1", ";;", "10"}], "]"}], "]"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"datain", "[", 
+  RowBox[{"[", 
+   RowBox[{
+    RowBox[{"-", "10"}], ";;", 
+    RowBox[{"-", "1"}]}], "]"}], "]"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"Length", "[", "datain", "]"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell["\<\
+Find all lines with less than 2 numbers and at least 1 string. This excludes \
+all the the triplet lines with mm at the end.\
+\>", "Text",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"charpos", "=", 
+   RowBox[{"Reap", "[", 
+    RowBox[{"Do", "[", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"Count", "[", 
+            RowBox[{
+             RowBox[{"datain", "[", 
+              RowBox[{"[", "i", "]"}], "]"}], ",", 
+             RowBox[{"_", "?", "NumberQ"}]}], "]"}], "<", "2"}], "&&", 
+          RowBox[{
+           RowBox[{"Count", "[", 
+            RowBox[{
+             RowBox[{"datain", "[", 
+              RowBox[{"[", "i", "]"}], "]"}], ",", 
+             RowBox[{"_", "?", "StringQ"}]}], "]"}], ">=", "1"}]}], ")"}], 
+        ",", 
+        RowBox[{"Sow", "[", 
+         RowBox[{"{", 
+          RowBox[{"i", ",", "1"}], "}"}], "]"}]}], "]"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"i", ",", 
+        RowBox[{"Length", "[", "datain", "]"}]}], "}"}]}], "]"}], "]"}]}], 
+  ";"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData["charpos"], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"charpos", "[", 
+   RowBox[{"[", 
+    RowBox[{"2", ",", "1"}], "]"}], "]"}], "//", "Length"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Drop", "[", 
+   RowBox[{"charpos", ",", "1"}], "]"}], ";"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"charpos2", "=", 
+  RowBox[{"Flatten", "[", 
+   RowBox[{
+    RowBox[{"Drop", "[", 
+     RowBox[{"charpos", ",", "1"}], "]"}], ",", "2"}], "]"}]}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"charpos3", "=", 
+  RowBox[{"Map", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"Part", "[", 
+      RowBox[{"#", ",", "1"}], "]"}], "&"}], ",", "charpos2", ",", "1"}], 
+   "]"}]}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell["\<\
+Find all the points for steps labeled \[OpenCurlyDoubleQuote]Contour\
+\[CloseCurlyDoubleQuote] and \[OpenCurlyDoubleQuote]Plane\
+\[CloseCurlyDoubleQuote]. Added 2016.07.11\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{"cpos", "=."}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{
+   "Find", " ", "all", " ", "the", " ", "record", " ", "numbers", " ", 
+    "where", " ", "Contour", " ", "occurs"}], "*)"}], 
+  RowBox[{"cpos1", "=", 
+   RowBox[{"Position", "[", 
+    RowBox[{
+     RowBox[{"Extract", "[", 
+      RowBox[{"datain", ",", "charpos2"}], "]"}], ",", "\"\<Contour\>\""}], 
+    "]"}]}]}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"cpos2", "=", 
+  RowBox[{"Position", "[", 
+   RowBox[{
+    RowBox[{"Extract", "[", 
+     RowBox[{"datain", ",", "charpos2"}], "]"}], ",", "\"\<Plane\>\""}], 
+   "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"cpos", "=", 
+  RowBox[{"Join", "[", 
+   RowBox[{"cpos1", ",", "cpos2"}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"cpos", "+", "1", "  ", 
+  RowBox[{"(*", 
+   RowBox[{
+   "Add", " ", "1", " ", "to", " ", "specify", " ", "the", " ", "record", " ",
+     "following", " ", "the", " ", "Contour", " ", "record"}], 
+   "*)"}]}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"rifflvec", "=", 
+  RowBox[{"Riffle", "[", 
+   RowBox[{"cpos", ",", 
+    RowBox[{"cpos", "+", "1"}]}], "]"}], " ", 
+  RowBox[{"(*", 
+   RowBox[{"Combine", " ", "the", " ", "2", " ", "vectors"}], 
+   "*)"}]}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"(*", 
+  RowBox[{
+  "Now", " ", "pull", " ", "out", " ", "the", " ", "index", " ", "locations", 
+   " ", "from", " ", "charpos2", " ", "pointed", " ", "to", " ", "by", " ", 
+   "the", " ", "riffled", " ", "vector"}], "*)"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"cpairs", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"Extract", "[", 
+     RowBox[{"charpos2", ",", "rifflvec"}], "]"}], "//", 
+    RowBox[{
+     RowBox[{"Map", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Part", "[", 
+         RowBox[{"#", ",", "1"}], "]"}], "&"}], ",", "#", ",", "1"}], "]"}], 
+     "&"}]}], "//", 
+   RowBox[{
+    RowBox[{"Partition", "[", 
+     RowBox[{"#", ",", "2"}], "]"}], "&"}]}]}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell["\<\
+Enter a specific list of desired regions as the iterator for the Do loop.\
+\>", "Text",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"(*", 
+  RowBox[{
+   RowBox[{
+   "Now", " ", "take", " ", "the", " ", "range", " ", "of", " ", "points", 
+    " ", "from", " ", "datain", " ", "between", " ", "the", " ", "range", " ", 
+    RowBox[{"pairs", ".", " ", "Drop"}], " ", "the", " ", "first", " ", 
+    "record", " ", "in", " ", "each", " ", "range", " ", 
+    RowBox[{"(", "Contour"}]}], "}"}], "*)"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"datain4", "=."}], ";"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"datain4", "=", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"Reap", "[", "\[IndentingNewLine]", 
+      RowBox[{"Do", "[", 
+       RowBox[{
+        RowBox[{"Sow", "[", 
+         RowBox[{"Take", "[", 
+          RowBox[{"datain", ",", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"cpairs", "[", 
+               RowBox[{"[", 
+                RowBox[{"i", ",", "1"}], "]"}], "]"}], "+", "1"}], ",", 
+             RowBox[{
+              RowBox[{"cpairs", "[", 
+               RowBox[{"[", 
+                RowBox[{"i", ",", "2"}], "]"}], "]"}], "-", "2"}]}], "}"}]}], 
+          "]"}], "]"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"i", ",", 
+          RowBox[{"Length", "[", "cpairs", "]"}]}], "}"}]}], "]"}], 
+      "\[IndentingNewLine]", "]"}], "//", 
+     RowBox[{
+      RowBox[{"Drop", "[", 
+       RowBox[{"#", ",", "1"}], "]"}], "&"}]}], "//", 
+    RowBox[{
+     RowBox[{"Flatten", "[", 
+      RowBox[{"#", ",", "3"}], "]"}], "&"}]}]}], ";"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"Length", "[", "datain4", "]"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"datain2", "=", "datain4"}], ";"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}]
+}, Open  ]],
+
+Cell["\<\
+All data points are now in one continuous list. All the contours are merged \
+together\
+\>", "Subsubsection"],
+
+Cell[CellGroupData[{
+
+Cell["continue here", "Subsubsection",
+ CellTags->"data ready"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"datain3x", "=", 
+    RowBox[{"Take", "[", 
+     RowBox[{"datain2", ",", "All", ",", "3"}], "]"}]}], ";"}], 
+  RowBox[{"(*", " ", 
+   RowBox[{"Strip", " ", "off", " ", "the", " ", "XYZ", " ", "numbers"}], 
+   "*)"}]}]], "Input"],
+
+Cell["Convert z-vals to microns:", "Text"],
+
+Cell[BoxData[{
+ RowBox[{"datain3x", "[", 
+  RowBox[{"[", "1", "]"}], "]"}], "\n", 
+ RowBox[{
+  RowBox[{"datain3x", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"MapAt", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"Times", "[", 
+          RowBox[{"#", ",", 
+           RowBox[{"10", "^", "3"}]}], "]"}], "&"}], ",", "#", ",", "3"}], 
+       "]"}], "&"}], ",", "datain3x"}], "]"}]}], ";"}], "\n", 
+ RowBox[{"datain3x", "[", 
+  RowBox[{"[", "1", "]"}], "]"}]}], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"xunit$", "=", "\"\<mm\>\""}], ";", 
+   RowBox[{"yunit$", "=", "\"\<mm\>\""}], ";", 
+   RowBox[{"zunit$", "=", "\"\<\[Micro]m\>\""}], ";"}], " ", 
+  RowBox[{"(*", 
+   RowBox[{"These", " ", "are", " ", "now", " ", "current", " ", "units"}], 
+   "*)"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "Cell"}], "]"}]], "Input",
+ CellAutoOverwrite->False],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"datainXYZS", "=", "datain3x"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"datainXYZSR", "=", "datainXYZS"}], ";"}], " ", 
+  RowBox[{"(*", " ", 
+   RowBox[{"No", " ", 
+    RowBox[{"REF", ".", " ", "Copy"}], " ", "surface", " ", "into", " ", "SR",
+     " ", 
+    RowBox[{"array", "."}]}], " ", "*)"}]}]}], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"skipnum", "=."}], ";", 
+  RowBox[{"cloudXYZ", "=."}]}]], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"cloudXYZ", "=", "datainXYZSR"}], ";"}], "\n", 
+ RowBox[{"Dimensions", "[", "cloudXYZ", "]"}]}], "Input"]
+}, Open  ]],
+
+Cell["Range of raw z-values:", "Text"],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "Cell"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"Min", "[", 
+    RowBox[{"cloudXYZ", "[", 
+     RowBox[{"[", 
+      RowBox[{"All", ",", 
+       RowBox[{"{", "3", "}"}]}], "]"}], "]"}], "]"}], ",", 
+   RowBox[{"Max", "[", 
+    RowBox[{"cloudXYZ", "[", 
+     RowBox[{"[", 
+      RowBox[{"All", ",", 
+       RowBox[{"{", "3", "}"}]}], "]"}], "]"}], "]"}]}], "}"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell["Plot free-form data list not on uniform grid", "Subsection"],
+
+Cell["\<\
+Start next range clean-up here. Keep eliminating points from cloudXYZ based \
+on x and y and z range criteria.\
+\>", "Subsubsection",
+ CellTags->"XY range restriction start"],
+
+Cell["\<\
+Execute the appropriate unpacking expression and rearrange the cloudXYZ as \
+necessary.
+This depends on the ordering of the XYZ values in each triplet:  XYZ or ZYX\
+\>", "Text"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"xvals", "=", 
+   RowBox[{
+    RowBox[{"Take", "[", 
+     RowBox[{"cloudXYZ", ",", "All", ",", 
+      RowBox[{"{", "1", "}"}]}], "]"}], "//", "Flatten"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"yvals", "=", 
+   RowBox[{
+    RowBox[{"Take", "[", 
+     RowBox[{"cloudXYZ", ",", "All", ",", 
+      RowBox[{"{", "2", "}"}]}], "]"}], "//", "Flatten"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"zvals", "=", 
+   RowBox[{
+    RowBox[{"Take", "[", 
+     RowBox[{"cloudXYZ", ",", "All", ",", 
+      RowBox[{"{", "3", "}"}]}], "]"}], "//", "Flatten"}]}], ";"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"xmin", "=", 
+     RowBox[{"Min", "[", "xvals", "]"}]}], ",", 
+    RowBox[{"xmax", "=", 
+     RowBox[{"Max", "[", "xvals", "]"}]}]}], "}"}], "//", 
+  "N"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"ymin", "=", 
+     RowBox[{"Min", "[", "yvals", "]"}]}], ",", 
+    RowBox[{"ymax", "=", 
+     RowBox[{"Max", "[", "yvals", "]"}]}]}], "}"}], "//", 
+  "N"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"zmin", "=", 
+     RowBox[{"Min", "[", "zvals", "]"}]}], ",", 
+    RowBox[{"zmax", "=", 
+     RowBox[{"Max", "[", "zvals", "]"}]}], ",", 
+    RowBox[{"Mean", "[", "zvals", "]"}], ",", 
+    RowBox[{"StandardDeviation", "[", "zvals", "]"}]}], "}"}], "//", 
+  "N"}]}], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"deltaX", "=", 
+    RowBox[{"xmax", "-", "xmin"}]}], ",", " ", 
+   RowBox[{"deltaY", "=", 
+    RowBox[{"ymax", "-", "ymin"}]}], ",", 
+   RowBox[{"deltaZ", "=", 
+    RowBox[{"zmax", "-", "zmin"}]}]}], "}"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"rowscols$", "=", "\"\<cloud\>\"", " ", 
+  RowBox[{"(*", "\"\<sparse\>\"", "*)"}]}]], "Input"],
+
+Cell["\<\
+Next expression may not contain desired array on first pass. Why???? BEWARE\
+\>", "Text"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"vp", "=", 
+   RowBox[{"{", 
+    RowBox[{"0", ",", 
+     RowBox[{"-", "2"}], ",", "2"}], "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"Dynamic", "[", "vp", "]"}], ";"}]}], "Input",
+ CellChangeTimes->{{3.6440090598306847`*^9, 3.64400916593165*^9}, {
+  3.644009241929307*^9, 3.644009246469157*^9}, {3.644009290874243*^9, 
+  3.6440092910618677`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Dimensions", "[", "cloudXYZ", "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"lpp01", "=", 
+  RowBox[{"ListPointPlot3D", "[", 
+   RowBox[{"cloudXYZ", ",", 
+    RowBox[{"PlotRange", "->", "All"}], ",", 
+    RowBox[{"ViewPoint", "\[Rule]", "vp"}], ",", 
+    RowBox[{"ColorFunction", "\[Rule]", "\"\<Rainbow\>\""}], ",", 
+    RowBox[{"ImageSize", "->", "400"}], ",", 
+    RowBox[{"AxesLabel", "->", 
+     RowBox[{"{", 
+      RowBox[{"\"\<Xval\>\"", ",", "\"\<Yval\>\"", ",", "\"\<\>\""}], "}"}]}],
+     ",", 
+    RowBox[{"PlotLabel", "->", 
+     RowBox[{"fileinS", "<>", "\"\<\\nraw data\>\""}]}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.64400926683454*^9, 3.644009267013892*^9}}],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{"autoOutput", ",", 
+   RowBox[{"Export", "[", 
+    RowBox[{
+     RowBox[{"fileinS", "<>", "\"\<_SUTandREFraw.tiff\>\""}], ",", "lpp01", 
+     ",", 
+     RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+     RowBox[{"ImageResolution", "->", "100"}]}], "]"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{"Button", "[", 
+   RowBox[{"\"\<Export raw data SUT&REF plot\>\"", ",", 
+    RowBox[{"Export", "[", 
+     RowBox[{
+      RowBox[{"fileinS", "<>", "\"\<_SUTandREFraw.tiff\>\""}], ",", "lpp01", 
+      ",", 
+      RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+      RowBox[{"ImageResolution", "->", "100"}]}], "]"}], ",", 
+    RowBox[{"Method", "\[Rule]", "\"\<Queued\>\""}]}], "]"}],
+  FontColor->RGBColor[1, 0, 1]]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell["Find the SUT and REF ", "Subsubsection"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"xyPCSrange", "=", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"0.", ",", "45."}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"-", "35."}], ",", "75."}], "}"}]}], "}"}]}], ";"}], " ", 
+  RowBox[{"(*", 
+   RowBox[{
+   "for", " ", "PCS", " ", "coord", " ", "system", " ", "with", " ", "LL", 
+    " ", "corner", " ", "as", " ", "origin"}], "*)"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"xyPCSrange", "=", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"xmin", ",", "xmax"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"ymin", ",", "ymax"}], "}"}]}], "}"}], " ", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"for", " ", "MCS", " ", "coord", " ", "system"}], " ", "-", " ", 
+    RowBox[{"currently", " ", "used", " ", "in", " ", "RTN"}]}], 
+   "*)"}]}]], "Input"],
+
+Cell["\<\
+First discard the points in the MCS that are measured before the datum origin \
+defining the PCS is set on the hole center.\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"xminPCS", ",", "xmaxPCS"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"yminPCS", ",", "ymaxPCS"}], "}"}]}], "}"}], "=", 
+  "xyPCSrange"}]], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"testRegion", " ", "=", 
+   RowBox[{"Reap", "[", " ", 
+    RowBox[{"Do", "[", 
+     RowBox[{
+      RowBox[{"If", "[", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{"cloudXYZ", "[", 
+            RowBox[{"[", "i", "]"}], "]"}], "[", 
+           RowBox[{"[", "1", "]"}], "]"}], "<", "xmaxPCS"}], "&&", " ", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"cloudXYZ", "[", 
+            RowBox[{"[", "i", "]"}], "]"}], "[", 
+           RowBox[{"[", "1", "]"}], "]"}], ">", "xminPCS"}], "&&", 
+         "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"cloudXYZ", "[", 
+            RowBox[{"[", "i", "]"}], "]"}], "[", 
+           RowBox[{"[", "2", "]"}], "]"}], "<", "ymaxPCS"}], "&&", " ", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"cloudXYZ", "[", 
+            RowBox[{"[", "i", "]"}], "]"}], "[", 
+           RowBox[{"[", "2", "]"}], "]"}], ">", "yminPCS"}]}], 
+        "\[IndentingNewLine]", ",", 
+        RowBox[{"Sow", "[", 
+         RowBox[{"cloudXYZ", "[", 
+          RowBox[{"[", "i", "]"}], "]"}], "]"}]}], "]"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"i", ",", 
+        RowBox[{"Length", "[", "cloudXYZ", "]"}]}], "}"}]}], "]"}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"PCSregion", "=", 
+   RowBox[{
+    RowBox[{"Drop", "[", 
+     RowBox[{"testRegion", ",", "1"}], "]"}], "//", 
+    RowBox[{
+     RowBox[{"Flatten", "[", 
+      RowBox[{"#", ",", "2"}], "]"}], "&"}]}]}], ";"}], "\n", 
+ RowBox[{"Length", "[", "PCSregion", "]"}]}], "Input",
+ CellChangeTimes->{3.651441200685265*^9}],
+
+Cell["Verify that the proper region has been selected.", "Text"],
+
+Cell[BoxData[
+ RowBox[{"PCSregionplt", "=", 
+  RowBox[{"ListPointPlot3D", "[", 
+   RowBox[{"PCSregion", ",", 
+    RowBox[{"PlotRange", "->", "All"}], ",", 
+    RowBox[{"ViewPoint", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0", ",", "Infinity"}], "}"}]}], ",", 
+    RowBox[{"ColorFunction", "\[Rule]", "\"\<Rainbow\>\""}], ",", 
+    RowBox[{"ImageSize", "->", "400"}], ",", 
+    RowBox[{"AxesLabel", "->", 
+     RowBox[{"{", 
+      RowBox[{"\"\<Xval\>\"", ",", "\"\<Yval\>\"", ",", "\"\<\>\""}], "}"}]}],
+     ",", 
+    RowBox[{"PlotLabel", "->", 
+     RowBox[{"fileinS", "<>", "\"\<\\nPCSregion\>\""}]}]}], "]"}]}]], "Input"]
+}, Open  ]],
+
+Cell["\<\
+Isolate the CCD region. THis will define the inclusion limits in Y-dir for \
+dividing the data into REF and SUT regions.\
+\>", "Text"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Fix the xyrange to isolate the SUT region from the REF surfaces. Requires the \
+datum origin to be at the CDD LL corner.\
+\>", "Subsubsection"],
+
+Cell[BoxData[
+ RowBox[{"xyrange", "=", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"0.", ",", "45."}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"0.", ",", "45."}], "}"}]}], "}"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"xyrange", "=", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"70.", ",", "120."}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"50.", ",", "110."}], "}"}]}], "}"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"xminCCD", ",", "xmaxCCD"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"yminCCD", ",", "ymaxCCD"}], "}"}]}], "}"}], "=", 
+  "xyrange"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"imin", ",", "imax"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"jmin", ",", "jmax"}], "}"}]}], "}"}], "=."}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"xminCCD", ",", "xmaxCCD"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"yminCCD", ",", "ymaxCCD"}], "}"}]}], "}"}], "//", 
+  "TableForm"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"testS", "=."}], ";", 
+  RowBox[{"testR", "=."}], ";", 
+  RowBox[{"SUTdata", "=."}], ";", 
+  RowBox[{"REFdata", "=."}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "CellGroup"}], "]"}]], "Input",
+ CellAutoOverwrite->False]
+}, Open  ]]
+}, Closed]],
+
+Cell["Finished data file input section", "Subsection"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+2.1 Select one of the next expressions to get the correct assignment of SUT \
+and REF.\
+\>", "Section"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"dataDateFlag$", "=", " ", "\"\<new\>\""}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"dataDateFlag$", "=", 
+  RowBox[{"InputString", "[", 
+   RowBox[{
+   "\"\<Enter flag for old or new data.\\nThis changes the assignment of the \
+SUT and REF regions to make them correspond to the correct data.\\nDefault = \
+new\>\"", ",", "dataDateFlag$"}], "]"}]}]], "Input"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["New DAT file points", "Text",
+ CellChangeTimes->{{3.6516185327248297`*^9, 3.6516185595154657`*^9}}],
+
+Cell[BoxData["dataDateFlag$"], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"testS", "=."}], ";", 
+  RowBox[{"SUTdata", "=."}], ";", 
+  RowBox[{"REFdata", "=."}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"testS", " ", "=", 
+   RowBox[{"Reap", "[", "\[IndentingNewLine]", " ", 
+    RowBox[{"Do", "[", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"If", "[", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{"PCSregion", "[", 
+            RowBox[{"[", "i", "]"}], "]"}], "[", 
+           RowBox[{"[", "1", "]"}], "]"}], "<", "xmaxCCD"}], "&&", " ", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"PCSregion", "[", 
+            RowBox[{"[", "i", "]"}], "]"}], "[", 
+           RowBox[{"[", "1", "]"}], "]"}], ">", "xminCCD"}], "&&", 
+         "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"PCSregion", "[", 
+            RowBox[{"[", "i", "]"}], "]"}], "[", 
+           RowBox[{"[", "2", "]"}], "]"}], "<", "ymaxCCD"}], "&&", " ", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"PCSregion", "[", 
+            RowBox[{"[", "i", "]"}], "]"}], "[", 
+           RowBox[{"[", "2", "]"}], "]"}], ">", "yminCCD"}]}], 
+        "\[IndentingNewLine]", ",", 
+        RowBox[{"Sow", "[", 
+         RowBox[{
+          RowBox[{"PCSregion", "[", 
+           RowBox[{"[", "i", "]"}], "]"}], ",", "x"}], "]"}], 
+        "\[IndentingNewLine]", ",", 
+        RowBox[{"Sow", "[", 
+         RowBox[{
+          RowBox[{"PCSregion", "[", 
+           RowBox[{"[", "i", "]"}], "]"}], ",", "y"}], "]"}]}], 
+       "\[IndentingNewLine]", "]"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"i", ",", 
+        RowBox[{"Length", "[", "PCSregion", "]"}]}], "}"}]}], 
+     "\[IndentingNewLine]", "]"}], "\[IndentingNewLine]", "]"}]}], 
+  ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Switch", "[", "\[IndentingNewLine]", 
+   RowBox[{"dataDateFlag$", ",", "\"\<old\>\"", ",", 
+    RowBox[{
+     RowBox[{"SUTdata", "=", 
+      RowBox[{"testS", "[", 
+       RowBox[{"[", 
+        RowBox[{"2", ",", "1"}], "]"}], "]"}]}], ";", 
+     RowBox[{"REFdata", " ", "=", " ", 
+      RowBox[{"testS", "[", 
+       RowBox[{"[", 
+        RowBox[{"2", ",", "2"}], "]"}], "]"}]}]}], ",", 
+    "\[IndentingNewLine]", "\"\<new\>\"", ",", 
+    RowBox[{
+     RowBox[{"SUTdata", "=", 
+      RowBox[{"testS", "[", 
+       RowBox[{"[", 
+        RowBox[{"2", ",", "2"}], "]"}], "]"}]}], ";", 
+     RowBox[{"REFdata", " ", "=", " ", 
+      RowBox[{"testS", "[", 
+       RowBox[{"[", 
+        RowBox[{"2", ",", "1"}], "]"}], "]"}]}]}], ",", "\[IndentingNewLine]",
+     "_", ",", 
+    RowBox[{
+     RowBox[{
+     "MessageDialog", "[", 
+      "\"\<Error in SUT&REF allocation, ABORT and try again.\>\"", "]"}], ";", 
+     RowBox[{"Interrupt", "[", "]"}]}]}], "]"}], ";"}]], "Input"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"testS", "[", 
+   RowBox[{"[", 
+    RowBox[{"2", ",", "1"}], "]"}], "]"}], "//", "Length"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Length", "[", "SUTdata", "]"}], ",", 
+     RowBox[{"Length", "[", "REFdata", "]"}]}], "}"}], "\n", 
+   RowBox[{
+    RowBox[{"testS", "=."}], ";"}]}]}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell["Plot the raw pts to see if the assignment is correct", "Text"],
+
+Cell[BoxData[
+ RowBox[{"splt", "=", 
+  RowBox[{"ListPointPlot3D", "[", 
+   RowBox[{"SUTdata", ",", 
+    RowBox[{"PlotRange", "->", "All"}], ",", 
+    RowBox[{"ViewPoint", "->", 
+     RowBox[{"Dynamic", "[", "vp", "]"}]}], ",", 
+    RowBox[{"ColorFunction", "\[Rule]", "\"\<Rainbow\>\""}], ",", 
+    RowBox[{"ImageSize", "\[Rule]", "200"}], ",", 
+    RowBox[{"AxesLabel", "->", 
+     RowBox[{"{", 
+      RowBox[{"\"\<Xval\>\"", ",", "\"\<Yval\>\"", ",", "\"\<\>\""}], "}"}]}],
+     ",", 
+    RowBox[{"PlotLabel", "->", 
+     RowBox[{"fileinS", "<>", "\"\<\\nraw SUT region\>\""}]}]}], 
+   "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"rplt", "=", 
+  RowBox[{"ListPointPlot3D", "[", 
+   RowBox[{"REFdata", ",", 
+    RowBox[{"PlotRange", "->", "All"}], ",", 
+    RowBox[{"ViewPoint", "->", 
+     RowBox[{"Dynamic", "[", "vp", "]"}]}], ",", 
+    RowBox[{"ColorFunction", "\[Rule]", "\"\<Rainbow\>\""}], ",", 
+    RowBox[{"ImageSize", "\[Rule]", "200"}], ",", 
+    RowBox[{"AxesLabel", "->", 
+     RowBox[{"{", 
+      RowBox[{"\"\<Xval\>\"", ",", "\"\<Yval\>\"", ",", "\"\<\>\""}], "}"}]}],
+     ",", 
+    RowBox[{"PlotLabel", "->", 
+     RowBox[{"fileinS", "<>", "\"\<\\nraw REF region\>\""}]}]}], 
+   "]"}]}]], "Input"]
+}, Open  ]],
+
+Cell["The working array is SUTdatatrim", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"SUTdatatrim", "=", "SUTdata"}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "CellGroup"}], "]"}]], "Input"]
+}, Closed]],
+
+Cell["Finished separating SUT from REF regions.", "Subsection"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+3.0 Now work on SUT Flatness. 
+\tRemove tilt with plane fit and trim bad points from residuals.\
+\>", "Section"],
+
+Cell["\<\
+Now work on SUT and REF points after correctly assigning the regions.\
+\>", "Text"],
+
+Cell["\<\
+Clean up SUT points, removing outliers. MUST EXECUTE THIS SECTION.\
+\>", "Subsubsection",
+ CellTags->"SUT trim iterate"],
+
+Cell[BoxData[
+ RowBox[{"fitnumflag", "=", 
+  RowBox[{
+  "Input", "[", 
+   "\"\<Enter num for fit to apply. If finished with trim, enter 1 (pure \
+plane).\\n0 = piston only\\n1 = pure plane\\n2 = pure sphere\\n3 = general \
+{m,n}order polynomial\\n4 = Chebyshev polynomial (m,n)\>\"", " ", 
+   "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"setfitbasis", "[", "fitnumflag", "]"}]], "Input"],
+
+Cell[BoxData["fitidxS$"], "Input"],
+
+Cell["\<\
+Don\[CloseCurlyQuote]t output data when points are being trimmed, only when \
+plane fit is selected.\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{
+   RowBox[{"fitnumflag", "\[Equal]", "1"}], ",", 
+   RowBox[{"autoOutput", "=", "True"}], ",", 
+   RowBox[{"autoOutput", "=", "False"}]}], "]"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Do the fit here. The working array is worksurf. Make sure it has the desired \
+data in it.\
+\>", "Text"],
+
+Cell["\<\
+Need to normalize the x and y values when doing the Chebyshev fit, using the \
+actual values for xlen and ylen. For the other cases, use xlen=ylen=1 in the \
+normaization expression.\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"xlen", "=", "1"}], ";", 
+  RowBox[{"ylen", "=", "1"}], ";"}]], "Input"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"SUTfit", "[", 
+   RowBox[{"x_", ",", "y_"}], "]"}], "=", 
+  RowBox[{"Fit", "[", 
+   RowBox[{"SUTdatatrim", ",", 
+    RowBox[{"fitbasis", "//", "ReleaseHold"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"x", ",", "y"}], "}"}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"vp1", "=", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "0", ",", ".5"}], "}"}]}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"sutfitplt", "=", 
+   RowBox[{"Plot3D", "[", 
+    RowBox[{
+     RowBox[{"SUTfit", "[", 
+      RowBox[{"x", ",", "y"}], "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"x", ",", "xminCCD", ",", "xmaxCCD"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"y", ",", "ymin", ",", "ymax"}], "}"}], ",", 
+     RowBox[{"ColorFunction", "->", "\"\<Rainbow\>\""}], ",", 
+     RowBox[{"ImageSize", "\[Rule]", "400"}], ",", 
+     RowBox[{"PlotStyle", "->", 
+      RowBox[{"Opacity", "[", "0.5", "]"}]}], ",", 
+     RowBox[{"ViewPoint", "->", 
+      RowBox[{"Dynamic", "[", "vp1", "]"}]}]}], "]"}]}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SUTandFITplane", "=", 
+  RowBox[{"Show", "[", 
+   RowBox[{"splt", ",", "sutfitplt", ",", 
+    RowBox[{"PlotRange", "->", "All"}], ",", 
+    RowBox[{"ViewPoint", "->", 
+     RowBox[{"Dynamic", "[", "vp1", "]"}]}], ",", 
+    RowBox[{"PlotLabel", "->", 
+     RowBox[{
+     "fileinS", "<>", "\"\<\\nPlane fit to trimmed SUT points\>\""}]}]}], 
+   "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Dynamic", "[", "vp1", "]"}]], "Input"],
+
+Cell["\<\
+Now trim outliers more than some value away fom the fit plane value.
+First subtract plane fit to the full SUT data. NEW VERSION for flatnees stats\
+\
+\>", "Text",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"SUTresids", "=", 
+   RowBox[{"Table", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"SUTdatatrim", "[", 
+        RowBox[{"[", 
+         RowBox[{"i", ",", "1"}], "]"}], "]"}], ",", 
+       RowBox[{"SUTdatatrim", "[", 
+        RowBox[{"[", 
+         RowBox[{"i", ",", "2"}], "]"}], "]"}], ",", 
+       RowBox[{
+        RowBox[{"SUTdatatrim", "[", 
+         RowBox[{"[", 
+          RowBox[{"i", ",", "3"}], "]"}], "]"}], "-", 
+        RowBox[{"SUTfit", "[", 
+         RowBox[{
+          RowBox[{"SUTdatatrim", "[", 
+           RowBox[{"[", 
+            RowBox[{"i", ",", "1"}], "]"}], "]"}], ",", 
+          RowBox[{"SUTdatatrim", "[", 
+           RowBox[{"[", 
+            RowBox[{"i", ",", "2"}], "]"}], "]"}]}], "]"}]}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", 
+       RowBox[{"Length", "[", "SUTdatatrim", "]"}]}], "}"}]}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{"Length", "[", "SUTdatatrim", "]"}]}], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"SUTresidsZ", "=", 
+    RowBox[{
+     RowBox[{"SUTresids", "[", 
+      RowBox[{"[", 
+       RowBox[{"All", ",", 
+        RowBox[{"{", "3", "}"}]}], "]"}], "]"}], "//", "Flatten"}]}], ";"}], 
+  " ", 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"extract", " ", "the", " ", "z"}], "-", "values"}], 
+   "*)"}]}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"Mean", "[", "SUTresidsZ", "]"}], ",", 
+   RowBox[{"Median", "[", "SUTresidsZ", "]"}], ",", 
+   RowBox[{"StandardDeviation", "[", "SUTresidsZ", "]"}]}], "}"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"{", 
+   RowBox[{"minz", ",", "maxz"}], "}"}], "=", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"Min", "[", "SUTresidsZ", "]"}], ",", 
+    RowBox[{"Max", "[", "SUTresidsZ", "]"}]}], "}"}]}]], "Input",
+ CellChangeTimes->{{3.648846572408309*^9, 3.648846617154477*^9}}],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "Cell"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"ListPointPlot3D", "[", 
+  RowBox[{"SUTresids", ",", 
+   RowBox[{"PlotRange", "->", "All"}], ",", 
+   RowBox[{"ViewPoint", "->", 
+    RowBox[{"Dynamic", "[", "vp1", "]"}]}], ",", 
+   RowBox[{"ColorFunction", "\[Rule]", "\"\<Rainbow\>\""}], ",", 
+   RowBox[{"ImageSize", "\[Rule]", "600"}], ",", 
+   RowBox[{"AxesLabel", "->", 
+    RowBox[{"{", 
+     RowBox[{
+     "\"\<Xval\>\"", ",", "\"\<Yval\>\"", ",", "\"\<Z [\[Micro]m]\>\""}], 
+     "}"}]}], ",", 
+   RowBox[{"BaseStyle", "\[Rule]", 
+    RowBox[{"Directive", "[", 
+     RowBox[{"Bold", ",", 
+      RowBox[{"FontFamily", "\[Rule]", "\"\<Arial\>\""}], ",", 
+      RowBox[{"FontSize", "->", "12"}]}], "]"}]}], ",", 
+   RowBox[{"PlotLabel", "\[Rule]", 
+    RowBox[{"fileinS", "<>", "\"\<\\n\>\"", "<>", "fitidxS$"}]}]}], 
+  "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"sutflathist", "=", 
+    RowBox[{"Histogram", "[", 
+     RowBox[{"SUTresidsZ", ",", "25", ",", 
+      RowBox[{"ImageSize", "\[Rule]", "300"}], ",", 
+      RowBox[{"PlotRange", "\[Rule]", "All"}]}], "]"}]}], ";"}], 
+  RowBox[{"(*", 
+   RowBox[{
+   "These", " ", "are", " ", "the", " ", "residuals", " ", "after", " ", 
+    "removing", " ", "plane", " ", "fit"}], "*)"}]}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"sutflathist", ",", 
+   RowBox[{"Dynamic", "[", 
+    RowBox[{"MousePosition", "[", "\"\<Graphics\>\"", "]"}], "]"}]}], 
+  "}"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell["Trim the outliers here.", "Text",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"threshmin", ",", "threshmax"}], "}"}], "=", 
+   RowBox[{"{", 
+    RowBox[{"minz", ",", "maxz"}], "}"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.648846683032147*^9, 3.648846685144195*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"{", 
+   RowBox[{"threshmin", ",", "threshmax"}], "}"}], "=", 
+  RowBox[{"Input", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"sutflathist", ",", 
+        RowBox[{"Dynamic", "[", 
+         RowBox[{"MousePosition", "[", "\"\<Graphics\>\"", "]"}], "]"}]}], 
+       "}"}], ",", 
+      "\"\<Enter {min,max} threshold values for trimming bad points.\>\""}], 
+     "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"threshmin", ",", "threshmax"}], "}"}]}], "]"}]}]], "Input"],
+
+Cell["\<\
+Trim both the XYZ and the Z data lists. Remove bad points. The Length of \
+SUTdatatrim decreases.\
+\>", "Text",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"SUTresidsZtrim", "=", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Drop", "[", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"Reap", "[", " ", "\[IndentingNewLine]", 
+       RowBox[{"Do", "[", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"If", "[", "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{
+            RowBox[{
+             RowBox[{
+              RowBox[{"SUTdatatrim", "[", 
+               RowBox[{"[", 
+                RowBox[{"i", ",", "3"}], "]"}], "]"}], "-", 
+              RowBox[{"SUTfit", "[", 
+               RowBox[{
+                RowBox[{"SUTdatatrim", "[", 
+                 RowBox[{"[", 
+                  RowBox[{"i", ",", "1"}], "]"}], "]"}], ",", 
+                RowBox[{"SUTdatatrim", "[", 
+                 RowBox[{"[", 
+                  RowBox[{"i", ",", "2"}], "]"}], "]"}]}], "]"}]}], "<", 
+             "threshmax"}], " ", "&&", " ", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"SUTdatatrim", "[", 
+               RowBox[{"[", 
+                RowBox[{"i", ",", "3"}], "]"}], "]"}], "-", 
+              RowBox[{"SUTfit", "[", 
+               RowBox[{
+                RowBox[{"SUTdatatrim", "[", 
+                 RowBox[{"[", 
+                  RowBox[{"i", ",", "1"}], "]"}], "]"}], ",", 
+                RowBox[{"SUTdatatrim", "[", 
+                 RowBox[{"[", 
+                  RowBox[{"i", ",", "2"}], "]"}], "]"}]}], "]"}]}], ">", 
+             "threshmin"}]}], ",", "\[IndentingNewLine]", 
+           RowBox[{"Sow", "[", 
+            RowBox[{
+             RowBox[{"SUTdatatrim", "[", 
+              RowBox[{"[", 
+               RowBox[{"i", ",", "3"}], "]"}], "]"}], "-", 
+             RowBox[{"SUTfit", "[", 
+              RowBox[{
+               RowBox[{"SUTdatatrim", "[", 
+                RowBox[{"[", 
+                 RowBox[{"i", ",", "1"}], "]"}], "]"}], ",", 
+               RowBox[{"SUTdatatrim", "[", 
+                RowBox[{"[", 
+                 RowBox[{"i", ",", "2"}], "]"}], "]"}]}], " ", "]"}]}], 
+            "]"}]}], "\[IndentingNewLine]", "]"}], ",", "\[IndentingNewLine]", 
+         RowBox[{"{", 
+          RowBox[{"i", ",", 
+           RowBox[{"Length", "[", "SUTdatatrim", "]"}]}], "}"}]}], 
+        "\[IndentingNewLine]", "]"}], "\[IndentingNewLine]", "]"}], ",", 
+      "\[IndentingNewLine]", "1"}], "]"}], "//", 
+    RowBox[{
+     RowBox[{"Flatten", "[", 
+      RowBox[{"#", ",", "2"}], "]"}], "&"}]}]}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SUTresidsZtrim", "[", 
+  RowBox[{"[", 
+   RowBox[{"1", ";;", "10"}], "]"}], "]"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"Length", "[", "SUTdatatrim", "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"SUTdatatrim", "=", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Drop", "[", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"Reap", "[", "\[IndentingNewLine]", " ", 
+       RowBox[{"Do", "[", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"If", "[", "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{
+            RowBox[{
+             RowBox[{
+              RowBox[{"SUTdatatrim", "[", 
+               RowBox[{"[", 
+                RowBox[{"i", ",", "3"}], "]"}], "]"}], "-", 
+              RowBox[{"SUTfit", "[", 
+               RowBox[{
+                RowBox[{"SUTdatatrim", "[", 
+                 RowBox[{"[", 
+                  RowBox[{"i", ",", "1"}], "]"}], "]"}], ",", 
+                RowBox[{"SUTdatatrim", "[", 
+                 RowBox[{"[", 
+                  RowBox[{"i", ",", "2"}], "]"}], "]"}]}], "]"}]}], "<", 
+             "threshmax"}], " ", "&&", " ", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"SUTdatatrim", "[", 
+               RowBox[{"[", 
+                RowBox[{"i", ",", "3"}], "]"}], "]"}], "-", 
+              RowBox[{"SUTfit", "[", 
+               RowBox[{
+                RowBox[{"SUTdatatrim", "[", 
+                 RowBox[{"[", 
+                  RowBox[{"i", ",", "1"}], "]"}], "]"}], ",", 
+                RowBox[{"SUTdatatrim", "[", 
+                 RowBox[{"[", 
+                  RowBox[{"i", ",", "2"}], "]"}], "]"}]}], "]"}]}], ">", 
+             "threshmin"}]}], ",", 
+           RowBox[{"Sow", "[", 
+            RowBox[{"SUTdatatrim", "[", 
+             RowBox[{"[", "i", "]"}], "]"}], "]"}]}], "\[IndentingNewLine]", 
+          "]"}], ",", "\[IndentingNewLine]", 
+         RowBox[{"{", 
+          RowBox[{"i", ",", 
+           RowBox[{"Length", "[", "SUTdatatrim", "]"}]}], "}"}]}], "]"}], 
+       "\[IndentingNewLine]", "]"}], ",", "\[IndentingNewLine]", "1"}], "]"}],
+     "//", 
+    RowBox[{
+     RowBox[{"Flatten", "[", 
+      RowBox[{"#", ",", "2"}], "]"}], "&"}]}]}], ";"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"Length", "[", "SUTdatatrim", "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"SUTresidsXYZtrim", "=", 
+   RowBox[{"Table", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"SUTdatatrim", "[", 
+        RowBox[{"[", 
+         RowBox[{"i", ",", "1"}], "]"}], "]"}], ",", 
+       RowBox[{"SUTdatatrim", "[", 
+        RowBox[{"[", 
+         RowBox[{"i", ",", "2"}], "]"}], "]"}], ",", 
+       RowBox[{"SUTresidsZtrim", "[", 
+        RowBox[{"[", "i", "]"}], "]"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", 
+       RowBox[{"Length", "[", "SUTdatatrim", "]"}]}], "}"}]}], "]"}]}], 
+  ";"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}]
+}, Open  ]],
+
+Cell["\<\
+Use these SUT zresids for Flatness statistics. This excludes tilt effects and \
+only looks at intrinsic surface flatness.\
+\>", "Text",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"maxzF", "=", 
+   RowBox[{"Max", "[", "SUTresidsZtrim", "]"}]}], ";", 
+  RowBox[{"minzF", "=", 
+   RowBox[{"Min", "[", "SUTresidsZtrim", "]"}]}], ";", 
+  RowBox[{"sigmaF", "=", 
+   RowBox[{"StandardDeviation", "[", "SUTresidsZtrim", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"zbinF", "=", 
+   RowBox[{"BinCounts", "[", 
+    RowBox[{"SUTresidsZtrim", ",", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"maxzF", "-", "minzF"}], ")"}], "/", "25"}]}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"hrange", "[", 
+    RowBox[{"binlist_", ",", "min_", ",", "max_"}], "]"}], ":=", 
+   RowBox[{"Quantile", "[", 
+    RowBox[{"binlist", ",", 
+     RowBox[{"{", 
+      RowBox[{"min", ",", "max"}], "}"}]}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"hgtrangeF95", "=", 
+   RowBox[{"hrange", "[", 
+    RowBox[{"SUTresidsZtrim", ",", "0.025", ",", "0.975"}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"PVrangeF95", "=", 
+   RowBox[{
+    RowBox[{"hgtrangeF95", "[", 
+     RowBox[{"[", "2", "]"}], "]"}], "-", 
+    RowBox[{"hgtrangeF95", "[", 
+     RowBox[{"[", "1", "]"}], "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"hgtrangeF99", "=", 
+   RowBox[{"hrange", "[", 
+    RowBox[{"SUTresidsZtrim", ",", "0.005", ",", "0.995"}], "]"}]}], ";", 
+  RowBox[{"PVrangeF99", "=", 
+   RowBox[{
+    RowBox[{"hgtrangeF99", "[", 
+     RowBox[{"[", "2", "]"}], "]"}], "-", 
+    RowBox[{"hgtrangeF99", "[", 
+     RowBox[{"[", "1", "]"}], "]"}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"sigmaF", "//", 
+   RowBox[{
+    RowBox[{"NumberForm", "[", 
+     RowBox[{"#", ",", "5"}], "]"}], "&"}]}], ";"}]}], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"vp1", "=", 
+  RowBox[{"{", 
+   RowBox[{"2", ",", "0", ",", ".5"}], "}"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Length", "[", "SUTresidsXYZtrim", "]"}]], "Input",
+ CellChangeTimes->{{3.6516173126080513`*^9, 3.651617323200077*^9}}],
+
+Cell[BoxData[
+ RowBox[{"sutflatplt", "=."}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"suttrimplt", "=", 
+  RowBox[{"ListPointPlot3D", "[", 
+   RowBox[{"SUTresidsXYZtrim", ",", 
+    RowBox[{"PlotRange", "->", "All"}], ",", 
+    RowBox[{"ViewPoint", "->", 
+     RowBox[{"Dynamic", "[", "vp1", "]"}]}], ",", 
+    RowBox[{"ColorFunction", "\[Rule]", "\"\<Rainbow\>\""}], ",", 
+    RowBox[{"ImageSize", "\[Rule]", "600"}], ",", 
+    RowBox[{"AxesLabel", "->", 
+     RowBox[{"{", 
+      RowBox[{
+      "\"\<Xval\>\"", ",", "\"\<Yval\>\"", ",", "\"\<Z [\[Micro]m]\>\""}], 
+      "}"}]}], ",", 
+    RowBox[{"BaseStyle", "\[Rule]", 
+     RowBox[{"Directive", "[", 
+      RowBox[{"Bold", ",", 
+       RowBox[{"FontFamily", "\[Rule]", "\"\<Arial\>\""}], ",", 
+       RowBox[{"FontSize", "->", "12"}]}], "]"}]}], ",", 
+    RowBox[{"PlotLabel", "->", 
+     RowBox[{
+     "fileinS", "<>", "\"\<: SUT flatness\>\"", "<>", "\"\<\\n95%range=\>\"", 
+      "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{"hgtrangeF95", "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", "3"}], "]"}], "&"}]}], "]"}], "<>", 
+      "\"\<, PV95= \>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"hgtrangeF95", "[", 
+          RowBox[{"[", "2", "]"}], "]"}], "-", 
+         RowBox[{"hgtrangeF95", "[", 
+          RowBox[{"[", "1", "]"}], "]"}]}], "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", "3"}], "]"}], "&"}]}], "]"}], "<>", "zunit$", "<>",
+       "\[IndentingNewLine]", "\"\<\\n99%range=\>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{"hgtrangeF99", "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", "3"}], "]"}], "&"}]}], "]"}], "<>", 
+      "\"\<, PV99= \>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"hgtrangeF99", "[", 
+          RowBox[{"[", "2", "]"}], "]"}], "-", 
+         RowBox[{"hgtrangeF99", "[", 
+          RowBox[{"[", "1", "]"}], "]"}]}], "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", "3"}], "]"}], "&"}]}], "]"}], "<>", "zunit$", "<>",
+       "\[IndentingNewLine]", "\"\<\\nsdev=\>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{"sigmaF", "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", "3"}], "]"}], "&"}]}], "]"}], "<>", 
+      "zunit$"}]}]}], "]"}]}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"suttrimflag", "=", "0"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"suttrimflag", "=", 
+  RowBox[{"Input", "[", 
+   RowBox[{
+    RowBox[{
+    "\"\<To trim more SUT points, set flag =1\\nIf finished trimming, set \
+flag =0\\nMake sure final iteration done with fitnumflag = 1 for plane \
+fit.\\nCurrent fitnumflag =\>\"", "<>", " ", 
+     RowBox[{"ToString", "[", "fitnumflag", "]"}]}], ",", "suttrimflag"}], 
+   "]"}]}]}], "Input"],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{
+   RowBox[{"suttrimflag", "\[Equal]", "1"}], ",", 
+   RowBox[{
+    RowBox[{"SUTdata", "=", "SUTdatatrim"}], ";", 
+    RowBox[{"NotebookLocate", "[", "\"\<SUT trim iterate\>\"", "]"}]}]}], 
+  "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "CellGroup"}], "]"}]], "Input"]
+}, Closed]],
+
+Cell["Finished with SUT flatness trim", "Subsection"],
+
+Cell[CellGroupData[{
+
+Cell["3.1 Continue with SUT Flat output", "Section"],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{"autoOutput", ",", 
+   RowBox[{"Export", "[", 
+    RowBox[{
+     RowBox[{"fileinS", "<>", "\"\<_FLAT_CCD_plot.tiff\>\""}], ",", 
+     "suttrimplt", ",", 
+     RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+     RowBox[{"ImageResolution", "->", "100"}]}], "]"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{"Button", "[", 
+   RowBox[{"\"\<Export trimmed SUT region plot\>\"", ",", 
+    RowBox[{"Export", "[", 
+     RowBox[{
+      RowBox[{"fileinS", "<>", "\"\<_FLAT_CCD_plot.tiff\>\""}], ",", 
+      "suttrimplt", ",", 
+      RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+      RowBox[{"ImageResolution", "->", "100"}]}], "]"}], ",", 
+    RowBox[{"Method", "->", "\"\<Queued\>\""}]}], "]"}],
+  FontColor->RGBColor[1, 0, 1]]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Dynamic", "[", "vp1", "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"sutlen$", "=", 
+  RowBox[{"ToString", "[", 
+   RowBox[{"Length", "[", "SUTresidsXYZtrim", "]"}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{"autoOutput", ",", 
+   RowBox[{"Export", "[", 
+    RowBox[{
+     RowBox[{"fileinS", "<>", "\"\<_FLAT_CCD_plot.tiff\>\""}], ",", 
+     "suttrimplt", ",", 
+     RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+     RowBox[{"ImageResolution", "->", "100"}]}], "]"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{"Button", "[", 
+   RowBox[{"\"\<Export SUT Flatness plot\>\"", ",", 
+    RowBox[{"Export", "[", 
+     RowBox[{
+      RowBox[{"fileinS", "<>", "\"\<_FLAT_CCD_plot.tiff\>\""}], ",", 
+      "suttrimplt", ",", 
+      RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+      RowBox[{"ImageResolution", "->", "100"}]}], "]"}]}], "]"}],
+  FontColor->RGBColor[1, 0, 1]]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"sutflathist", "=", 
+  RowBox[{"Histogram", "[", 
+   RowBox[{"SUTresidsZtrim", ",", "20", ",", 
+    RowBox[{"PlotLabel", "->", 
+     RowBox[{
+     "fileinS", "<>", "\"\<: SUT flatness\>\"", "<>", "\"\<\\n95%range=\>\"", 
+      "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{"hgtrangeF95", "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", "3"}], "]"}], "&"}]}], "]"}], "<>", 
+      "\"\<, PV95= \>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"hgtrangeF95", "[", 
+          RowBox[{"[", "2", "]"}], "]"}], "-", 
+         RowBox[{"hgtrangeF95", "[", 
+          RowBox[{"[", "1", "]"}], "]"}]}], "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", "3"}], "]"}], "&"}]}], "]"}], "<>", "zunit$", "<>",
+       "\[IndentingNewLine]", "\"\<\\n99%range=\>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{"hgtrangeF99", "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", "3"}], "]"}], "&"}]}], "]"}], "<>", 
+      "\"\<, PV99= \>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"hgtrangeF99", "[", 
+          RowBox[{"[", "2", "]"}], "]"}], "-", 
+         RowBox[{"hgtrangeF99", "[", 
+          RowBox[{"[", "1", "]"}], "]"}]}], "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", "3"}], "]"}], "&"}]}], "]"}], "<>", "zunit$", "<>",
+       "\[IndentingNewLine]", "\"\<\\nsdev=\>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{"sigmaF", "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", "3"}], "]"}], "&"}]}], "]"}], "<>", 
+      "zunit$"}]}]}], "]"}], 
+  RowBox[{"(*", 
+   RowBox[{
+   "These", " ", "are", " ", "the", " ", "residuals", " ", "after", " ", 
+    "removing", " ", "plane", " ", "fit"}], "*)"}]}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{"autoOutput", ",", 
+   RowBox[{"Export", "[", 
+    RowBox[{
+     RowBox[{"fileinS", "<>", "\"\<_FLAT_CCD_histo.tiff\>\""}], ",", 
+     "sutflathist", ",", 
+     RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+     RowBox[{"ImageResolution", "->", "100"}]}], "]"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{"Button", "[", 
+   RowBox[{"\"\<Export SUT Flatness histogram\>\"", ",", 
+    RowBox[{"Export", "[", 
+     RowBox[{
+      RowBox[{"fileinS", "<>", "\"\<_FLAT_CCD_histo.tiff\>\""}], ",", 
+      "sutflathist", ",", 
+      RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+      RowBox[{"ImageResolution", "->", "100"}]}], "]"}], ",", 
+    RowBox[{"Method", "\[Rule]", "\"\<Queued\>\""}]}], "]"}],
+  FontColor->RGBColor[1, 0, 1]]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "Cell"}], "]"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"sbwcF", "=", 
+  RowBox[{"BoxWhiskerChart", "[", 
+   RowBox[{"SUTresidsZtrim", ",", 
+    RowBox[{"{", 
+     RowBox[{"\"\<Outliers\>\"", ",", 
+      RowBox[{"{", 
+       RowBox[{"\"\<MeanMarker\>\"", ",", "1.0", ",", "Thick"}], "}"}]}], 
+     "}"}], ",", 
+    RowBox[{"BaseStyle", "\[Rule]", 
+     RowBox[{"Directive", "[", 
+      RowBox[{"Bold", ",", 
+       RowBox[{"FontFamily", "\[Rule]", "\"\<Arial\>\""}], ",", 
+       RowBox[{"FontSize", "->", "12"}]}], "]"}]}], ",", 
+    RowBox[{"PlotLabel", "->", 
+     RowBox[{
+     "fileinS", "<>", "\"\<: SUT flatness\>\"", "<>", "\"\<\\n95%range=\>\"", 
+      "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{"hgtrangeF95", "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", "3"}], "]"}], "&"}]}], "]"}], "<>", 
+      "\"\<, PV95= \>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"hgtrangeF95", "[", 
+          RowBox[{"[", "2", "]"}], "]"}], "-", 
+         RowBox[{"hgtrangeF95", "[", 
+          RowBox[{"[", "1", "]"}], "]"}]}], "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", "3"}], "]"}], "&"}]}], "]"}], "<>", "zunit$", "<>",
+       "\[IndentingNewLine]", "\"\<\\n99%range=\>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{"hgtrangeF99", "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", "3"}], "]"}], "&"}]}], "]"}], "<>", 
+      "\"\<, PV99= \>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"hgtrangeF99", "[", 
+          RowBox[{"[", "2", "]"}], "]"}], "-", 
+         RowBox[{"hgtrangeF99", "[", 
+          RowBox[{"[", "1", "]"}], "]"}]}], "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", "3"}], "]"}], "&"}]}], "]"}], "<>", "zunit$", "<>",
+       "\[IndentingNewLine]", "\"\<\\nsdev=\>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{"sigmaF", "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", "3"}], "]"}], "&"}]}], "]"}], "<>", "zunit$"}]}], 
+    ",", 
+    RowBox[{"AxesLabel", "->", 
+     RowBox[{"{", 
+      RowBox[{"zunit$", ",", "\"\<\>\""}], "}"}]}]}], "]"}]}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "Cell"}], "]"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ CellAutoOverwrite->False],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{"autoOutput", ",", 
+   RowBox[{"Export", "[", 
+    RowBox[{
+     RowBox[{"fileinS", "<>", "\"\<_FLAT_CCD_bw.tiff\>\""}], ",", "sbwcF", 
+     ",", 
+     RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+     RowBox[{"ImageResolution", "->", "100"}]}], "]"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{"Button", "[", 
+   RowBox[{"\"\<Export Flatness whisker chart file\>\"", ",", 
+    RowBox[{"Export", "[", 
+     RowBox[{
+      RowBox[{"fileinS", "<>", "\"\<_FLAT_CCD_bw.tiff\>\""}], ",", "sbwcF", 
+      ",", 
+      RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+      RowBox[{"ImageResolution", "->", "100"}]}], "]"}]}], "]"}],
+  FontColor->RGBColor[1, 0, 1]]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"quantlist", "=", 
+   RowBox[{"Reverse", "[", 
+    RowBox[{"{", 
+     RowBox[{
+     "0.0", ",", "0.005", ",", "0.01", ",", "0.025", ",", "0.25", ",", "0.50",
+       ",", "0.75", ",", "0.975", ",", "0.99", ",", "0.995", ",", "1.0"}], 
+     "}"}], "]"}]}], ";"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"qresF", "=", 
+   RowBox[{"Quantile", "[", 
+    RowBox[{"SUTresidsZtrim", ",", "quantlist"}], "]"}]}], ";"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"qtableF", "=", 
+   RowBox[{"Transpose", "[", 
+    RowBox[{"{", 
+     RowBox[{"quantlist", ",", "qresF"}], "}"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"%", "//", "TableForm"}]}], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{"autoOutput", ",", 
+   RowBox[{"Export", "[", 
+    RowBox[{
+     RowBox[{"fileinS", "<>", "\"\<_FLAT_CCD_quantile.xlsx\>\""}], ",", 
+     RowBox[{"Prepend", "[", 
+      RowBox[{"qtableF", ",", 
+       RowBox[{"{", 
+        RowBox[{"fileinS", "<>", "\"\<, SUT flatness Quantiles\>\""}], 
+        "}"}]}], "]"}], ",", "\"\<XLSX\>\""}], "]"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{"Button", "[", 
+   RowBox[{"\"\<Export Flatness Quantile table file\>\"", ",", 
+    RowBox[{"Export", "[", 
+     RowBox[{
+      RowBox[{"fileinS", "<>", "\"\<_FLAT_CCD_quantile.xlsx\>\""}], ",", 
+      RowBox[{"Prepend", "[", 
+       RowBox[{"qtableF", ",", 
+        RowBox[{"{", 
+         RowBox[{"fileinS", "<>", "\"\<, SUT flatness Quantiles\>\""}], 
+         "}"}]}], "]"}], ",", "\"\<XLSX\>\""}], "]"}]}], "]"}],
+  FontColor->RGBColor[1, 0, 1]]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{"autoOutput", ",", 
+   RowBox[{"Export", "[", 
+    RowBox[{
+     RowBox[{"fileinS", "<>", "\"\<_FLAT_CCD_data.xlsx\>\""}], ",", 
+     "SUTresidsXYZtrim", ",", "\"\<XLSX\>\""}], "]"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{"Button", "[", 
+   RowBox[{"\"\<Export XYZ flatness height data.\>\"", ",", 
+    RowBox[{"Export", "[", 
+     RowBox[{
+      RowBox[{"fileinS", "<>", "\"\<_FLAT_CCD_data.xlsx\>\""}], ",", 
+      "SUTresidsXYZtrim", ",", "\"\<XLSX\>\""}], "]"}]}], "]"}],
+  FontColor->RGBColor[1, 0, 1]]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"strimplt", "=", 
+  RowBox[{"ListPointPlot3D", "[", 
+   RowBox[{"SUTdatatrim", ",", 
+    RowBox[{"PlotRange", "->", "All"}], ",", 
+    RowBox[{"ViewPoint", "->", 
+     RowBox[{"Dynamic", "[", "vp1", "]"}]}], ",", 
+    RowBox[{"ColorFunction", "\[Rule]", "\"\<Rainbow\>\""}], ",", 
+    RowBox[{"ImageSize", "->", "400"}], ",", 
+    RowBox[{"AxesLabel", "->", 
+     RowBox[{"{", 
+      RowBox[{"\"\<Xval\>\"", ",", "\"\<Yval\>\"", ",", "\"\<\>\""}], "}"}]}],
+     ",", 
+    RowBox[{"PlotLabel", "->", 
+     RowBox[{
+     "fileinS", "<>", "\"\<: SUT flatness\>\"", "<>", "\"\<\\n95%range=\>\"", 
+      "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{"hgtrangeF95", "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", "3"}], "]"}], "&"}]}], "]"}], "<>", 
+      "\"\<, PV95= \>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"hgtrangeF95", "[", 
+          RowBox[{"[", "2", "]"}], "]"}], "-", 
+         RowBox[{"hgtrangeF95", "[", 
+          RowBox[{"[", "1", "]"}], "]"}]}], "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", "3"}], "]"}], "&"}]}], "]"}], "<>", "zunit$", "<>",
+       "\[IndentingNewLine]", "\"\<\\n99%range=\>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{"hgtrangeF99", "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", "3"}], "]"}], "&"}]}], "]"}], "<>", 
+      "\"\<, PV99= \>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"hgtrangeF99", "[", 
+          RowBox[{"[", "2", "]"}], "]"}], "-", 
+         RowBox[{"hgtrangeF99", "[", 
+          RowBox[{"[", "1", "]"}], "]"}]}], "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", "3"}], "]"}], "&"}]}], "]"}], "<>", "zunit$", "<>",
+       "\[IndentingNewLine]", "\"\<\\nsdev=\>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{"sigmaF", "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", "3"}], "]"}], "&"}]}], "]"}], "<>", 
+      "zunit$"}]}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "CellGroup"}], "]"}]], "Input"]
+}, Closed]],
+
+Cell["End of SUT flatness section.", "Subsection"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+4.0 Work on REF region. 
+\tDo plane fit and toss out bad points. Iterate if necessary.\
+\>", "Section"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"REFdatatrim", "=", "REFdata"}], ";"}], " ", 
+  RowBox[{"(*", 
+   RowBox[{
+   "Set", " ", "to", " ", "full", " ", "REF", " ", "data", " ", "first", " ", 
+    "time", " ", "thru"}], " ", "*)"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Length", "[", "REFdatatrim", "]"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell["Restart here for REF iteration bad point cleanup", "Subsubsection",
+ CellTags->"REF data trim"],
+
+Cell[BoxData[
+ RowBox[{"Length", "[", "REFdatatrim", "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"If", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"Length", "[", "REFdatatrim", "]"}], "==", "0"}], ",", 
+    RowBox[{
+     RowBox[{
+     "MessageDialog", "[", "\"\<Setting REF to const plane\>\"", "]"}], ";", 
+     RowBox[{"zSUTconst", "=", 
+      RowBox[{"Mean", "[", 
+       RowBox[{"SUTdata", "[", 
+        RowBox[{"[", 
+         RowBox[{"All", ",", "3"}], "]"}], "]"}], "]"}]}], ";", 
+     RowBox[{"REFdatatrim", "=", 
+      RowBox[{"Table", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"SUTdata", "[", 
+           RowBox[{"[", 
+            RowBox[{"i", ",", "1"}], "]"}], "]"}], ",", 
+          RowBox[{"SUTdata", "[", 
+           RowBox[{"[", 
+            RowBox[{"i", ",", "2"}], "]"}], "]"}], ",", "zSUTconst"}], "}"}], 
+        ",", 
+        RowBox[{"{", 
+         RowBox[{"i", ",", 
+          RowBox[{"Length", "[", "SUTdata", "]"}]}], "}"}]}], "]"}]}]}]}], 
+   "]"}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"zSUTconst", "=", 
+  RowBox[{"Mean", "[", 
+   RowBox[{"SUTdata", "[", 
+    RowBox[{"[", 
+     RowBox[{"All", ",", "3"}], "]"}], "]"}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"rplt", "=", 
+  RowBox[{"ListPointPlot3D", "[", 
+   RowBox[{"REFdatatrim", ",", 
+    RowBox[{"PlotRange", "->", "All"}], ",", 
+    RowBox[{"ViewPoint", "->", 
+     RowBox[{"Dynamic", "[", "vp", "]"}]}], ",", 
+    RowBox[{"ColorFunction", "\[Rule]", "\"\<Rainbow\>\""}], ",", 
+    RowBox[{"ImageSize", "->", "400"}], ",", 
+    RowBox[{"AxesLabel", "->", 
+     RowBox[{"{", 
+      RowBox[{"\"\<Xval\>\"", ",", "\"\<Yval\>\"", ",", "\"\<\>\""}], "}"}]}],
+     ",", 
+    RowBox[{"PlotLabel", "->", 
+     RowBox[{"fileinS", "<>", "\"\<\\nraw REF data\>\""}]}]}], 
+   "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "Cell"}], "]"}]], "Input",
+ CellAutoOverwrite->False],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"rsplt", "=."}], ";", 
+  RowBox[{"rsplt", "=", 
+   RowBox[{"Show", "[", 
+    RowBox[{"rplt", ",", "strimplt", ",", 
+     RowBox[{"PlotLabel", "->", 
+      RowBox[{"fileinS", "<>", "\"\<\\nraw data\>\""}]}]}], "]"}]}], 
+  ";"}]], "Input"],
+
+Cell["Look at REF data", "Subsubsection"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Now fit a plane surface to the REF points. Work on REFdatatrim array.\
+\>", "Text"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"fitbasisR", "=", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "x", ",", "y"}], "}"}]}], ";", 
+  RowBox[{"fitidxR", "=", "\"\<1,1\>\""}], ";"}], "\n", 
+ RowBox[{"fitordR$", "=", 
+  RowBox[{"StringTake", "[", 
+   RowBox[{
+    RowBox[{"ToString", "[", "fitbasisR", "]"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"2", ",", 
+      RowBox[{"-", "2"}]}], "}"}]}], "]"}]}]}], "Input"],
+
+Cell["Fit a plane to the trimmed data to see outliers.", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"REFfit", "[", 
+   RowBox[{"x_", ",", "y_"}], "]"}], "=", 
+  RowBox[{"Fit", "[", 
+   RowBox[{"REFdatatrim", ",", "fitbasisR", ",", 
+    RowBox[{"{", 
+     RowBox[{"x", ",", "y"}], "}"}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"vp1", "=", "vp"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"refplt", "=", 
+  RowBox[{"Plot3D", "[", 
+   RowBox[{
+    RowBox[{"REFfit", "[", 
+     RowBox[{"x", ",", "y"}], "]"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"x", ",", "xminCCD", ",", "xmaxCCD"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"y", ",", "ymin", ",", "ymax"}], "}"}], ",", 
+    RowBox[{"ColorFunction", "->", "\"\<Rainbow\>\""}], ",", 
+    RowBox[{"ImageSize", "\[Rule]", "200"}], ",", 
+    RowBox[{"PlotStyle", "->", 
+     RowBox[{"Opacity", "[", "0.5", "]"}]}], ",", 
+    RowBox[{"ViewPoint", "->", 
+     RowBox[{"Dynamic", "[", "vp1", "]"}]}]}], "]"}]}]], "Input"]
+}, Open  ]],
+
+Cell["Remove the plane fit and work on resids", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"REFresids", "=", 
+   RowBox[{"Table", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"REFdatatrim", "[", 
+        RowBox[{"[", 
+         RowBox[{"i", ",", "1"}], "]"}], "]"}], ",", 
+       RowBox[{"REFdatatrim", "[", 
+        RowBox[{"[", 
+         RowBox[{"i", ",", "2"}], "]"}], "]"}], ",", 
+       RowBox[{
+        RowBox[{"REFdatatrim", "[", 
+         RowBox[{"[", 
+          RowBox[{"i", ",", "3"}], "]"}], "]"}], "-", 
+        RowBox[{"REFfit", "[", 
+         RowBox[{
+          RowBox[{"REFdatatrim", "[", 
+           RowBox[{"[", 
+            RowBox[{"i", ",", "1"}], "]"}], "]"}], ",", 
+          RowBox[{"REFdatatrim", "[", 
+           RowBox[{"[", 
+            RowBox[{"i", ",", "2"}], "]"}], "]"}]}], "]"}]}]}], "}"}], 
+     "\[IndentingNewLine]", ",", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", "1", ",", 
+       RowBox[{"Length", "[", "REFdatatrim", "]"}]}], "}"}]}], 
+    "\[IndentingNewLine]", "]"}]}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"test", "=."}], ";", 
+  RowBox[{"zREFdata", "=."}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"zREFdata", "=", 
+   RowBox[{
+    RowBox[{"Take", "[", 
+     RowBox[{"REFresids", ",", "All", ",", 
+      RowBox[{"{", "3", "}"}]}], "]"}], "//", "Flatten"}]}], ";"}]], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"maxzR", "=", 
+   RowBox[{"Max", "[", "zREFdata", "]"}]}], ";", 
+  RowBox[{"minzR", "=", 
+   RowBox[{"Min", "[", "zREFdata", "]"}]}], ";", 
+  RowBox[{"sigmaR", "=", 
+   RowBox[{"StandardDeviation", "[", "zREFdata", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"zbinR", "=", 
+   RowBox[{"BinCounts", "[", 
+    RowBox[{"zREFdata", ",", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"maxzR", "-", "minzR"}], ")"}], "/", "25"}]}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"hrange", "[", 
+    RowBox[{"binlist_", ",", "min_", ",", "max_"}], "]"}], ":=", 
+   RowBox[{"Quantile", "[", 
+    RowBox[{"binlist", ",", 
+     RowBox[{"{", 
+      RowBox[{"min", ",", "max"}], "}"}]}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"hgtrangeR99", "=", 
+   RowBox[{"hrange", "[", 
+    RowBox[{"zREFdata", ",", "0.005", ",", "0.995"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"PVrangeR99", "=", 
+   RowBox[{
+    RowBox[{"hgtrangeR99", "[", 
+     RowBox[{"[", "2", "]"}], "]"}], "-", 
+    RowBox[{"hgtrangeR99", "[", 
+     RowBox[{"[", "1", "]"}], "]"}]}]}], ";"}], "\n", 
+ RowBox[{"sigmaR", "//", 
+  RowBox[{
+   RowBox[{"NumberForm", "[", 
+    RowBox[{"#", ",", "5"}], "]"}], "&"}]}]}], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"histresidplt", "=", 
+   RowBox[{"Histogram", "[", 
+    RowBox[{"zREFdata", ",", "50", ",", 
+     RowBox[{"ImageSize", "->", "400"}], ",", 
+     RowBox[{"PlotRange", "\[Rule]", "All"}], ",", 
+     RowBox[{"BaseStyle", "\[Rule]", 
+      RowBox[{"Directive", "[", 
+       RowBox[{"Bold", ",", 
+        RowBox[{"FontFamily", "\[Rule]", "\"\<Arial\>\""}], ",", 
+        RowBox[{"FontSize", "->", "12"}]}], "]"}]}], ",", 
+     RowBox[{"AxesLabel", "->", 
+      RowBox[{"{", 
+       RowBox[{"zunit$", ",", "\"\<\>\""}], "}"}]}], ",", 
+     RowBox[{"PlotLabel", "\[Rule]", 
+      RowBox[{"fileinS", "<>", "\"\<\\n99% range=\>\"", "<>", 
+       RowBox[{"ToString", "[", 
+        RowBox[{
+         RowBox[{"hrange", "[", 
+          RowBox[{"zREFdata", ",", "0.005", ",", "0.995"}], "]"}], "//", 
+         RowBox[{
+          RowBox[{"NumberForm", "[", 
+           RowBox[{"#", ",", "5"}], "]"}], "&"}]}], "]"}], "<>", 
+       "\"\< PV99=\>\"", "<>", 
+       RowBox[{"ToString", "[", "PVrangeR99", "]"}], "<>", "\"\<\\nsdev=\>\"",
+        "<>", 
+       RowBox[{"ToString", "[", 
+        RowBox[{"sigmaR", "//", 
+         RowBox[{
+          RowBox[{"NumberForm", "[", 
+           RowBox[{"#", ",", "5"}], "]"}], "&"}]}], "]"}], "<>", 
+       "zunit$"}]}]}], "]"}]}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"{", 
+   RowBox[{"histresidplt", ",", 
+    RowBox[{"Dynamic", "[", 
+     RowBox[{"MousePosition", "[", "\"\<Graphics\>\"", "]"}], "]"}]}], "}"}], 
+  "//", "TableForm"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "Cell"}], "]"}]], "Input",
+ CellAutoOverwrite->False],
+
+Cell[CellGroupData[{
+
+Cell["Trim the outliers here.", "Text",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "Cell"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"threshRmin", ",", "threshRmax"}], "}"}], "=", 
+   RowBox[{"{", 
+    RowBox[{"minzR", ",", "maxzR"}], "}"}]}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"{", 
+   RowBox[{"threshRmin", ",", "threshRmax"}], "}"}], "=", 
+  RowBox[{"Input", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"histresidplt", ",", 
+         RowBox[{"Dynamic", "[", 
+          RowBox[{"MousePosition", "[", "\"\<Graphics\>\"", "]"}], "]"}]}], 
+        "}"}], "//", "TableForm"}], ",", 
+      "\"\<Enter {minzR,maxzR} threshold values for trimming bad \
+points.\>\""}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"threshRmin", ",", "threshRmax"}], "}"}]}], "]"}]}]], "Input"],
+
+Cell["\<\
+Trim both the XYZ and the Z data lists. First Sow the z-values within the \
+threshold region. Then Sow \
+\>", "Text",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"REFdatatrim2", "=", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Drop", "[", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"Reap", "[", "\[IndentingNewLine]", " ", 
+       RowBox[{"Do", "[", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"If", "[", "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{
+            RowBox[{
+             RowBox[{
+              RowBox[{"REFdatatrim", "[", 
+               RowBox[{"[", 
+                RowBox[{"i", ",", "3"}], "]"}], "]"}], "-", 
+              RowBox[{"REFfit", "[", 
+               RowBox[{
+                RowBox[{"REFdatatrim", "[", 
+                 RowBox[{"[", 
+                  RowBox[{"i", ",", "1"}], "]"}], "]"}], ",", 
+                RowBox[{"REFdatatrim", "[", 
+                 RowBox[{"[", 
+                  RowBox[{"i", ",", "2"}], "]"}], "]"}]}], "]"}]}], "<", 
+             "threshRmax"}], " ", "&&", " ", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"REFdatatrim", "[", 
+               RowBox[{"[", 
+                RowBox[{"i", ",", "3"}], "]"}], "]"}], "-", 
+              RowBox[{"REFfit", "[", 
+               RowBox[{
+                RowBox[{"REFdatatrim", "[", 
+                 RowBox[{"[", 
+                  RowBox[{"i", ",", "1"}], "]"}], "]"}], ",", 
+                RowBox[{"REFdatatrim", "[", 
+                 RowBox[{"[", 
+                  RowBox[{"i", ",", "2"}], "]"}], "]"}]}], "]"}]}], ">", 
+             "threshRmin"}]}], ",", 
+           RowBox[{"Sow", "[", 
+            RowBox[{"REFdatatrim", "[", 
+             RowBox[{"[", "i", "]"}], "]"}], "]"}]}], "\[IndentingNewLine]", 
+          "]"}], ",", "\[IndentingNewLine]", 
+         RowBox[{"{", 
+          RowBox[{"i", ",", 
+           RowBox[{"Length", "[", "REFdatatrim", "]"}]}], "}"}]}], "]"}], 
+       "\[IndentingNewLine]", "]"}], ",", "\[IndentingNewLine]", "1"}], "]"}],
+     "//", 
+    RowBox[{
+     RowBox[{"Flatten", "[", 
+      RowBox[{"#", ",", "2"}], "]"}], "&"}]}]}], ";"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+
+Cell[BoxData[
+ RowBox[{"Length", "[", "REFdatatrim2", "]"}]], "Input"]
+}, Open  ]],
+
+Cell["\<\
+Now iterate if more points have been trimmed from the last histogram. Set \
+REFdatatrim to REFdatatrim2 and go back up.
+Otherwise, continue with final REFdatatrim array.\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "Cell"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Rtrimflag", "=", 
+  RowBox[{"Input", "[", 
+   RowBox[{
+   "\"\<Enter REF trim iterate flag: 1=More trim, 0 = Good to go\>\"", ",", 
+    "Rtrimflag"}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{
+   RowBox[{"Rtrimflag", "\[Equal]", "1"}], ",", 
+   RowBox[{
+    RowBox[{"REFdatatrim", "=", "REFdatatrim2"}], ";", 
+    RowBox[{"NotebookLocate", "[", "\"\<REF data trim\>\"", "]"}]}]}], 
+  "]"}]], "Input"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "CellGroup"}], "]"}]], "Input"]
+}, Closed]],
+
+Cell["Finished with REF trim.", "Subsection"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+4.1 Finished with trim. Now fit a plane surface to the REF points.\
+\>", "Section"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"fitbasisR", "=", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "x", ",", "y"}], "}"}]}], ";", 
+  RowBox[{"fitidxR", "=", "\"\<1,1\>\""}], ";"}], "\n", 
+ RowBox[{"fitordR$", "=", 
+  RowBox[{"StringTake", "[", 
+   RowBox[{
+    RowBox[{"ToString", "[", "fitbasisR", "]"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"2", ",", 
+      RowBox[{"-", "2"}]}], "}"}]}], "]"}]}]}], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"REFfit", "[", 
+   RowBox[{"x_", ",", "y_"}], "]"}], "=", 
+  RowBox[{"Fit", "[", 
+   RowBox[{"REFdatatrim", ",", "fitbasisR", ",", 
+    RowBox[{"{", 
+     RowBox[{"x", ",", "y"}], "}"}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"vp1", "=", "vp"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"refplt", "=", 
+  RowBox[{"Plot3D", "[", 
+   RowBox[{
+    RowBox[{"REFfit", "[", 
+     RowBox[{"x", ",", "y"}], "]"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"x", ",", "xminCCD", ",", "xmaxCCD"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"y", ",", "ymin", ",", "ymax"}], "}"}], ",", 
+    RowBox[{"ColorFunction", "->", "\"\<Rainbow\>\""}], ",", 
+    RowBox[{"ImageSize", "\[Rule]", "200"}], ",", 
+    RowBox[{"PlotStyle", "->", 
+     RowBox[{"Opacity", "[", "0.5", "]"}]}], ",", 
+    RowBox[{"ViewPoint", "->", 
+     RowBox[{"Dynamic", "[", "vp1", "]"}]}]}], "]"}]}]], "Input"],
+
+Cell["", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"REFcorrected", "=", 
+   RowBox[{"Table", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"REFdatatrim", "[", 
+        RowBox[{"[", 
+         RowBox[{"i", ",", "1"}], "]"}], "]"}], ",", 
+       RowBox[{"REFdatatrim", "[", 
+        RowBox[{"[", 
+         RowBox[{"i", ",", "2"}], "]"}], "]"}], ",", 
+       RowBox[{
+        RowBox[{"REFdatatrim", "[", 
+         RowBox[{"[", 
+          RowBox[{"i", ",", "3"}], "]"}], "]"}], "-", 
+        RowBox[{"REFfit", "[", 
+         RowBox[{
+          RowBox[{"REFdatatrim", "[", 
+           RowBox[{"[", 
+            RowBox[{"i", ",", "1"}], "]"}], "]"}], ",", 
+          RowBox[{"REFdatatrim", "[", 
+           RowBox[{"[", 
+            RowBox[{"i", ",", "2"}], "]"}], "]"}]}], "]"}]}]}], "}"}], 
+     "\[IndentingNewLine]", ",", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", "1", ",", 
+       RowBox[{"Length", "[", "REFdatatrim", "]"}]}], "}"}]}], 
+    "\[IndentingNewLine]", "]"}]}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"reflen$", "=", 
+  RowBox[{"ToString", "[", 
+   RowBox[{"Length", "[", "REFcorrected", "]"}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"REFresidsPlt", "=", 
+  RowBox[{"ListPointPlot3D", "[", 
+   RowBox[{"REFcorrected", ",", 
+    RowBox[{"PlotRange", "->", "All"}], ",", 
+    RowBox[{"ColorFunction", "\[Rule]", "\"\<Rainbow\>\""}], ",", 
+    RowBox[{"AxesLabel", "->", 
+     RowBox[{"{", 
+      RowBox[{
+      "\"\<Xval\>\"", ",", "\"\<Yval\>\"", ",", "\"\<Z[\[Micro]m]\>\""}], 
+      "}"}]}], ",", 
+    RowBox[{"PlotLabel", "->", 
+     RowBox[{
+     "fileinS", "<>", "\"\<\\nThis shows REF after subt plane fit\>\""}]}]}], 
+   "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{"autoOutput", ",", 
+   RowBox[{"Export", "[", 
+    RowBox[{
+     RowBox[{"fileinS", "<>", "\"\<_ABSZ_REF_plot.tiff\>\""}], ",", 
+     "REFresidsPlt", ",", 
+     RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+     RowBox[{"ImageResolution", "->", "100"}]}], "]"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{"Export", "[", 
+   RowBox[{
+    RowBox[{"fileinS", "<>", "\"\<_ABSZ_REF_plot.tiff\>\""}], ",", 
+    "REFresidsPlt", ",", 
+    RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+    RowBox[{"ImageResolution", "->", "100"}]}], "]"}],
+  FontColor->RGBColor[1, 0, 1]]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"zREFresids", "=", 
+   RowBox[{
+    RowBox[{"Take", "[", 
+     RowBox[{"REFcorrected", ",", "All", ",", 
+      RowBox[{"{", "3", "}"}]}], "]"}], "//", "Flatten"}]}], ";"}]], "Input"],
+
+Cell["Look at quality of REF plane correction to REF points:", "Text"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"maxzR2", "=", 
+   RowBox[{"Max", "[", "zREFresids", "]"}]}], ";", 
+  RowBox[{"minzR2", "=", 
+   RowBox[{"Min", "[", "zREFresids", "]"}]}], ";", 
+  RowBox[{"sigmaR2", "=", 
+   RowBox[{"StandardDeviation", "[", "zREFresids", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"zbinR2", "=", 
+   RowBox[{"BinCounts", "[", 
+    RowBox[{"zREFresids", ",", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"maxzR2", "-", "minzR2"}], ")"}], "/", "25"}]}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"hrange", "[", 
+    RowBox[{"binlist_", ",", "min_", ",", "max_"}], "]"}], ":=", 
+   RowBox[{"Quantile", "[", 
+    RowBox[{"binlist", ",", 
+     RowBox[{"{", 
+      RowBox[{"min", ",", "max"}], "}"}]}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"hgtrange99", "=", 
+   RowBox[{"hrange", "[", 
+    RowBox[{"zREFresids", ",", "0.005", ",", "0.995"}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"PVrange99", "=", 
+   RowBox[{
+    RowBox[{"hgtrange99", "[", 
+     RowBox[{"[", "2", "]"}], "]"}], "-", 
+    RowBox[{"hgtrange99", "[", 
+     RowBox[{"[", "1", "]"}], "]"}]}]}], ";"}], "\n", 
+ RowBox[{"sigmaR2", "//", 
+  RowBox[{
+   RowBox[{"NumberForm", "[", 
+    RowBox[{"#", ",", "5"}], "]"}], "&"}]}]}], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"histREFresidplt", "=", 
+   RowBox[{"Histogram", "[", 
+    RowBox[{"zREFresids", ",", "50", ",", 
+     RowBox[{"ImageSize", "->", "400"}], ",", 
+     RowBox[{"BaseStyle", "\[Rule]", 
+      RowBox[{"Directive", "[", 
+       RowBox[{"Bold", ",", 
+        RowBox[{"FontFamily", "\[Rule]", "\"\<Arial\>\""}], ",", 
+        RowBox[{"FontSize", "->", "12"}]}], "]"}]}], ",", 
+     RowBox[{"AxesLabel", "->", 
+      RowBox[{"{", 
+       RowBox[{"zunit$", ",", "\"\<\>\""}], "}"}]}], ",", 
+     RowBox[{"PlotLabel", "\[Rule]", 
+      RowBox[{
+      "fileinS", "<>", "\"\< REFresids\>\"", "<>", "\"\<\\n99%=\>\"", "<>", 
+       RowBox[{"ToString", "[", 
+        RowBox[{
+         RowBox[{"hrange", "[", 
+          RowBox[{"zREFresids", ",", "0.005", ",", "0.995"}], "]"}], "//", 
+         RowBox[{
+          RowBox[{"NumberForm", "[", 
+           RowBox[{"#", ",", "4"}], "]"}], "&"}]}], "]"}], "<>", 
+       "\"\<, PV99=\>\"", "<>", 
+       RowBox[{"ToString", "[", 
+        RowBox[{"PVrange99", "//", 
+         RowBox[{
+          RowBox[{"NumberForm", "[", 
+           RowBox[{"#", ",", "4"}], "]"}], "&"}]}], "]"}], "<>", 
+       "\"\<\\nsdev=\>\"", "<>", 
+       RowBox[{"ToString", "[", 
+        RowBox[{"sigmaR2", "//", 
+         RowBox[{
+          RowBox[{"NumberForm", "[", 
+           RowBox[{"#", ",", "4"}], "]"}], "&"}]}], "]"}], "<>", 
+       "zunit$"}]}]}], "]"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.6514422844582376`*^9, 3.651442284872493*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"histREFresidplt", ",", 
+   RowBox[{"Dynamic", "[", 
+    RowBox[{"MousePosition", "[", "\"\<Graphics\>\"", "]"}], "]"}]}], 
+  "}"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{"autoOutput", ",", 
+   RowBox[{"Export", "[", 
+    RowBox[{
+     RowBox[{"fileinS", "<>", "\"\<_ABSZ_REF_histo.tiff\>\""}], ",", 
+     "histREFresidplt", ",", 
+     RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+     RowBox[{"ImageResolution", "->", "100"}]}], "]"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{"Button", "[", 
+   RowBox[{"\"\<Export REF resids histogram plot\>\"", ",", 
+    RowBox[{"Export", "[", 
+     RowBox[{
+      RowBox[{"fileinS", "<>", "\"\<_ABSZ_REF_histo.tiff\>\""}], ",", 
+      "histREFresidplt", ",", 
+      RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+      RowBox[{"ImageResolution", "->", "100"}]}], "]"}]}], "]"}],
+  FontColor->RGBColor[1, 0, 1]]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"rbwc", "=", 
+  RowBox[{"BoxWhiskerChart", "[", 
+   RowBox[{"zREFresids", ",", 
+    RowBox[{"{", 
+     RowBox[{"\"\<Outliers\>\"", ",", 
+      RowBox[{"{", 
+       RowBox[{"\"\<MeanMarker\>\"", ",", "1.0", ",", "Thick"}], "}"}]}], 
+     "}"}], ",", 
+    RowBox[{"BaseStyle", "\[Rule]", 
+     RowBox[{"Directive", "[", 
+      RowBox[{"Bold", ",", 
+       RowBox[{"FontFamily", "\[Rule]", "\"\<Arial\>\""}], ",", 
+       RowBox[{"FontSize", "->", "12"}]}], "]"}]}], ",", 
+    RowBox[{"PlotLabel", "\[Rule]", 
+     RowBox[{"fileinS", "<>", "\"\< REFresids\>\"", "<>", "\"\<\\n99%=\>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{
+        RowBox[{"hrange", "[", 
+         RowBox[{"zREFresids", ",", "0.005", ",", "0.995"}], "]"}], "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", "4"}], "]"}], "&"}]}], "]"}], "<>", 
+      "\"\<, PV99=\>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{"PVrange99", "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", "4"}], "]"}], "&"}]}], "]"}], "<>", 
+      "\"\<\\nsdev=\>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{"sigmaR2", "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", "4"}], "]"}], "&"}]}], "]"}], "<>", "zunit$"}]}], 
+    ",", 
+    RowBox[{"AxesLabel", "->", 
+     RowBox[{"{", 
+      RowBox[{"zunit$", ",", "\"\<\>\""}], "}"}]}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "Cell"}], "]"}]], "Input",
+ CellAutoOverwrite->False],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{"autoOutput", ",", 
+   RowBox[{"Export", "[", 
+    RowBox[{
+     RowBox[{"fileinS", "<>", "\"\<_ABSZ_REF_bw.tiff\>\""}], ",", "rbwc", ",", 
+     RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+     RowBox[{"ImageResolution", "->", "100"}]}], "]"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{"Button", "[", 
+   RowBox[{"\"\<Export REF box whisker chart file\>\"", ",", 
+    RowBox[{"Export", "[", 
+     RowBox[{
+      RowBox[{"fileinS", "<>", "\"\<_ABSZ_REF_bw.tiff\>\""}], ",", "rbwc", 
+      ",", 
+      RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+      RowBox[{"ImageResolution", "->", "100"}]}], "]"}]}], "]"}],
+  FontColor->RGBColor[1, 0, 1]]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"vp1", "=", 
+  RowBox[{"{", 
+   RowBox[{"2", ",", "0", ",", "0"}], "}"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SUTandREFplane", "=", 
+  RowBox[{"Show", "[", 
+   RowBox[{"rsplt", ",", "refplt", ",", 
+    RowBox[{"PlotRange", "->", "All"}], ",", 
+    RowBox[{"ViewPoint", "->", 
+     RowBox[{"Dynamic", "[", "vp1", "]"}]}], ",", 
+    RowBox[{"PlotLabel", "->", 
+     RowBox[{
+     "fileinS", "<>", "\"\<\\nREF plane fit to trimmed point range\>\""}]}]}],
+    "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "Cell"}], "]"}]], "Input",
+ CellAutoOverwrite->False],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{"autoOutput", ",", 
+   RowBox[{"Export", "[", 
+    RowBox[{
+     RowBox[{"fileinS", "<>", "\"\<_ABSZ_plotwithref.tiff\>\""}], ",", 
+     "SUTandREFplane", ",", 
+     RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+     RowBox[{"ImageResolution", "->", "100"}]}], "]"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{"Button", "[", 
+   RowBox[{"\"\<Export SUT&REF&fitplane plot\>\"", ",", 
+    RowBox[{"Export", "[", 
+     RowBox[{
+      RowBox[{"fileinS", "<>", "\"\<_ABSZ_plotwithref.tiff\>\""}], ",", 
+      "SUTandREFplane", ",", 
+      RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+      RowBox[{"ImageResolution", "->", "100"}]}], "]"}], ",", 
+    RowBox[{"Method", "\[Rule]", "\"\<Queued\>\""}]}], "]"}],
+  FontColor->RGBColor[1, 0, 1]]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "CellGroup"}], "]"}]], "Input"]
+}, Closed]],
+
+Cell["End of REF fitting section.", "Subsection"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+5.0 Now do the subtraction of the REF plane from the SUT points. 
+\tMake sure upstemcal correction factor is set correctly.\
+\>", "Section"],
+
+Cell[BoxData["upstemcal"], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"SUTcorrected", "=", 
+   RowBox[{"Table", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"SUTdata", "[", 
+        RowBox[{"[", 
+         RowBox[{"i", ",", "1"}], "]"}], "]"}], ",", 
+       RowBox[{"SUTdata", "[", 
+        RowBox[{"[", 
+         RowBox[{"i", ",", "2"}], "]"}], "]"}], ",", 
+       RowBox[{
+        RowBox[{"SUTdata", "[", 
+         RowBox[{"[", 
+          RowBox[{"i", ",", "3"}], "]"}], "]"}], "-", 
+        RowBox[{"REFfit", "[", 
+         RowBox[{
+          RowBox[{"SUTdata", "[", 
+           RowBox[{"[", 
+            RowBox[{"i", ",", "1"}], "]"}], "]"}], ",", 
+          RowBox[{"SUTdata", "[", 
+           RowBox[{"[", 
+            RowBox[{"i", ",", "2"}], "]"}], "]"}]}], "]"}], "-", 
+        "upstemcal"}]}], "}"}], "\[IndentingNewLine]", ",", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", "1", ",", 
+       RowBox[{"Length", "[", "SUTdata", "]"}]}], "}"}]}], 
+    "\[IndentingNewLine]", "]"}]}], ";"}], "\n", 
+ RowBox[{"Length", "[", "SUTdata", "]"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"zSUTresids", "=", 
+   RowBox[{
+    RowBox[{"Take", "[", 
+     RowBox[{"SUTcorrected", ",", "All", ",", 
+      RowBox[{"{", "3", "}"}]}], "]"}], "//", "Flatten"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"quantlist", "=", 
+   RowBox[{"Reverse", "[", 
+    RowBox[{"{", 
+     RowBox[{
+     "0.0", ",", "0.005", ",", "0.01", ",", "0.025", ",", "0.25", ",", "0.50",
+       ",", "0.75", ",", "0.975", ",", "0.99", ",", "0.995", ",", "1.0"}], 
+     "}"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"qres", "=", 
+   RowBox[{"Quantile", "[", 
+    RowBox[{"zSUTresids", ",", "quantlist"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"qtableABSZ", "=", 
+   RowBox[{"Transpose", "[", 
+    RowBox[{"{", 
+     RowBox[{"quantlist", ",", "qres"}], "}"}], "]"}]}], ";", 
+  RowBox[{"qtableABSZ", "//", "TableForm"}]}]}], "Input"],
+
+Cell[BoxData[
+ RowBox[{"q99range", "=", 
+  RowBox[{
+   RowBox[{"qres", "[", 
+    RowBox[{"[", "8", "]"}], "]"}], "-", 
+   RowBox[{"qres", "[", 
+    RowBox[{"[", "2", "]"}], "]"}]}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"hrange", "[", 
+    RowBox[{"binlist_", ",", "min_", ",", "max_"}], "]"}], ":=", 
+   RowBox[{"Quantile", "[", 
+    RowBox[{"binlist", ",", 
+     RowBox[{"{", 
+      RowBox[{"min", ",", "max"}], "}"}]}], "]"}]}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"hgtrangeS95", "=."}], ";", 
+  RowBox[{"hgtrangeS99", "=."}], ";", 
+  RowBox[{"PVrangeS95", "=."}], ";", 
+  RowBox[{"PVrangeS99", "=."}], " ", ";"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"maxzS", "=", 
+   RowBox[{"Max", "[", "zSUTresids", "]"}]}], ";", 
+  RowBox[{"minzS", "=", 
+   RowBox[{"Min", "[", "zSUTresids", "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"meanZcor", "=", 
+   RowBox[{
+    RowBox[{"Mean", "[", "zSUTresids", "]"}], "//", "Chop"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"sigmaS", "=", 
+   RowBox[{"StandardDeviation", "[", "zSUTresids", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"zbinS", "=", 
+   RowBox[{"BinCounts", "[", 
+    RowBox[{"zSUTresids", ",", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"maxzS", "-", "minzS"}], ")"}], "/", "25"}]}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"hgtrangeS95", "=", 
+   RowBox[{"hrange", "[", 
+    RowBox[{"zSUTresids", ",", "0.025", ",", "0.975"}], "]"}]}], ";", 
+  RowBox[{"PVrangeS95", "=", 
+   RowBox[{
+    RowBox[{"hgtrangeS95", "[", 
+     RowBox[{"[", "2", "]"}], "]"}], "-", 
+    RowBox[{"hgtrangeS95", "[", 
+     RowBox[{"[", "1", "]"}], "]"}]}]}], ";", 
+  RowBox[{"hgtrangeS99", "=", 
+   RowBox[{"hrange", "[", 
+    RowBox[{"zSUTresids", ",", "0.005", ",", "0.995"}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"PVrangeS99", "=", 
+   RowBox[{
+    RowBox[{"hgtrangeS99", "[", 
+     RowBox[{"[", "2", "]"}], "]"}], "-", 
+    RowBox[{"hgtrangeS99", "[", 
+     RowBox[{"[", "1", "]"}], "]"}]}]}], ";"}], "\n", 
+ RowBox[{"sigmaS", "//", 
+  RowBox[{
+   RowBox[{"NumberForm", "[", 
+    RowBox[{"#", ",", 
+     RowBox[{"{", 
+      RowBox[{"3", ",", "3"}], "}"}]}], "]"}], "&"}]}]}], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Median", "[", "zSUTresids", "]"}]], "Input"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"CCDabshgt", "=", 
+  RowBox[{"ListPointPlot3D", "[", 
+   RowBox[{"SUTcorrected", ",", 
+    RowBox[{"PlotRange", "->", "All"}], ",", 
+    RowBox[{"ColorFunction", "\[Rule]", "\"\<Rainbow\>\""}], ",", 
+    RowBox[{"AxesLabel", "->", 
+     RowBox[{"{", 
+      RowBox[{
+      "\"\<Xval\>\"", ",", "\"\<Yval\>\"", ",", "\"\<Z[\[Micro]m]\>\""}], 
+      "}"}]}], ",", 
+    RowBox[{"ImageSize", "\[Rule]", "400"}], ",", 
+    RowBox[{"PlotLabel", "\[Rule]", 
+     RowBox[{"fileinS", "<>", "\"\<: AbsZ\\n95%=\>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{
+        RowBox[{"hrange", "[", 
+         RowBox[{"zSUTresids", ",", "0.025", ",", "0.975"}], "]"}], "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", 
+           RowBox[{"{", 
+            RowBox[{"3", ",", "3"}], "}"}]}], "]"}], "&"}]}], "]"}], "<>", 
+      "\"\<, PV95=\>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{"PVrangeS95", "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", 
+           RowBox[{"{", 
+            RowBox[{"3", ",", "3"}], "}"}]}], "]"}], "&"}]}], "]"}], "<>", 
+      "zunit$", "<>", "\"\<\\nmean= \>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{"meanZcor", "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", 
+           RowBox[{"{", 
+            RowBox[{"3", ",", "3"}], "}"}]}], "]"}], "&"}]}], "]"}], "<>", 
+      "\"\<, sigma=\>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{"sigmaS", "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", 
+           RowBox[{"{", 
+            RowBox[{"3", ",", "3"}], "}"}]}], "]"}], "&"}]}], "]"}], "<>", 
+      "zunit$"}]}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{"autoOutput", ",", 
+   RowBox[{"Export", "[", 
+    RowBox[{
+     RowBox[{"fileinS", "<>", "\"\<_ABSZ_CCD_plot.tiff\>\""}], ",", 
+     "CCDabshgt", ",", 
+     RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+     RowBox[{"ImageResolution", "->", "100"}]}], "]"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{"Export", "[", 
+   RowBox[{
+    RowBox[{"fileinS", "<>", "\"\<_ABSZ_CCD_plot.tiff\>\""}], ",", 
+    "CCDabshgt", ",", 
+    RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+    RowBox[{"ImageResolution", "->", "100"}]}], "]"}],
+  FontColor->RGBColor[1, 0, 1]]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"zeroplane", "=", 
+   RowBox[{"Plot3D", "[", 
+    RowBox[{"0", ",", 
+     RowBox[{"{", 
+      RowBox[{"x", ",", "xmin", ",", "xmax"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"y", ",", "ymin", ",", "ymax"}], "}"}], ",", 
+     RowBox[{"PlotStyle", "->", 
+      RowBox[{"Opacity", "[", "0.5", "]"}]}]}], "]"}]}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"vp2", "=", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "0", ",", ".5"}], "}"}]}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SUTcor3D", "=", 
+  RowBox[{"Show", "[", 
+   RowBox[{"CCDabshgt", ",", "zeroplane", ",", 
+    RowBox[{"ViewPoint", "->", 
+     RowBox[{"Dynamic", "[", "vp2", "]"}]}], ",", 
+    RowBox[{"ImageSize", "->", "400"}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "Cell"}], "]"}]], "Input",
+ CellAutoOverwrite->False],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{"autoOutput", ",", 
+   RowBox[{"Export", "[", 
+    RowBox[{
+     RowBox[{"fileinS", "<>", "\"\<_ABSZ_CCD_plotwithdatum.tiff\>\""}], ",", 
+     "SUTcor3D", ",", 
+     RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+     RowBox[{"ImageResolution", "->", "100"}]}], "]"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{"Export", "[", 
+   RowBox[{
+    RowBox[{"fileinS", "<>", "\"\<_ABSZ_CCD_plotwithdatum.tiff\>\""}], ",", 
+    "SUTcor3D", ",", 
+    RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+    RowBox[{"ImageResolution", "->", "100"}]}], "]"}],
+  FontColor->RGBColor[1, 0, 1]]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"surfdenplt", "=", 
+  RowBox[{"ListDensityPlot", "[", 
+   RowBox[{"SUTcorrected", ",", 
+    RowBox[{"PlotRange", "\[Rule]", "All"}], ",", 
+    RowBox[{"ColorFunction", "\[Rule]", "\"\<Rainbow\>\""}], ",", 
+    RowBox[{"Mesh", "->", "9"}], ",", 
+    RowBox[{"PlotLegends", "\[Rule]", 
+     RowBox[{"BarLegend", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"\"\<Rainbow\>\"", ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"qres", "[", 
+            RowBox[{"[", 
+             RowBox[{"-", "1"}], "]"}], "]"}], ",", 
+           RowBox[{"qres", "[", 
+            RowBox[{"[", "1", "]"}], "]"}]}], "}"}]}], "}"}], ",", 
+       RowBox[{"LabelStyle", "\[Rule]", 
+        RowBox[{"Directive", "[", 
+         RowBox[{"Bold", ",", 
+          RowBox[{"FontFamily", "\[Rule]", "\"\<Helvetica\>\""}]}], "]"}]}]}],
+       "]"}]}], ",", 
+    RowBox[{"PlotLabel", "->", 
+     RowBox[{"fileinS", "<>", "\"\<\\nSUT - REF\>\""}]}], ",", 
+    RowBox[{"BaseStyle", "\[Rule]", 
+     RowBox[{"Directive", "[", 
+      RowBox[{"Bold", ",", 
+       RowBox[{"FontFamily", "\[Rule]", "\"\<Arial\>\""}], ",", 
+       RowBox[{"FontSize", "->", "12"}]}], "]"}]}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{"autoOutput", ",", 
+   RowBox[{"Export", "[", 
+    RowBox[{
+     RowBox[{"fileinS", "<>", "\"\<_ABSZ_CCD_surfdensityplt.tiff\>\""}], ",", 
+     "surfdenplt", ",", 
+     RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+     RowBox[{"ImageResolution", "->", "100"}]}], "]"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{"Button", "[", 
+   RowBox[{"\"\<Export Surface density plot\>\"", ",", 
+    RowBox[{"Export", "[", 
+     RowBox[{
+      RowBox[{"fileinS", "<>", "\"\<_ABSZ_CCD_surfdensityplt.tiff\>\""}], ",",
+       "surfdenplt", ",", 
+      RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+      RowBox[{"ImageResolution", "->", "100"}]}], "]"}], ",", 
+    RowBox[{"Method", "\[Rule]", "\"\<Queued\>\""}]}], "]"}],
+  FontColor->RGBColor[1, 0, 1]]], "Input",
+ CellChangeTimes->{{3.64884709193489*^9, 3.648847106948991*^9}}],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "Cell"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"histSUTresidplt", "=", 
+  RowBox[{"Histogram", "[", 
+   RowBox[{"zSUTresids", ",", "40", ",", 
+    RowBox[{"ImageSize", "->", "400"}], ",", 
+    RowBox[{"BaseStyle", "\[Rule]", 
+     RowBox[{"Directive", "[", 
+      RowBox[{"Bold", ",", 
+       RowBox[{"FontFamily", "\[Rule]", "\"\<Arial\>\""}], ",", 
+       RowBox[{"FontSize", "->", "12"}]}], "]"}]}], ",", 
+    RowBox[{"AxesLabel", "->", 
+     RowBox[{"{", 
+      RowBox[{"zunit$", ",", "\"\<\>\""}], "}"}]}], ",", 
+    RowBox[{"PlotLabel", "\[Rule]", 
+     RowBox[{"fileinS", "<>", "\"\<: SUT w/REFsubt\\n95%=\>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{
+        RowBox[{"hrange", "[", 
+         RowBox[{"zSUTresids", ",", "0.025", ",", "0.975"}], "]"}], "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", 
+           RowBox[{"{", 
+            RowBox[{"3", ",", "3"}], "}"}]}], "]"}], "&"}]}], "]"}], "<>", 
+      "\"\<, PV95=\>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{"PVrangeS95", "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", 
+           RowBox[{"{", 
+            RowBox[{"3", ",", "3"}], "}"}]}], "]"}], "&"}]}], "]"}], "<>", 
+      "zunit$", "<>", "\"\<\\nmean=\>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{"meanZcor", "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", 
+           RowBox[{"{", 
+            RowBox[{"3", ",", "3"}], "}"}]}], "]"}], "&"}]}], "]"}], "<>", 
+      "\"\<, sigma=\>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{"sigmaS", "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", 
+           RowBox[{"{", 
+            RowBox[{"3", ",", "3"}], "}"}]}], "]"}], "&"}]}], "]"}], "<>", 
+      "zunit$"}]}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{"autoOutput", ",", 
+   RowBox[{"Export", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"ToString", "[", "fileinS", "]"}], "<>", 
+      "\"\<_ABSZ_histowithdatum.tiff\>\""}], ",", "histSUTresidplt", ",", 
+     RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+     RowBox[{"ImageResolution", "->", "100"}]}], "]"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{"Button", "[", 
+   RowBox[{"\"\<Export SUT-REF histogram\>\"", ",", 
+    RowBox[{"Export", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"ToString", "[", "fileinS", "]"}], "<>", 
+       "\"\<_ABSZ_histowithdatum.tiff\>\""}], ",", "histSUTresidplt", ",", 
+      RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+      RowBox[{"ImageResolution", "->", "100"}]}], "]"}], ",", 
+    RowBox[{"Method", "\[Rule]", "\"\<Queued\>\""}]}], "]"}],
+  FontColor->RGBColor[1, 0, 1]]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"ChartElementData", "[", "\"\<DistributionChart\>\"", "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"sdensityplt", "=", 
+  RowBox[{"DistributionChart", "[", 
+   RowBox[{"zSUTresids", ",", 
+    RowBox[{"ChartElementFunction", "\[Rule]", 
+     RowBox[{"ChartElementData", "[", "\"\<SmoothDensity\>\"", "]"}]}], ",", 
+    RowBox[{"BaseStyle", "\[Rule]", 
+     RowBox[{"Directive", "[", 
+      RowBox[{"Bold", ",", 
+       RowBox[{"FontFamily", "\[Rule]", "\"\<Arial\>\""}], ",", 
+       RowBox[{"FontSize", "->", "12"}]}], "]"}]}], ",", 
+    RowBox[{"FrameLabel", "->", 
+     RowBox[{"{", 
+      RowBox[{"\"\<\>\"", ",", "zunit$"}], "}"}]}], ",", 
+    RowBox[{"PlotLabel", "\[Rule]", 
+     RowBox[{"fileinS", "<>", "\"\<: SUT w/REFsubt\\n95%=\>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{
+        RowBox[{"hrange", "[", 
+         RowBox[{"zSUTresids", ",", "0.025", ",", "0.975"}], "]"}], "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", 
+           RowBox[{"{", 
+            RowBox[{"3", ",", "3"}], "}"}]}], "]"}], "&"}]}], "]"}], "<>", 
+      "\"\<, PV95=\>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{"PVrangeS95", "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", 
+           RowBox[{"{", 
+            RowBox[{"3", ",", "3"}], "}"}]}], "]"}], "&"}]}], "]"}], "<>", 
+      "zunit$", "<>", "\"\<\\nmean=\>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{"meanZcor", "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", 
+           RowBox[{"{", 
+            RowBox[{"3", ",", "3"}], "}"}]}], "]"}], "&"}]}], "]"}], "<>", 
+      "\"\<, sigma=\>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{"sigmaS", "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", 
+           RowBox[{"{", 
+            RowBox[{"3", ",", "3"}], "}"}]}], "]"}], "&"}]}], "]"}], "<>", 
+      "zunit$"}]}], ",", 
+    RowBox[{"AxesLabel", "->", 
+     RowBox[{"{", 
+      RowBox[{"zunit$", ",", "zunit$"}], "}"}]}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"quantileMean", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"xmin_", ",", "xmax_"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"ymin_", ",", "ymax_"}], "}"}]}], "}"}], ",", "data_", ",", 
+    "metadata_"}], "]"}], ":=", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+     "min", ",", "max", ",", "lq", ",", " ", "uq", ",", " ", "median"}], 
+     "}"}], ",", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+       "min", ",", "lq", ",", " ", "median", ",", " ", "uq", ",", " ", 
+        "max"}], "}"}], "=", 
+      RowBox[{"Quantile", "[", 
+       RowBox[{"data", ",", 
+        RowBox[{"{", 
+         RowBox[{"0", ",", "0.1", ",", "0.5", ",", "0.9", ",", "1"}], "}"}]}],
+        "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{"Line", "[", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"xmin", ",", " ", "median"}], "}"}], ",", " ", 
+         RowBox[{"{", 
+          RowBox[{"xmax", ",", " ", "median"}], "}"}]}], "}"}], "]"}], 
+      "}"}]}]}], "\[IndentingNewLine]", "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{"autoOutput", ",", 
+   RowBox[{"Export", "[", 
+    RowBox[{
+     RowBox[{"fileinS", "<>", "\"\<_SABSZ_CCD_density.tiff\>\""}], ",", 
+     "sdensityplt", ",", 
+     RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+     RowBox[{"ImageResolution", "->", "100"}]}], "]"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{"Button", "[", 
+   RowBox[{"\"\<Export smooth density chart file\>\"", ",", 
+    RowBox[{"Export", "[", 
+     RowBox[{
+      RowBox[{"fileinS", "<>", "\"\<_ABSZ_CCD_density.tiff\>\""}], ",", 
+      "sdensityplt", ",", 
+      RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+      RowBox[{"ImageResolution", "->", "100"}]}], "]"}]}], "]"}],
+  FontColor->RGBColor[1, 0, 1]]], "Input",
+ CellChangeTimes->{3.648846970207542*^9, 3.648847009593994*^9}],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "Cell"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"bwc", "=", 
+  RowBox[{"BoxWhiskerChart", "[", 
+   RowBox[{"zSUTresids", ",", 
+    RowBox[{"{", 
+     RowBox[{"\"\<Outliers\>\"", ",", 
+      RowBox[{"{", 
+       RowBox[{"\"\<MeanMarker\>\"", ",", "1.0", ",", "Thick"}], "}"}]}], 
+     "}"}], ",", 
+    RowBox[{"BaseStyle", "\[Rule]", 
+     RowBox[{"Directive", "[", 
+      RowBox[{"Bold", ",", 
+       RowBox[{"FontFamily", "\[Rule]", "\"\<Arial\>\""}], ",", 
+       RowBox[{"FontSize", "->", "12"}]}], "]"}]}], ",", 
+    RowBox[{"FrameLabel", "->", 
+     RowBox[{"{", 
+      RowBox[{"\"\<\>\"", ",", "zunit$"}], "}"}]}], ",", 
+    RowBox[{"PlotLabel", "\[Rule]", 
+     RowBox[{"fileinS", "<>", "\"\<: SUT w/REFsubt\\n95%=\>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{
+        RowBox[{"hrange", "[", 
+         RowBox[{"zSUTresids", ",", "0.025", ",", "0.975"}], "]"}], "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", 
+           RowBox[{"{", 
+            RowBox[{"3", ",", "3"}], "}"}]}], "]"}], "&"}]}], "]"}], "<>", 
+      "\"\<, PV95=\>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{"PVrangeS95", "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", 
+           RowBox[{"{", 
+            RowBox[{"3", ",", "3"}], "}"}]}], "]"}], "&"}]}], "]"}], "<>", 
+      "zunit$", "<>", "\"\<\\nmean=\>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{"meanZcor", "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", 
+           RowBox[{"{", 
+            RowBox[{"3", ",", "3"}], "}"}]}], "]"}], "&"}]}], "]"}], "<>", 
+      "\"\<, sigma=\>\"", "<>", 
+      RowBox[{"ToString", "[", 
+       RowBox[{"sigmaS", "//", 
+        RowBox[{
+         RowBox[{"NumberForm", "[", 
+          RowBox[{"#", ",", 
+           RowBox[{"{", 
+            RowBox[{"3", ",", "3"}], "}"}]}], "]"}], "&"}]}], "]"}], "<>", 
+      "zunit$"}]}], ",", 
+    RowBox[{"AxesLabel", "->", 
+     RowBox[{"{", 
+      RowBox[{"zunit$", ",", "zunit$"}], "}"}]}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "Cell"}], "]"}]], "Input",
+ CellAutoOverwrite->False],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{"autoOutput", ",", 
+   RowBox[{"Export", "[", 
+    RowBox[{
+     RowBox[{"fileinS", "<>", "\"\<_ABSZ_CCD_bw.tiff\>\""}], ",", "bwc", ",", 
+     
+     RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+     RowBox[{"ImageResolution", "->", "100"}]}], "]"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{"Button", "[", 
+   RowBox[{"\"\<Export box whisker chart file\>\"", ",", 
+    RowBox[{"Export", "[", 
+     RowBox[{
+      RowBox[{"fileinS", "<>", "\"\<_ABSZ_CCD_bw.tiff\>\""}], ",", "bwc", ",", 
+      RowBox[{"\"\<ImageEncoding\>\"", "->", "\"\<LZW\>\""}], ",", 
+      RowBox[{"ImageResolution", "->", "100"}]}], "]"}]}], "]"}],
+  FontColor->RGBColor[1, 0, 1]]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{"autoOutput", ",", 
+   RowBox[{"Export", "[", 
+    RowBox[{
+     RowBox[{"fileinS", "<>", "\"\<_ABSZ_CCD_quantile.xlsx\>\""}], ",", 
+     RowBox[{"Prepend", "[", 
+      RowBox[{"qtableABSZ", ",", 
+       RowBox[{"{", 
+        RowBox[{"fileinS", "<>", "\"\<, Quantiles\>\""}], "}"}]}], "]"}], 
+     ",", "\"\<XLSX\>\""}], "]"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{"Button", "[", 
+   RowBox[{"\"\<Export Quantile table file\>\"", ",", 
+    RowBox[{"Export", "[", 
+     RowBox[{
+      RowBox[{"fileinS", "<>", "\"\<_ABSZ_CCD_quantile.xlsx\>\""}], ",", 
+      RowBox[{"Prepend", "[", 
+       RowBox[{"qtableABSZ", ",", 
+        RowBox[{"{", 
+         RowBox[{"fileinS", "<>", "\"\<, Quantiles\>\""}], "}"}]}], "]"}], 
+      ",", "\"\<XLSX\>\""}], "]"}]}], "]"}],
+  FontColor->RGBColor[1, 0, 1]]], "Input"],
+
+Cell["Output the detrended data triplets", "Text"],
+
+Cell["\<\
+ADD HEADER info to output file. Output in Excel format. This format drops off \
+the brackets upon opening in Excel. Ordinary text file imports with brackets \
+showing.
+Can\[CloseCurlyQuote]t make the header info appear on separate lines at start \
+of Excel file.\
+\>", "Text"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"SUTout", "=", 
+   RowBox[{"Prepend", "[", 
+    RowBox[{"SUTcorrected", ",", 
+     RowBox[{"{", 
+      RowBox[{"fileinS", ",", 
+       RowBox[{"DateString", "[", "]"}], ",", 
+       RowBox[{"{", 
+        RowBox[{
+        "\"\<X(mm)\>\"", ",", "\"\<Y(mm)\>\"", ",", "\"\<Z(micron)\>\""}], 
+        "}"}]}], "}"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"SUTout", "[", 
+   RowBox[{"[", 
+    RowBox[{"1", ";;", "5"}], "]"}], "]"}], ";"}]}], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "Cell"}], "]"}]], "Input",
+ CellAutoOverwrite->False],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{"autoOutput", ",", 
+   RowBox[{"Export", "[", 
+    RowBox[{
+     RowBox[{"fileinS", "<>", "\"\<_ABSZ_CCD_data.xlsx\>\""}], ",", "SUTout", 
+     ",", "\"\<XLSX\>\""}], "]"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{"Button", "[", 
+   RowBox[{
+   "\"\<Export absolute height data relative to gauge block datum.\>\"", ",", 
+    
+    RowBox[{"Export", "[", 
+     RowBox[{
+      RowBox[{"fileinS", "<>", "\"\<_ABSZ_CCD_data.xlsx\>\""}], ",", "SUTout",
+       ",", "\"\<XLSX\>\""}], "]"}]}], "]"}],
+  FontColor->RGBColor[1, 0, 1]]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"statreport", "=", 
+  RowBox[{
+   RowBox[{
+   "StringTemplate", "[", 
+    "\"\<Summary statistics for ITL sensor data file:\\n\\t \
+`1`.\\n\\nFlatness\\n\\tPV95% =`2`\\t[<10\[Micro]m]\\n\\nAbsolute Height \
+relative to 13.000mm datum\\n\\tMean Z   =\\t`3`\\t[-25\[Micro]m to +25\
+\[Micro]m]\\n\\tMedian Z =\\t`4`\\n\\tPV95%    \
+=\\t`5`\\t[<18\[Micro]m]\\n\\nQuantiles\\n`6`\\n\\nReport generated \
+`7`\\nNotebook version: `8`\\nLast modified: `9`\>\"", "\[IndentingNewLine]", 
+    "\[IndentingNewLine]", "]"}], "[", 
+   RowBox[{"fileinS", ",", "PVrangeF95", ",", "meanZcor", ",", 
+    RowBox[{"Median", "[", "zSUTresids", "]"}], ",", "PVrangeS95", ",", 
+    RowBox[{"qtableABSZ", "//", "TableForm"}], ",", 
+    RowBox[{"DateString", "[", "]"}], ",", 
+    RowBox[{"CurrentValue", "[", "\"\<NotebookFileName\>\"", "]"}], ",", 
+    RowBox[{
+     RowBox[{"\"\<FileModificationTime\>\"", "/.", 
+      RowBox[{"NotebookInformation", "[", "]"}]}], "//", "DateString"}]}], 
+   "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{"autoOutput", ",", 
+   RowBox[{"Export", "[", 
+    RowBox[{
+     RowBox[{"fileinS", "<>", "\"\<_CCD_stat_report.txt\>\""}], ",", 
+     "statreport", ",", "\"\<TEXT\>\""}], "]"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{"Button", "[", 
+   RowBox[{"\"\<Export statistics TXT file.\>\"", ",", 
+    RowBox[{"Export", "[", 
+     RowBox[{
+      RowBox[{"fileinS", "<>", "\"\<_CCD_stat_report.txt\>\""}], ",", 
+      "statreport", ",", "\"\<TEXT\>\""}], "]"}]}], "]"}],
+  FontColor->RGBColor[1, 0, 1]]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "CellGroup"}], "]"}]], "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Execute the next expression to jump back up to the top.", "Text"],
+
+Cell[BoxData[
+ RowBox[{"NotebookLocate", "[", "\"\<Full restart here\>\"", "]"}]], "Input"]
+}, Open  ]],
+
+Cell["END of SUT Absolute Height section.", "Subsection"],
+
+Cell[CellGroupData[{
+
+Cell["Junk", "Title"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Remove obvious outliers from SUTdata if necessary. Skip this section if not \
+necessary.\
+\>", "Section"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"{", 
+   RowBox[{"minS", ",", "medianS", ",", "maxS", ",", "stddevS"}], "}"}], "=", 
+  
+  RowBox[{"Operate", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"Min", "[", "#", "]"}], ",", 
+       RowBox[{"Median", "[", "#", "]"}], ",", 
+       RowBox[{"Max", "[", "#", "]"}], ",", 
+       RowBox[{"StandardDeviation", "[", "#", "]"}]}], "}"}], "&"}], ",", 
+    RowBox[{
+     RowBox[{"SUTdata", "[", 
+      RowBox[{"[", 
+       RowBox[{"All", ",", 
+        RowBox[{"{", "3", "}"}]}], "]"}], "]"}], "//", "Flatten"}], ",", 
+    "0"}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"MedianDeviation", "[", 
+  RowBox[{
+   RowBox[{"SUTdata", "[", 
+    RowBox[{"[", 
+     RowBox[{"All", ",", 
+      RowBox[{"{", "3", "}"}]}], "]"}], "]"}], "//", "Flatten"}], 
+  "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"threshS", "=", 
+  RowBox[{"3", "*", 
+   RowBox[{"(", 
+    RowBox[{"Min", "[", 
+     RowBox[{
+      RowBox[{"maxS", "-", "medianS"}], ",", 
+      RowBox[{"medianS", "-", "minS"}]}], "]"}], ")"}], 
+   RowBox[{"(*", 
+    RowBox[{
+    "Set", " ", "trim", " ", "threshold", " ", "to", " ", "3", " ", "times", 
+     " ", "the", " ", "smaller", " ", "deviation", " ", "from", " ", "the", 
+     " ", "median"}], "*)"}]}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"threshS", "=", 
+  RowBox[{"2", "*", "stddevS", 
+   RowBox[{"(*", 
+    RowBox[{
+    "Set", " ", "trim", " ", "threshold", " ", "to", " ", "3", " ", "times", 
+     " ", "the", " ", "smaller", " ", "deviation", " ", "from", " ", "the", 
+     " ", "median"}], "*)"}]}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Length", "[", "SUTdata", "]"}]], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"testS", "=."}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"testS", " ", "=", 
+   RowBox[{"Reap", "[", " ", 
+    RowBox[{"Do", "[", 
+     RowBox[{
+      RowBox[{"If", "[", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"Abs", "[", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"SUTdata", "[", 
+             RowBox[{"[", "i", "]"}], "]"}], "[", 
+            RowBox[{"[", "3", "]"}], "]"}], "-", "medianS"}], "]"}], "<", 
+         "threshS"}], "\[IndentingNewLine]", ",", 
+        RowBox[{"Sow", "[", 
+         RowBox[{"SUTdata", "[", 
+          RowBox[{"[", "i", "]"}], "]"}], "]"}]}], "]"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"i", ",", 
+        RowBox[{"Length", "[", "SUTdata", "]"}]}], "}"}]}], "]"}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"testS", "=", 
+   RowBox[{
+    RowBox[{"Drop", "[", 
+     RowBox[{"testS", ",", "1"}], "]"}], "//", 
+    RowBox[{
+     RowBox[{"Flatten", "[", 
+      RowBox[{"#", ",", "2"}], "]"}], "&"}]}]}], ";"}]}], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Length", "[", "testS", "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"Length", "[", "testS", "]"}], "==", 
+    RowBox[{"Length", "[", "SUTdata", "]"}]}], ",", 
+   RowBox[{
+   "MessageDialog", "[", "\"\<No points were trimmed from SUTdata\>\"", 
+    "]"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"Length", "[", "testS", "]"}], ">", "0"}], ",", 
+     RowBox[{"SUTdata", "=", "testS"}], ",", 
+     RowBox[{
+     "MessageDialog", "[", "\"\<Problem with trimming SUTdata\>\"", "]"}]}], 
+    "]"}], ";"}], 
+  RowBox[{"(*", 
+   RowBox[{
+   "Abort", " ", "if", " ", "problem", " ", "trimming", " ", "SUT", " ", 
+    "data"}], "*)"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"testS", "=."}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"splt", "=", 
+  RowBox[{"ListPointPlot3D", "[", 
+   RowBox[{"SUTdata", ",", 
+    RowBox[{"PlotRange", "->", "All"}], ",", 
+    RowBox[{"ViewPoint", "->", 
+     RowBox[{"Dynamic", "[", "vp", "]"}]}], ",", 
+    RowBox[{"ColorFunction", "\[Rule]", "\"\<Rainbow\>\""}], ",", 
+    RowBox[{"ImageSize", "->", "400"}], ",", 
+    RowBox[{"AxesLabel", "->", 
+     RowBox[{"{", 
+      RowBox[{"\"\<Xval\>\"", ",", "\"\<Yval\>\"", ",", "\"\<\>\""}], "}"}]}],
+     ",", 
+    RowBox[{"PlotLabel", "->", 
+     RowBox[{"fileinS", "<>", "\"\<\\nSUT-outliers\>\""}]}]}], 
+   "]"}]}]], "Input"]
+}, Closed]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+This is the ol Contour finder. Replace this with new contour finder. Does not \
+handle \[OpenCurlyDoubleQuote]Plane\[CloseCurlyDoubleQuote] points\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"datain2", "=", 
+    RowBox[{"Select", "[", 
+     RowBox[{"datain", ",", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Length", "[", "#", "]"}], ">", "0"}], "&"}]}], "]"}]}], 
+   ";"}], 
+  RowBox[{"(*", 
+   RowBox[{"Strip", " ", "out", " ", "the", " ", "blank", " ", "lines"}], 
+   "*)"}]}]], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"c1", "=", 
+  RowBox[{"Position", "[", 
+   RowBox[{"datain2", ",", "\"\<Contour\>\"", ",", "2"}], "]"}]}], "\n", 
+ RowBox[{"Length", "[", "c1", "]"}]}], "Input"],
+
+Cell[BoxData[
+ RowBox[{"c2", "=", 
+  RowBox[{"Position", "[", 
+   RowBox[{"datain2", ",", "\"\<Plane\>\"", ",", "2"}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"contourPos", "=", 
+  RowBox[{"Join", "[", 
+   RowBox[{"c1", ",", "c2"}], "]"}]}]], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"Length", "[", "datain2", "]"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"datain2", "=", 
+    RowBox[{"Select", "[", 
+     RowBox[{"datain2", ",", 
+      RowBox[{
+       RowBox[{"NumericQ", "[", 
+        RowBox[{"#", "[", 
+         RowBox[{"[", "1", "]"}], "]"}], "]"}], "&"}]}], "]"}]}], ";"}], " ", 
+  
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "Strip", " ", "out", " ", "all", " ", "the", " ", "lines", " ", "that", 
+    " ", 
+    RowBox[{"don", "'"}], "t", " ", "start", " ", "with", " ", "a", " ", 
+    "number"}], " ", "*)"}]}], "\n", 
+ RowBox[{"Length", "[", "datain2", "]"}]}], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"datain2", "[", 
+   RowBox[{"[", 
+    RowBox[{"1", ";;", "10"}], "]"}], "]"}], "//", "TableForm"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SelectionMove", "[", 
+  RowBox[{"nb", ",", "Next", ",", "Cell"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{"manualcalcFlag", ",", 
+   RowBox[{"Interrupt", "[", "]"}]}], " ", "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Manipulate", "[", 
+  RowBox[{
+   RowBox[{"datain2", "[", 
+    RowBox[{"[", "i", "]"}], "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"i", ",", "1", ",", 
+     RowBox[{"Length", "[", "datain2", "]"}], ",", "1"}], "}"}]}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.644009408198921*^9, 3.644009457519156*^9}}]
+}, Closed]]
+},
+CellGrouping->Manual,
+WindowSize->{822, 722},
+WindowMargins->{{48, Automatic}, {Automatic, 32}},
+ShowCellTags->True,
+FrontEndVersion->"10.4 for Mac OS X x86 (32-bit, 64-bit Kernel) (April 11, \
+2016)",
+StyleDefinitions->"MyStyle01.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{
+ "Full restart here"->{
+  Cell[1896, 56, 328, 7, 122, "Section",
+   CellTags->"Full restart here"]},
+ "pick MST file num"->{
+  Cell[25379, 766, 88, 1, 70, "Subsubsection",
+   CellTags->"pick MST file num"]},
+ "data ready"->{
+  Cell[36377, 1137, 63, 1, 70, "Subsubsection",
+   CellTags->"data ready"]},
+ "XY range restriction start"->{
+  Cell[38953, 1232, 184, 4, 70, "Subsubsection",
+   CellTags->"XY range restriction start"]},
+ "SUT trim iterate"->{
+  Cell[54563, 1751, 130, 3, 70, "Subsubsection",
+   CellTags->"SUT trim iterate"]},
+ "REF data trim"->{
+  Cell[87044, 2716, 101, 1, 70, "Subsubsection",
+   CellTags->"REF data trim"]}
+ }
+*)
+(*CellTagsIndex
+CellTagsIndex->{
+ {"Full restart here", 143482, 4467},
+ {"pick MST file num", 143583, 4470},
+ {"data ready", 143683, 4473},
+ {"XY range restriction start", 143793, 4476},
+ {"SUT trim iterate", 143910, 4479},
+ {"REF data trim", 144014, 4482}
+ }
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[557, 20, 55, 0, 77, "Title"],
+Cell[615, 22, 32, 0, 27, "Subsubtitle"],
+Cell[650, 24, 47, 0, 63, "Subtitle"],
+Cell[700, 26, 46, 0, 63, "Subtitle"],
+Cell[CellGroupData[{
+Cell[771, 30, 34, 0, 72, "Section"],
+Cell[808, 32, 1051, 19, 261, "Subsubtitle"]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[1896, 56, 328, 7, 122, "Section",
+ CellTags->"Full restart here"],
+Cell[CellGroupData[{
+Cell[2249, 67, 924, 24, 70, "Input"],
+Cell[3176, 93, 1640, 41, 70, "Input"],
+Cell[4819, 136, 114, 2, 70, "Input"],
+Cell[4936, 140, 61, 1, 70, "Input"]
+}, Open  ]]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[5046, 147, 35, 0, 42, "Section"],
+Cell[5084, 149, 316, 6, 70, "Text"],
+Cell[5403, 157, 454, 11, 70, "Input"],
+Cell[5860, 170, 117, 3, 70, "Input"],
+Cell[5980, 175, 630, 12, 70, "Input"],
+Cell[6613, 189, 398, 11, 70, "Input"],
+Cell[7014, 202, 66, 1, 70, "Input"],
+Cell[7083, 205, 103, 1, 70, "Input"],
+Cell[7189, 208, 108, 1, 70, "Input"],
+Cell[CellGroupData[{
+Cell[7322, 213, 97, 2, 70, "Subsubsection"],
+Cell[7422, 217, 715, 24, 70, "Input"]
+}, Open  ]],
+Cell[8152, 244, 250, 7, 70, "Input"],
+Cell[8405, 253, 214, 4, 70, "Text"],
+Cell[8622, 259, 289, 6, 70, "Text"],
+Cell[8914, 267, 183, 4, 70, "Text"],
+Cell[9100, 273, 1575, 41, 70, "Input"],
+Cell[CellGroupData[{
+Cell[10700, 318, 221, 4, 70, "Subsubsection"],
+Cell[10924, 324, 939, 23, 70, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[11900, 352, 348, 7, 70, "Subsubsection"],
+Cell[12251, 361, 400, 8, 70, "Input"],
+Cell[12654, 371, 307, 7, 70, "Input"],
+Cell[12964, 380, 495, 15, 70, "Input"],
+Cell[13462, 397, 37, 0, 70, "Text"],
+Cell[13502, 399, 256, 7, 70, "Input"],
+Cell[13761, 408, 141, 4, 70, "Input"],
+Cell[13905, 414, 118, 3, 70, "Subsubsection"],
+Cell[14026, 419, 407, 14, 70, "Input"],
+Cell[14436, 435, 6998, 190, 70, "Input"],
+Cell[21437, 627, 133, 3, 70, "Input"]
+}, Closed]]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[21619, 636, 59, 0, 42, "Section"],
+Cell[21681, 638, 82, 2, 70, "Input"],
+Cell[21766, 642, 219, 5, 70, "Input"],
+Cell[21988, 649, 116, 2, 70, "Input"],
+Cell[22107, 653, 111, 3, 70, "Text"],
+Cell[22221, 658, 133, 3, 70, "Input"],
+Cell[22357, 663, 237, 6, 70, "Input"],
+Cell[22597, 671, 200, 6, 70, "Input"],
+Cell[22800, 679, 344, 9, 70, "Input"],
+Cell[23147, 690, 133, 3, 70, "Subsection"],
+Cell[23283, 695, 192, 6, 70, "Input"],
+Cell[23478, 703, 184, 5, 70, "Input"],
+Cell[23665, 710, 133, 3, 70, "Input"],
+Cell[23801, 715, 128, 3, 70, "Subsection"],
+Cell[23932, 720, 313, 5, 70, "Text"],
+Cell[24248, 727, 116, 2, 70, "Input"],
+Cell[24367, 731, 416, 12, 70, "Input"],
+Cell[24786, 745, 568, 17, 70, "Input"],
+Cell[CellGroupData[{
+Cell[25379, 766, 88, 1, 70, "Subsubsection",
+ CellTags->"pick MST file num"],
+Cell[25470, 769, 63, 1, 70, "Input"],
+Cell[25536, 772, 133, 3, 70, "Input"]
+}, Open  ]],
+Cell[25684, 778, 240, 6, 70, "Input"],
+Cell[25927, 786, 304, 9, 70, "Input"],
+Cell[26234, 797, 306, 8, 70, "Input"],
+Cell[26543, 807, 71, 0, 70, "Text"],
+Cell[26617, 809, 195, 5, 70, "Input"],
+Cell[26815, 816, 106, 2, 70, "Input"],
+Cell[26924, 820, 382, 9, 70, "Input"],
+Cell[CellGroupData[{
+Cell[27331, 833, 50, 0, 70, "Text"],
+Cell[27384, 835, 298, 8, 70, "Input"],
+Cell[27685, 845, 406, 11, 70, "Input"],
+Cell[28094, 858, 71, 1, 70, "Input"],
+Cell[28168, 861, 106, 2, 70, "Input"]
+}, Open  ]],
+Cell[28289, 866, 110, 3, 70, "Text"],
+Cell[28402, 871, 342, 9, 70, "Input"],
+Cell[CellGroupData[{
+Cell[28769, 884, 105, 1, 70, "Text",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[28877, 887, 117, 2, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[28997, 891, 121, 2, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[29121, 895, 161, 4, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[29285, 901, 201, 6, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[29489, 909, 117, 2, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[29609, 913, 201, 4, 70, "Text",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[29813, 919, 1016, 30, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[30832, 951, 33, 0, 70, "Input"],
+Cell[30868, 953, 191, 5, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[31062, 960, 158, 4, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[31223, 966, 232, 6, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[31458, 974, 265, 8, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[31726, 984, 195, 4, 70, "Text"],
+Cell[31924, 990, 48, 1, 70, "Input"],
+Cell[31975, 993, 431, 12, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[32409, 1007, 202, 6, 70, "Input"],
+Cell[32614, 1015, 115, 3, 70, "Input"],
+Cell[32732, 1020, 295, 7, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[33030, 1029, 294, 8, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[33327, 1039, 310, 6, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[33640, 1047, 501, 16, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[34144, 1065, 150, 3, 70, "Text",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[34297, 1070, 449, 9, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[34749, 1081, 122, 3, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[34874, 1086, 1088, 32, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[35965, 1120, 118, 2, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[36086, 1124, 132, 3, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}]
+}, Open  ]],
+Cell[36233, 1130, 119, 3, 70, "Subsubsection"],
+Cell[CellGroupData[{
+Cell[36377, 1137, 63, 1, 70, "Subsubsection",
+ CellTags->"data ready"],
+Cell[36443, 1140, 274, 8, 70, "Input"],
+Cell[36720, 1150, 42, 0, 70, "Text"],
+Cell[36765, 1152, 505, 16, 70, "Input"],
+Cell[37273, 1170, 309, 8, 70, "Input"],
+Cell[37585, 1180, 133, 3, 70, "Input"],
+Cell[37721, 1185, 353, 10, 70, "Input"],
+Cell[38077, 1197, 100, 3, 70, "Input"],
+Cell[38180, 1202, 140, 3, 70, "Input"]
+}, Open  ]],
+Cell[38335, 1208, 38, 0, 70, "Text"],
+Cell[38376, 1210, 106, 2, 70, "Input"],
+Cell[38485, 1214, 374, 12, 70, "Input"],
+Cell[CellGroupData[{
+Cell[38884, 1230, 66, 0, 70, "Subsection"],
+Cell[38953, 1232, 184, 4, 70, "Subsubsection",
+ CellTags->"XY range restriction start"],
+Cell[39140, 1238, 187, 4, 70, "Text"],
+Cell[39330, 1244, 591, 18, 70, "Input"],
+Cell[39924, 1264, 801, 26, 70, "Input"],
+Cell[40728, 1292, 267, 8, 70, "Input"],
+Cell[40998, 1302, 117, 2, 70, "Input"],
+Cell[41118, 1306, 99, 2, 70, "Text"],
+Cell[41220, 1310, 380, 10, 70, "Input"],
+Cell[41603, 1322, 70, 1, 70, "Input"],
+Cell[41676, 1325, 626, 14, 70, "Input"],
+Cell[42305, 1341, 334, 8, 70, "Input"],
+Cell[42642, 1351, 475, 11, 70, "Input"],
+Cell[CellGroupData[{
+Cell[43142, 1366, 46, 0, 70, "Subsubsection"],
+Cell[43191, 1368, 448, 14, 70, "Input"],
+Cell[43642, 1384, 414, 12, 70, "Input"],
+Cell[44059, 1398, 147, 3, 70, "Text"],
+Cell[44209, 1403, 234, 8, 70, "Input"],
+Cell[44446, 1413, 1654, 47, 70, "Input"],
+Cell[46103, 1462, 64, 0, 70, "Text"],
+Cell[46170, 1464, 639, 15, 70, "Input"]
+}, Open  ]],
+Cell[46824, 1482, 144, 3, 70, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[47005, 1490, 153, 3, 70, "Subsubsection"],
+Cell[47161, 1495, 210, 7, 70, "Input"],
+Cell[47374, 1504, 214, 7, 70, "Input"],
+Cell[47591, 1513, 231, 8, 70, "Input"],
+Cell[47825, 1523, 230, 8, 70, "Input"],
+Cell[48058, 1533, 234, 8, 70, "Input"],
+Cell[48295, 1543, 170, 5, 70, "Input"],
+Cell[48468, 1550, 138, 3, 70, "Input"]
+}, Open  ]]
+}, Closed]],
+Cell[48633, 1557, 54, 0, 43, "Subsection"],
+Cell[CellGroupData[{
+Cell[48712, 1561, 113, 3, 65, "Section"],
+Cell[CellGroupData[{
+Cell[48850, 1568, 94, 2, 70, "Input"],
+Cell[48947, 1572, 299, 6, 70, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[49283, 1583, 105, 1, 70, "Text"],
+Cell[49391, 1586, 39, 0, 70, "Input"],
+Cell[49433, 1588, 137, 4, 70, "Input"],
+Cell[49573, 1594, 1669, 45, 70, "Input"],
+Cell[51245, 1641, 1003, 28, 70, "Input"]
+}, Open  ]],
+Cell[52263, 1672, 136, 4, 70, "Input"],
+Cell[52402, 1678, 263, 8, 70, "Input"],
+Cell[CellGroupData[{
+Cell[52690, 1690, 68, 0, 70, "Text"],
+Cell[52761, 1692, 606, 15, 70, "Input"],
+Cell[53370, 1709, 606, 15, 70, "Input"]
+}, Open  ]],
+Cell[53991, 1727, 48, 0, 70, "Text"],
+Cell[54042, 1729, 83, 2, 70, "Input"],
+Cell[54128, 1733, 111, 2, 70, "Input"]
+}, Closed]],
+Cell[54254, 1738, 63, 0, 43, "Subsection"],
+Cell[CellGroupData[{
+Cell[54342, 1742, 122, 3, 65, "Section"],
+Cell[54467, 1747, 93, 2, 70, "Text"],
+Cell[54563, 1751, 130, 3, 70, "Subsubsection",
+ CellTags->"SUT trim iterate"],
+Cell[54696, 1756, 311, 7, 70, "Input"],
+Cell[55010, 1765, 73, 1, 70, "Input"],
+Cell[55086, 1768, 34, 0, 70, "Input"],
+Cell[55123, 1770, 124, 3, 70, "Text"],
+Cell[55250, 1775, 201, 5, 70, "Input"],
+Cell[CellGroupData[{
+Cell[55476, 1784, 114, 3, 70, "Text"],
+Cell[55593, 1789, 206, 4, 70, "Text"],
+Cell[55802, 1795, 106, 3, 70, "Input"]
+}, Open  ]],
+Cell[55923, 1801, 276, 8, 70, "Input"],
+Cell[56202, 1811, 129, 4, 70, "Input"],
+Cell[56334, 1817, 636, 16, 70, "Input"],
+Cell[56973, 1835, 385, 10, 70, "Input"],
+Cell[57361, 1847, 62, 1, 70, "Input"],
+Cell[57426, 1850, 225, 5, 70, "Text",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[57654, 1857, 1036, 30, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[58693, 1889, 414, 14, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[59110, 1905, 273, 6, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[59386, 1913, 297, 8, 70, "Input"],
+Cell[59686, 1923, 106, 2, 70, "Input"],
+Cell[59795, 1927, 815, 20, 70, "Input"],
+Cell[60613, 1949, 480, 12, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[61096, 1963, 177, 5, 70, "Input"],
+Cell[CellGroupData[{
+Cell[61298, 1972, 92, 1, 70, "Text",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[61393, 1975, 253, 7, 70, "Input"],
+Cell[61649, 1984, 538, 16, 70, "Input"],
+Cell[62190, 2002, 174, 4, 70, "Text",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[62367, 2008, 2486, 61, 70, "Input"],
+Cell[64856, 2071, 169, 4, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[65028, 2077, 69, 1, 70, "Input"],
+Cell[65100, 2080, 2078, 52, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[67181, 2134, 69, 1, 70, "Input"],
+Cell[67253, 2137, 639, 19, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}]
+}, Open  ]],
+Cell[67907, 2159, 198, 4, 70, "Text",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[68108, 2165, 1705, 51, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[69816, 2218, 109, 3, 70, "Input"],
+Cell[69928, 2223, 142, 2, 70, "Input"],
+Cell[70073, 2227, 54, 1, 70, "Input"],
+Cell[70130, 2230, 2467, 63, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[72600, 2295, 466, 11, 70, "Input"],
+Cell[73069, 2308, 253, 7, 70, "Input"],
+Cell[73325, 2317, 111, 2, 70, "Input"]
+}, Closed]],
+Cell[73451, 2322, 53, 0, 43, "Subsection"],
+Cell[CellGroupData[{
+Cell[73529, 2326, 52, 0, 42, "Section"],
+Cell[73584, 2328, 340, 8, 70, "Input"],
+Cell[73927, 2338, 478, 11, 70, "Input"],
+Cell[74408, 2351, 62, 1, 70, "Input"],
+Cell[74473, 2354, 139, 3, 70, "Input"],
+Cell[74615, 2359, 340, 8, 70, "Input"],
+Cell[74958, 2369, 471, 11, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[75432, 2382, 1997, 52, 70, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[77432, 2436, 342, 8, 42, "Input"],
+Cell[77777, 2446, 537, 12, 58, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[78317, 2460, 159, 3, 26, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[78479, 2465, 2327, 61, 138, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[80809, 2528, 186, 4, 26, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[80998, 2534, 333, 8, 42, "Input"],
+Cell[81334, 2544, 474, 11, 42, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[81811, 2557, 358, 9, 26, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[82172, 2568, 206, 5, 26, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[82381, 2575, 290, 8, 42, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[82674, 2585, 404, 10, 42, "Input"],
+Cell[83081, 2597, 548, 13, 58, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[83632, 2612, 247, 6, 26, "Input"],
+Cell[83882, 2620, 331, 8, 42, "Input"],
+Cell[84216, 2630, 2160, 56, 138, "Input"],
+Cell[86379, 2688, 111, 2, 26, "Input"]
+}, Closed]],
+Cell[86505, 2693, 50, 0, 43, "Subsection"],
+Cell[CellGroupData[{
+Cell[86580, 2697, 113, 3, 65, "Section"],
+Cell[86696, 2702, 251, 7, 70, "Input"],
+Cell[86950, 2711, 69, 1, 70, "Input"],
+Cell[CellGroupData[{
+Cell[87044, 2716, 101, 1, 70, "Subsubsection",
+ CellTags->"REF data trim"],
+Cell[87148, 2719, 69, 1, 70, "Input"],
+Cell[87220, 2722, 965, 29, 70, "Input"],
+Cell[88188, 2753, 176, 5, 70, "Input"],
+Cell[88367, 2760, 603, 15, 70, "Input"],
+Cell[88973, 2777, 133, 3, 70, "Input"],
+Cell[89109, 2782, 271, 8, 70, "Input"],
+Cell[89383, 2792, 41, 0, 70, "Subsubsection"],
+Cell[CellGroupData[{
+Cell[89449, 2796, 93, 2, 70, "Text"],
+Cell[89545, 2800, 404, 12, 70, "Input"],
+Cell[89952, 2814, 64, 0, 70, "Text"],
+Cell[90019, 2816, 241, 7, 70, "Input"],
+Cell[90263, 2825, 52, 1, 70, "Input"],
+Cell[90318, 2828, 601, 15, 70, "Input"]
+}, Open  ]],
+Cell[90934, 2846, 55, 0, 70, "Text"],
+Cell[90992, 2848, 992, 29, 70, "Input"],
+Cell[91987, 2879, 102, 3, 70, "Input"],
+Cell[92092, 2884, 211, 6, 70, "Input"],
+Cell[92306, 2892, 1232, 38, 106, "Input"],
+Cell[93541, 2932, 1305, 32, 90, "Input"],
+Cell[94849, 2966, 213, 6, 26, "Input"],
+Cell[95065, 2974, 133, 3, 26, "Input"],
+Cell[CellGroupData[{
+Cell[95223, 2981, 92, 1, 42, "Text",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[95318, 2984, 106, 2, 26, "Input"],
+Cell[95427, 2988, 191, 6, 26, "Input"],
+Cell[95621, 2996, 584, 17, 58, "Input"],
+Cell[96208, 3015, 180, 4, 42, "Text",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[CellGroupData[{
+Cell[96413, 3023, 2081, 52, 202, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[98497, 3077, 70, 1, 26, "Input"]
+}, Open  ]],
+Cell[98582, 3081, 193, 4, 57, "Text"],
+Cell[98778, 3087, 106, 2, 26, "Input"],
+Cell[98887, 3091, 193, 5, 26, "Input"],
+Cell[99083, 3098, 253, 7, 26, "Input"]
+}, Open  ]]
+}, Open  ]],
+Cell[99363, 3109, 111, 2, 26, "Input"]
+}, Closed]],
+Cell[99489, 3114, 45, 0, 43, "Subsection"],
+Cell[CellGroupData[{
+Cell[99559, 3118, 93, 2, 42, "Section"],
+Cell[99655, 3122, 404, 12, 70, "Input"],
+Cell[100062, 3136, 241, 7, 70, "Input"],
+Cell[100306, 3145, 52, 1, 70, "Input"],
+Cell[100361, 3148, 601, 15, 70, "Input"],
+Cell[100965, 3165, 16, 0, 70, "Text"],
+Cell[100984, 3167, 995, 29, 70, "Input"],
+Cell[101982, 3198, 135, 3, 70, "Input"],
+Cell[102120, 3203, 534, 14, 70, "Input"],
+Cell[102657, 3219, 342, 8, 70, "Input"],
+Cell[103002, 3229, 320, 8, 70, "Input"],
+Cell[103325, 3239, 216, 6, 70, "Input"],
+Cell[103544, 3247, 70, 0, 70, "Text"],
+Cell[103617, 3249, 1248, 39, 138, "Input"],
+Cell[104868, 3290, 1490, 37, 106, "Input"],
+Cell[106361, 3329, 181, 5, 26, "Input"],
+Cell[106545, 3336, 346, 8, 42, "Input"],
+Cell[106894, 3346, 432, 10, 58, "Input"],
+Cell[107329, 3358, 1470, 38, 106, "Input"],
+Cell[108802, 3398, 133, 3, 26, "Input"],
+Cell[108938, 3403, 326, 7, 42, "Input"],
+Cell[109267, 3412, 419, 10, 42, "Input"],
+Cell[109689, 3424, 108, 3, 26, "Input"],
+Cell[109800, 3429, 388, 10, 42, "Input"],
+Cell[110191, 3441, 133, 3, 26, "Input"],
+Cell[110327, 3446, 347, 8, 42, "Input"],
+Cell[110677, 3456, 488, 11, 58, "Input"],
+Cell[111168, 3469, 111, 2, 26, "Input"]
+}, Closed]],
+Cell[111294, 3474, 49, 0, 43, "Subsection"],
+Cell[CellGroupData[{
+Cell[111368, 3478, 150, 3, 65, "Section"],
+Cell[111521, 3483, 35, 0, 70, "Input"],
+Cell[111559, 3485, 1043, 30, 70, "Input"],
+Cell[112605, 3517, 844, 24, 70, "Input"],
+Cell[113452, 3543, 193, 6, 70, "Input"],
+Cell[113648, 3551, 274, 8, 70, "Input"],
+Cell[113925, 3561, 193, 5, 70, "Input"],
+Cell[CellGroupData[{
+Cell[114143, 3570, 1550, 48, 70, "Input"],
+Cell[115696, 3620, 68, 1, 70, "Input"]
+}, Open  ]],
+Cell[115779, 3624, 1779, 47, 70, "Input"],
+Cell[117561, 3673, 339, 8, 70, "Input"],
+Cell[117903, 3683, 317, 8, 70, "Input"],
+Cell[118223, 3693, 367, 10, 70, "Input"],
+Cell[118593, 3705, 129, 4, 70, "Input"],
+Cell[118725, 3711, 256, 6, 70, "Input"],
+Cell[118984, 3719, 133, 3, 70, "Input"],
+Cell[119120, 3724, 347, 8, 70, "Input"],
+Cell[119470, 3734, 325, 8, 70, "Input"],
+Cell[119798, 3744, 1209, 30, 70, "Input"],
+Cell[121010, 3776, 350, 8, 70, "Input"],
+Cell[121363, 3786, 555, 12, 70, "Input"],
+Cell[121921, 3800, 106, 2, 70, "Input"],
+Cell[122030, 3804, 1845, 48, 70, "Input"],
+Cell[123878, 3854, 391, 9, 70, "Input"],
+Cell[124272, 3865, 529, 12, 70, "Input"],
+Cell[124804, 3879, 93, 1, 70, "Input"],
+Cell[124900, 3882, 2026, 52, 70, "Input"],
+Cell[126929, 3936, 1164, 36, 70, "Input"],
+Cell[128096, 3974, 345, 8, 70, "Input"],
+Cell[128444, 3984, 494, 11, 70, "Input"],
+Cell[128941, 3997, 106, 2, 70, "Input"],
+Cell[129050, 4001, 2060, 55, 70, "Input"],
+Cell[131113, 4058, 133, 3, 70, "Input"],
+Cell[131249, 4063, 331, 8, 70, "Input"],
+Cell[131583, 4073, 407, 9, 70, "Input"],
+Cell[131993, 4084, 391, 10, 70, "Input"],
+Cell[132387, 4096, 473, 12, 58, "Input"],
+Cell[132863, 4110, 50, 0, 42, "Text"],
+Cell[132916, 4112, 286, 6, 72, "Text"],
+Cell[133205, 4120, 504, 15, 42, "Input"],
+Cell[133712, 4137, 133, 3, 26, "Input"],
+Cell[133848, 4142, 237, 6, 26, "Input"],
+Cell[134088, 4150, 356, 10, 42, "Input"],
+Cell[134447, 4162, 1011, 20, 185, "Input"],
+Cell[135461, 4184, 242, 6, 26, "Input"],
+Cell[135706, 4192, 321, 8, 26, "Input"],
+Cell[136030, 4202, 111, 2, 26, "Input"]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[136178, 4209, 71, 0, 39, "Text"],
+Cell[136252, 4211, 91, 1, 26, "Input"]
+}, Open  ]],
+Cell[136358, 4215, 57, 0, 51, "Subsection"],
+Cell[CellGroupData[{
+Cell[136440, 4219, 21, 0, 51, "Title"],
+Cell[CellGroupData[{
+Cell[136486, 4223, 115, 3, 70, "Section"],
+Cell[136604, 4228, 615, 19, 70, "Input"],
+Cell[137222, 4249, 216, 7, 70, "Input"],
+Cell[137441, 4258, 449, 12, 70, "Input"],
+Cell[137893, 4272, 301, 7, 70, "Input"],
+Cell[138197, 4281, 65, 1, 70, "Input"],
+Cell[138265, 4284, 1035, 32, 70, "Input"],
+Cell[139303, 4318, 63, 1, 70, "Input"],
+Cell[139369, 4321, 275, 8, 70, "Input"],
+Cell[139647, 4331, 441, 14, 70, "Input"],
+Cell[140091, 4347, 67, 2, 70, "Input"],
+Cell[140161, 4351, 599, 15, 70, "Input"]
+}, Closed]]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[140809, 4372, 170, 3, 39, "Text"],
+Cell[140982, 4377, 350, 12, 70, "Input"],
+Cell[141335, 4391, 185, 4, 70, "Input"],
+Cell[141523, 4397, 137, 3, 70, "Input"],
+Cell[141663, 4402, 115, 3, 70, "Input"],
+Cell[141781, 4407, 612, 18, 70, "Input"],
+Cell[142396, 4427, 143, 4, 70, "Input"],
+Cell[142542, 4433, 106, 2, 70, "Input"],
+Cell[142651, 4437, 128, 3, 70, "Input"],
+Cell[142782, 4442, 326, 9, 70, "Input"]
+}, Closed]]
+}
+]
+*)
+

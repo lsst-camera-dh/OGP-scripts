@@ -1,0 +1,1597 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 10.1' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     50045,       1589]
+NotebookOptionsPosition[     43036,       1360]
+NotebookOutlinePosition[     44948,       1421]
+CellTagsIndexPosition[     44905,       1418]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Kinematic mount errors for raft on MF03", "Title",
+ CellChangeTimes->{{3.656100285497663*^9, 3.656100317644437*^9}}],
+
+Cell["PZT   2015.11.09", "Subtitle",
+ CellChangeTimes->{{3.656100323380575*^9, 3.656100335220693*^9}}],
+
+Cell["\<\
+Nominal ideal ball centers are located at p1={x1,y1}, p2={x2,y2}, and \
+p3={x3,y3}. These are the locations of the vertex angles of the triangle \
+formed by the balls. The kinematic mount is designed so that the lines \
+defined by the vee-groove apex bisect the leg opposite the vertex. With this \
+constraint, all three lines intersect at the centroid point, pc, defined by \
+pc=1/3 (p1+p2+p3), the mean of the three vertex points.\
+\>", "Text",
+ CellChangeTimes->{{3.656100356494982*^9, 3.656100404318388*^9}, {
+  3.6561004958926897`*^9, 3.6561005157968397`*^9}, {3.6563682843837748`*^9, 
+  3.656368297662389*^9}, {3.656368449625197*^9, 3.656368779266283*^9}}],
+
+Cell["\<\
+Given the location of each ball center and the common centroid intersection \
+point, it is easy to write an expression for the parametric form of the line \
+through each point and the centroid. Any set of three balls will be \
+constrained to lie on these lines by the kinematic principle. For any set of \
+3 balls, we can construct the expressions for the distance between each pair \
+of points in terms of the parametric variables. Since we actually measure the \
+distances with the OGP CMM, we can use these values in the distance \
+expressions and solve for the values of the parameters that put the balls on \
+each line segment. \
+\>", "Text",
+ CellChangeTimes->{{3.6563688230813427`*^9, 3.656368977458735*^9}, 
+   3.656369011686343*^9, {3.6563690493537903`*^9, 3.6563691024980392`*^9}, {
+   3.656369138144401*^9, 3.656369250081513*^9}}]
+}, Open  ]],
+
+Cell["Start here", "Section",
+ CellChangeTimes->{{3.656280980272998*^9, 3.6562809835197163`*^9}, {
+  3.656369292769845*^9, 3.656369293400324*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Start with nominal values for points.", "Subsubsection"],
+
+Cell["Clear variables", "Text"],
+
+Cell[BoxData[{
+ RowBox[{"Clear", "[", 
+  RowBox[{"x1", ",", "x2", ",", "x3", ",", "y1", ",", "y2", ",", "y3"}], 
+  "]"}], "\n", 
+ RowBox[{"Clear", "[", 
+  RowBox[{"xb1", ",", "xb2", ",", "xb3", ",", "yb1", ",", "yb2", ",", "yb3"}],
+   "]"}], "\n", 
+ RowBox[{"Clear", "[", 
+  RowBox[{"d12", ",", "d23", ",", "d31"}], "]"}], "\n", 
+ RowBox[{"Clear", "[", 
+  RowBox[{"v1", ",", "v2", ",", "v3"}], "]"}]}], "Input",
+ CellChangeTimes->{{3.656163089806604*^9, 3.6561631116612787`*^9}, 
+   3.656369918023436*^9}],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Define the nominal location of the ideal balls, and the centroid point:\
+\>", "Text",
+ CellChangeTimes->{{3.656369567044507*^9, 3.6563696019235697`*^9}, {
+  3.656370665170624*^9, 3.656370675025256*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"p1", "=", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"xb1", ",", "yb1"}], "}"}], "=", 
+    RowBox[{"{", 
+     RowBox[{"0.", ",", "0."}], "}"}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"p2", "=", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"xb2", ",", "yb2"}], "}"}], "=", 
+    RowBox[{"{", 
+     RowBox[{"86.5", ",", "0."}], "}"}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"p3", "=", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"xb3", ",", "y3b"}], "}"}], "=", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"86.5", "/", "2"}], ",", "113.5"}], "}"}]}]}], ";"}]}], "Input",\
+
+ CellChangeTimes->{{3.656369334860608*^9, 3.656369480274819*^9}, {
+  3.6563696395407677`*^9, 3.656369650372776*^9}, {3.656369866337926*^9, 
+  3.656369895258062*^9}, {3.656370431940549*^9, 3.656370441691389*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"pc", "=", 
+  RowBox[{
+   RowBox[{"1", "/", "3"}], 
+   RowBox[{"(", " ", 
+    RowBox[{"p1", "+", "p2", "+", "p3"}], ")"}], 
+   RowBox[{"(*", " ", 
+    RowBox[{"The", " ", "centroid", " ", "point"}], " ", "*)"}]}]}]], "Input",\
+
+ CellChangeTimes->{{3.656280387324069*^9, 3.656280429756118*^9}, {
+  3.662670585225156*^9, 3.662670600414082*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"43.25`", ",", "37.83333333333333`"}], "}"}]], "Output"]
+}, Open  ]]
+}, Open  ]],
+
+Cell["Set the ideal distances between points:", "Text",
+ CellChangeTimes->{{3.656369611627583*^9, 3.656369627251567*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"d12", "=", "86.5"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"d23", "=", 
+   RowBox[{"Sqrt", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"86.5", "/", "2"}], ")"}], "^", "2"}], "+", 
+     RowBox[{"113.5", "^", "2"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"d13", "=", 
+   RowBox[{"Sqrt", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"86.5", "/", "2"}], ")"}], "^", "2"}], "+", 
+     RowBox[{"113.5", "^", "2"}]}], "]"}]}], ";"}]}], "Input",
+ CellChangeTimes->{{3.656369485054386*^9, 3.656369545847172*^9}, {
+  3.656370709368884*^9, 3.656370712394991*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"d12", ",", "d23", ",", "d13"}], "}"}]], "Input",
+ CellChangeTimes->{{3.6626706812819147`*^9, 3.662670694803442*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"86.5`", ",", "121.46115634226442`", ",", "121.46115634226442`"}], 
+  "}"}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Parametric form of vee-goove lines in terms of vector components. Each line \
+is determined by a vector from the nominal ball center to the centroid point, \
+pc. A point on the line is parametrised by the scalar t.\
+\>", "Text",
+ CellChangeTimes->{{3.6562809979196672`*^9, 3.656281012071884*^9}, {
+  3.656343228806438*^9, 3.656343256565645*^9}, {3.656343297920121*^9, 
+  3.656343380824737*^9}, {3.656343419538925*^9, 3.6563434864932413`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"v1", "[", "t1_", "]"}], ":=", 
+   RowBox[{"p1", " ", "+", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"pc", "-", "p1"}], ")"}], " ", "t1"}]}]}], ";", " ", 
+  RowBox[{
+   RowBox[{"v2", "[", "t2_", "]"}], ":=", 
+   RowBox[{"p2", " ", "+", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"pc", "-", "p2"}], ")"}], " ", "t2"}]}]}], ";", " ", 
+  RowBox[{
+   RowBox[{"v3", "[", "t3_", "]"}], ":=", 
+   RowBox[{"p3", "+", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"pc", "-", "p3"}], ")"}], "t3"}]}]}], ";"}]], "Input"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+The constraints on the scalar parameter values  are the distances between the \
+balls. 
+There are 3 distance constraints: 1->2, 2->3, and 1->3.
+Write the distances as functions of points on each relevant line:\
+\>", "Text",
+ CellChangeTimes->{{3.656281055934462*^9, 3.656281073362193*^9}, {
+  3.656281139558022*^9, 3.6562811465343313`*^9}, {3.656343585334556*^9, 
+  3.656343864208449*^9}, {3.65634391656398*^9, 3.656343930596084*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"dist12", "=", 
+  RowBox[{"Sqrt", "[", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"v2", "[", "t2", "]"}], "-", 
+      RowBox[{"v1", "[", "t1", "]"}]}], ")"}], ".", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"v2", "[", "t2", "]"}], "-", 
+      RowBox[{"v1", "[", "t1", "]"}]}], ")"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.656283974025234*^9, 3.6562840369072037`*^9}, {
+  3.656370883529826*^9, 3.656370908401577*^9}}],
+
+Cell[BoxData[
+ SqrtBox[
+  RowBox[{
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{"86.5`", "\[VeryThinSpace]", "-", 
+      RowBox[{"43.25`", " ", "t1"}], "-", 
+      RowBox[{"43.25`", " ", "t2"}]}], ")"}], "2"], "+", 
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{"0.`", "\[VeryThinSpace]", "-", 
+      RowBox[{"37.83333333333333`", " ", "t1"}], "+", 
+      RowBox[{"37.83333333333333`", " ", "t2"}]}], ")"}], "2"]}]]], "Output"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"dist23", "=", 
+   RowBox[{"Sqrt", "[", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"v3", "[", "t3", "]"}], "-", 
+       RowBox[{"v2", "[", "t2", "]"}]}], ")"}], ".", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"v3", "[", "t3", "]"}], "-", 
+       RowBox[{"v2", "[", "t2", "]"}]}], ")"}]}], "]"}]}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"dist13", "=", 
+   RowBox[{"Sqrt", "[", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"v3", "[", "t3", "]"}], "-", 
+       RowBox[{"v1", "[", "t1", "]"}]}], ")"}], ".", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"v3", "[", "t3", "]"}], "-", 
+       RowBox[{"v1", "[", "t1", "]"}]}], ")"}]}], "]"}]}], ";"}]], "Input"]
+}, Open  ]],
+
+Cell["\<\
+Now we can measure the actual position of each ball and compute the actual \
+distance. Put these distances in and solve the system of 3 equations for the \
+t-parameters that give the desired separations. Each solution is unique, as \
+there is only one way the kinematic mount can be assembled.
+Solve for the values of the parameters that give the desired separation \
+distances.
+soln0 is the solution with the balls in the nominal positions. See that the \
+parameter values are 0 for each ball, as they should be.\
+\>", "Text",
+ CellChangeTimes->{{3.656285239928447*^9, 3.65628528092732*^9}, {
+   3.656343993390472*^9, 3.6563441920010357`*^9}, {3.6563443023214273`*^9, 
+   3.656344389909912*^9}, 3.656371000333886*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"soln0", "=", 
+  RowBox[{
+   RowBox[{"FindRoot", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"dist12", "\[Equal]", "86.5"}], ",", 
+       RowBox[{"dist23", "\[Equal]", "d23"}], ",", 
+       RowBox[{"dist13", "\[Equal]", "d23"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"t1", ",", "0.1", ",", 
+         RowBox[{"-", "0.4"}], ",", "0.4"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"t2", ",", "0.1", ",", 
+         RowBox[{"-", "0.4"}], ",", "0.4"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"t3", ",", "0.1", ",", 
+         RowBox[{"-", "0.4"}], ",", "0.4"}], "}"}]}], "}"}]}], "]"}], "//", 
+   "Chop"}]}]], "Input",
+ CellChangeTimes->{{3.656370883459217*^9, 3.656370924458262*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"t1", "\[Rule]", "0"}], ",", 
+   RowBox[{"t2", "\[Rule]", "0"}], ",", 
+   RowBox[{"t3", "\[Rule]", "0"}]}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell["\<\
+Check the soln0 result by plugging in the b=0 values into each vee-groove \
+line expression. The {x,y} coords are as they should be.\
+\>", "Text",
+ CellChangeTimes->{{3.656344403693884*^9, 3.656344488062376*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"nomBallCenters", "=", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"v1", "[", "t1", "]"}], ",", 
+     RowBox[{"v2", "[", "t2", "]"}], ",", 
+     RowBox[{"v3", "[", "t3", "]"}]}], "}"}], "/.", "soln0"}]}]], "Input",
+ CellChangeTimes->{{3.656370883474968*^9, 3.656370924470524*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"0.`", ",", "0.`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"86.5`", ",", "0.`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"43.25`", ",", "113.5`"}], "}"}]}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell["\<\
+The vector from ball 1 to ball 2 is found by taking the difference between \
+the two points:\
+\>", "Text",
+ CellChangeTimes->{{3.6563445573719883`*^9, 3.65634463064625*^9}, {
+   3.656371444326406*^9, 3.6563715273945427`*^9}, 3.656371785831121*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"vec12", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"v2", "[", "t2", "]"}], "-", 
+    RowBox[{"v1", "[", "t1", "]"}]}], "/.", "soln0"}]}]], "Input",
+ CellChangeTimes->{{3.6563715321760893`*^9, 3.656371555185932*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"86.5`", ",", "0.`"}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell["\<\
+The angle of this vector relative to the global x-axis is given by:\
+\>", "Text",
+ CellChangeTimes->{{3.656371809236326*^9, 3.656371865175906*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"ArcTan", "[", 
+   RowBox[{
+    RowBox[{"vec12", "[", 
+     RowBox[{"[", "2", "]"}], "]"}], "/", 
+    RowBox[{"vec12", "[", 
+     RowBox[{"[", "1", "]"}], "]"}]}], "]"}], "/", "Degree"}]], "Input",
+ CellChangeTimes->{{3.656371177187153*^9, 3.6563712247913446`*^9}, {
+  3.656371265033496*^9, 3.65637128687328*^9}, {3.6563716012817287`*^9, 
+  3.656371636691415*^9}}],
+
+Cell[BoxData["0.`"], "Output"]
+}, Open  ]],
+
+Cell["\<\
+So the nominal  positions of balls p1 and p2 lie along the global x-axis.\
+\>", "Text",
+ CellChangeTimes->{{3.6563718834649887`*^9, 3.656371941298851*^9}}],
+
+Cell["\<\
+Now plot the kinematic line segments between the balls and the centroid \
+point.  Set the ball radius to a small number so that displacements on the \
+order of microns will be visible in the graphics. You can\[CloseCurlyQuote]t \
+see the balls at the ends of each line segment, but they are there.\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"ballrad", "=", "0.1"}], ";"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"nomBalls", "=", 
+  RowBox[{"Graphics", "[", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Line", "[", 
+      RowBox[{"{", 
+       RowBox[{"pc", ",", 
+        RowBox[{"v1", "[", "0", "]"}]}], "}"}], "]"}], ",", 
+     RowBox[{"Line", "[", 
+      RowBox[{"{", 
+       RowBox[{"pc", ",", 
+        RowBox[{"v2", "[", "0", "]"}]}], "}"}], "]"}], ",", 
+     RowBox[{"Line", "[", 
+      RowBox[{"{", 
+       RowBox[{"pc", ",", 
+        RowBox[{"v3", "[", "0", "]"}]}], "}"}], "]"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"Circle", "[", 
+      RowBox[{
+       RowBox[{"v1", "[", "0", "]"}], ",", "ballrad"}], "]"}], ",", 
+     RowBox[{"Circle", "[", 
+      RowBox[{
+       RowBox[{"v2", "[", "0", "]"}], ",", "ballrad"}], "]"}], ",", 
+     RowBox[{"Circle", "[", 
+      RowBox[{
+       RowBox[{"v3", "[", "0", "]"}], ",", "ballrad"}], "]"}]}], "}"}], 
+   "]"}]}]], "Input",
+ CellChangeTimes->{{3.656342656802403*^9, 3.6563426636017447`*^9}}],
+
+Cell[BoxData[
+ GraphicsBox[{LineBox[{{43.25, 37.83333333333333}, {0., 0.}}], 
+   LineBox[{{43.25, 37.83333333333333}, {86.5, 0.}}], 
+   LineBox[{{43.25, 37.83333333333333}, {43.25, 113.5}}], 
+   CircleBox[{0., 0.}, 0.1], CircleBox[{86.5, 0.}, 0.1], 
+   CircleBox[{43.25, 113.5}, 0.1]},
+  ImageSize->{122.60323851222176`, Automatic}]], "Output"]
+}, Open  ]]
+}, Open  ]],
+
+Cell["\<\
+Now input the actual measured ball centers from MF03 cal data report. The \
+absolute position does not matter, only the relative distances for this \
+analysis. Form the 3 distances with the Norm function.\
+\>", "Section"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"mb1", "=", 
+   RowBox[{"{", 
+    RowBox[{"0", ",", "0"}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"mb2", "=", 
+   RowBox[{"{", 
+    RowBox[{"86.4893", ",", 
+     RowBox[{"-", "0.0158"}]}], "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"mb3", "=", 
+   RowBox[{"{", 
+    RowBox[{"43.3096", ",", "113.48888"}], "}"}]}], ";"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"run$", "=", "\"\<151113a run3\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"mb1", "=", 
+   RowBox[{"{", 
+    RowBox[{"0", ",", "0"}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"mb2", "=", 
+   RowBox[{"{", 
+    RowBox[{"86.4892", ",", 
+     RowBox[{"-", "0.01561"}]}], "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"mb3", "=", 
+   RowBox[{"{", 
+    RowBox[{"43.30914", ",", "113.48939"}], "}"}]}], ";"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"run$", "=", "\"\<151113b run4\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"mb1", "=", 
+   RowBox[{"{", 
+    RowBox[{"0", ",", "0"}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"mb2", "=", 
+   RowBox[{"{", 
+    RowBox[{"86.48938", ",", 
+     RowBox[{"-", "0.01581"}]}], "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"mb3", "=", 
+   RowBox[{"{", 
+    RowBox[{"43.30966", ",", "113.48888"}], "}"}]}], ";"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"run$", "=", "\"\<151113c run5\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"mb1", "=", 
+   RowBox[{"{", 
+    RowBox[{"0", ",", "0"}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"mb2", "=", 
+   RowBox[{"{", 
+    RowBox[{"86.48922", ",", 
+     RowBox[{"-", "0.01622"}]}], "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"mb3", "=", 
+   RowBox[{"{", 
+    RowBox[{"43.31033", ",", "113.48899"}], "}"}]}], ";"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"run$", "=", "\"\<151113d run6\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"mb1", "=", 
+   RowBox[{"{", 
+    RowBox[{"0", ",", "0"}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"mb2", "=", 
+   RowBox[{"{", 
+    RowBox[{"86.48904", ",", 
+     RowBox[{"-", "0.01527"}]}], "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"mb3", "=", 
+   RowBox[{"{", 
+    RowBox[{"43.30884", ",", "113.48905"}], "}"}]}], ";"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"run$", "=", "\"\<151113d run6 reset\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"mb1", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"-", "0.00043"}], ",", 
+     RowBox[{"-", "0.00107"}]}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"mb2", "=", 
+   RowBox[{"{", 
+    RowBox[{"86.48894", ",", 
+     RowBox[{"-", "0.0003"}]}], "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"mb3", "=", 
+   RowBox[{"{", 
+    RowBox[{"43.30793", ",", "113.48866"}], "}"}]}], ";"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"run$", "=", "\"\<151114\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"mb1", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"-", "0.00073"}], ",", 
+     RowBox[{"-", "0.00031"}]}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"mb2", "=", 
+   RowBox[{"{", 
+    RowBox[{"86.48876", ",", 
+     RowBox[{"-", "0.00026"}]}], "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"mb3", "=", 
+   RowBox[{"{", 
+    RowBox[{"43.31335", ",", "113.4813"}], "}"}]}], ";"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"run$", "=", "\"\<151116\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"mb1", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"-", "0.00059"}], ",", 
+     RowBox[{"-", "0.00042"}]}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"mb2", "=", 
+   RowBox[{"{", 
+    RowBox[{"86.49082", ",", "0.00028"}], "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"mb3", "=", 
+   RowBox[{"{", 
+    RowBox[{"43.31528", ",", "113.48569"}], "}"}]}], ";"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"run$", "=", "\"\<160122\>\""}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"mb1", "=", 
+   RowBox[{"{", 
+    RowBox[{"0.0", ",", "0.0"}], "}"}]}], 
+  RowBox[{"(*", 
+   RowBox[{"LL", " ", "ball"}], "*)"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"mb2", "=", 
+   RowBox[{"{", 
+    RowBox[{"86.4891", ",", 
+     RowBox[{"-", "0.0059"}]}], "}"}]}], 
+  RowBox[{"(*", 
+   RowBox[{"LR", " ", "ball"}], "*)"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"mb3", "=", 
+   RowBox[{"{", 
+    RowBox[{"43.3308", ",", "113.4747"}], "}"}]}], 
+  RowBox[{"(*", 
+   RowBox[{"UC", " ", "ball"}], "*)"}], ";"}]}], "Input",
+ CellChangeTimes->{{3.6626696872678623`*^9, 3.6626696994133883`*^9}, {
+  3.662669755717626*^9, 3.6626699795729637`*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"run$", "=", "\"\<test\>\""}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"mb1", "=", 
+   RowBox[{"{", 
+    RowBox[{"0.0", ",", "0.0"}], "}"}]}], 
+  RowBox[{"(*", 
+   RowBox[{"LL", " ", "ball"}], "*)"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"mb2", "=", 
+   RowBox[{"{", 
+    RowBox[{"86.5", ",", "0."}], "}"}]}], 
+  RowBox[{"(*", 
+   RowBox[{"LR", " ", "ball"}], "*)"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"mb3", "=", 
+   RowBox[{"{", 
+    RowBox[{"43.25", ",", "113.55"}], "}"}]}], 
+  RowBox[{"(*", 
+   RowBox[{"UC", " ", "ball"}], "*)"}], ";"}]}], "Input",
+ CellChangeTimes->{{3.6670605300071173`*^9, 3.667060555046637*^9}, {
+  3.667060602969109*^9, 3.667060663592532*^9}, {3.667060926351159*^9, 
+  3.667060927034631*^9}}],
+
+Cell["\<\
+Note: X&Y coords in OGP report are in PCS but have the X&Y labels \
+misidentified. The numbers there need to be switched when entered here.\
+\>", "Subsubsection"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"run$", "=", "\"\<ECM-004\>\""}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"mb1", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"+", "000.01632"}], ",", 
+     RowBox[{"-", "000.01427"}]}], "}"}]}], 
+  RowBox[{"(*", 
+   RowBox[{"LL", " ", "ball"}], "*)"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"mb2", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"+", "086.50150"}], ",", 
+     RowBox[{"-", "000.10007"}]}], "}"}]}], 
+  RowBox[{"(*", 
+   RowBox[{"LR", " ", "ball"}], "*)"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"mb3", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"+", "043.23210"}], ",", 
+     RowBox[{"-", "113.53629"}]}], "}"}]}], 
+  RowBox[{"(*", 
+   RowBox[{"UC", " ", "ball"}], "*)"}], ";"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"run$", "=", "\"\<ECM-005\>\""}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"mb1", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"+", "000.01686"}], ",", 
+     RowBox[{"+", "000.00260"}]}], "}"}]}], 
+  RowBox[{"(*", 
+   RowBox[{"LL", " ", "ball"}], "*)"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"mb2", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"+", "086.50142"}], ",", 
+     RowBox[{"-", "000.08126"}]}], "}"}]}], 
+  RowBox[{"(*", 
+   RowBox[{"LR", " ", "ball"}], "*)"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"mb3", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"+", "043.23126"}], ",", 
+     RowBox[{"-", "113.51808"}]}], "}"}]}], 
+  RowBox[{"(*", 
+   RowBox[{"UC", " ", "ball"}], "*)"}], ";"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"run$", "=", "\"\<ECM-005 run4\>\""}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"mb1", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"+", "000.01863"}], ",", 
+     RowBox[{"+", "000.00280"}]}], "}"}]}], 
+  RowBox[{"(*", 
+   RowBox[{"LL", " ", "ball"}], "*)"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"mb2", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"+", "086.50528"}], ",", 
+     RowBox[{"-", "000.00367"}]}], "}"}]}], 
+  RowBox[{"(*", 
+   RowBox[{"LR", " ", "ball"}], "*)"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"mb3", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"+", "043.35315"}], ",", 
+     RowBox[{"-", "113.47929"}]}], "}"}]}], 
+  RowBox[{"(*", 
+   RowBox[{"UC", " ", "ball"}], "*)"}], ";"}]}], "Input"],
+
+Cell[CellGroupData[{
+
+Cell["Continue from here", "Section"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"{", 
+   RowBox[{"dmb12", ",", "dmb23", ",", "dmb13"}], "}"}], "=", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"Norm", "[", 
+     RowBox[{"mb2", "-", "mb1"}], "]"}], ",", 
+    RowBox[{"Norm", "[", 
+     RowBox[{"mb3", "-", "mb2"}], "]"}], ",", 
+    RowBox[{"Norm", "[", 
+     RowBox[{"mb3", "-", "mb1"}], "]"}]}], "}"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+  "86.48665024200785`", ",", "121.40355290485242`", ",", 
+   "121.47454619959895`"}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell["\<\
+Now solve the system for the actual ball center location along the lines that \
+satisfy the distance constraints.\
+\>", "Text",
+ CellChangeTimes->{{3.6563448629914007`*^9, 3.656344914845229*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"solnmb", "=", 
+  RowBox[{
+   RowBox[{"FindRoot", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"dist12", "\[Equal]", "dmb12"}], ",", 
+       RowBox[{"dist23", "\[Equal]", "dmb23"}], ",", 
+       RowBox[{"dist13", "\[Equal]", "dmb13"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"t1", ",", "0.1", ",", 
+         RowBox[{"-", "0.4"}], ",", "0.4"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"t2", ",", "0.1", ",", 
+         RowBox[{"-", "0.4"}], ",", "0.4"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"t3", ",", "0.1", ",", 
+         RowBox[{"-", "0.4"}], ",", "0.4"}], "}"}]}], "}"}]}], "]"}], "//", 
+   "Chop"}]}]], "Input",
+ CellChangeTimes->{{3.656370883489769*^9, 3.6563709244835167`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"t1", "\[Rule]", 
+    RowBox[{"-", "0.0005448619704442688`"}]}], ",", 
+   RowBox[{"t2", "\[Rule]", "0.0008539012404944656`"}], ",", 
+   RowBox[{"t3", "\[Rule]", "0.00020175852463077086`"}]}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell["\<\
+Put these parameter values into each line equation to get the coords of the \
+ball centers in the system defined by the nominal ball positions.\
+\>", "Text",
+ CellChangeTimes->{{3.656344938125338*^9, 3.6563450391552143`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"{", 
+   RowBox[{"mbc1", ",", "mbc2", ",", "mbc3"}], "}"}], "=", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"v1", "[", "t1", "]"}], ",", 
+     RowBox[{"v2", "[", "t2", "]"}], ",", 
+     RowBox[{"v3", "[", "t3", "]"}]}], "}"}], "/.", "solnmb"}]}]], "Input",
+ CellChangeTimes->{{3.656370883511098*^9, 3.656370924503059*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"-", "0.023565280221714623`"}], ",", 
+     RowBox[{"-", "0.020613944548474834`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"86.46306877134862`", ",", "0.03230593026537394`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"43.25`", ",", "113.4847336049696`"}], "}"}]}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell["\<\
+Compare the actual ball solution positions above to the nominal positions. \
+Compute the displacement of the solution points from the nominal points.\
+\>", "Text",
+ CellChangeTimes->{{3.656372638850481*^9, 3.656372718317299*^9}, {
+  3.656372808476243*^9, 3.65637284887855*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"p1", ",", "p2", ",", "p3"}], "}"}]], "Input",
+ CellChangeTimes->{{3.6563725877064543`*^9, 3.656372615804585*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"0.`", ",", "0.`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"86.5`", ",", "0.`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"43.25`", ",", "113.5`"}], "}"}]}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"{", 
+   RowBox[{"mbc1", ",", "mbc2", ",", "mbc3"}], "}"}], "-", 
+  RowBox[{"{", 
+   RowBox[{"p1", ",", "p2", ",", "p3"}], "}"}]}]], "Input",
+ CellChangeTimes->{{3.656372769176434*^9, 3.656372775834001*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"-", "0.023565280221714623`"}], ",", 
+     RowBox[{"-", "0.020613944548474834`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"-", "0.03693122865138321`"}], ",", "0.03230593026537394`"}], 
+    "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.`", ",", 
+     RowBox[{"-", "0.01526639503039462`"}]}], "}"}]}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell["\<\
+Plot the lines from the vee groove centroid to the ball ends.\
+\>", "Text",
+ CellChangeTimes->{{3.656345055812141*^9, 3.656345058275298*^9}, {
+  3.656345499196007*^9, 3.656345548658895*^9}, {3.6563457296583843`*^9, 
+  3.65634573235435*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Graphics", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Line", "[", 
+      RowBox[{"{", 
+       RowBox[{"pc", ",", 
+        RowBox[{"v1", "[", "0", "]"}]}], "}"}], "]"}], ",", 
+     RowBox[{"Line", "[", 
+      RowBox[{"{", 
+       RowBox[{"pc", ",", 
+        RowBox[{"v2", "[", "0", "]"}]}], "}"}], "]"}], ",", 
+     RowBox[{"Line", "[", 
+      RowBox[{"{", 
+       RowBox[{"pc", ",", 
+        RowBox[{"v3", "[", "0", "]"}]}], "}"}], "]"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"Circle", "[", 
+      RowBox[{
+       RowBox[{"v1", "[", "0", "]"}], ",", "ballrad"}], "]"}], ",", 
+     RowBox[{"Circle", "[", 
+      RowBox[{
+       RowBox[{"v2", "[", "0", "]"}], ",", "ballrad"}], "]"}], ",", 
+     RowBox[{"Circle", "[", 
+      RowBox[{
+       RowBox[{"v3", "[", "0", "]"}], ",", "ballrad"}], "]"}]}], "}"}], ",", 
+   RowBox[{"ImageSize", "\[Rule]", "100"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ GraphicsBox[{LineBox[{{43.25, 37.83333333333333}, {0., 0.}}], 
+   LineBox[{{43.25, 37.83333333333333}, {86.5, 0.}}], 
+   LineBox[{{43.25, 37.83333333333333}, {43.25, 113.5}}], 
+   CircleBox[{0., 0.}, 0.1], CircleBox[{86.5, 0.}, 0.1], 
+   CircleBox[{43.25, 113.5}, 0.1]},
+  ImageSize->100]], "Output"]
+}, Open  ]],
+
+Cell["Plot the measured balls in Red", "Text",
+ CellChangeTimes->{{3.656345825581818*^9, 3.6563458427019978`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"measBalls", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Graphics", "[", 
+      RowBox[{"{", 
+       RowBox[{"Red", ",", 
+        RowBox[{"Circle", "[", 
+         RowBox[{"mbc1", ",", "ballrad"}], "]"}]}], "}"}], "]"}], ",", 
+     RowBox[{"Graphics", "[", 
+      RowBox[{"{", 
+       RowBox[{"Red", ",", 
+        RowBox[{"Circle", "[", 
+         RowBox[{"mbc2", ",", "ballrad"}], "]"}]}], "}"}], "]"}], ",", 
+     RowBox[{"Graphics", "[", 
+      RowBox[{"{", 
+       RowBox[{"Red", ",", 
+        RowBox[{"Circle", "[", 
+         RowBox[{"mbc3", ",", "ballrad"}], "]"}]}], "}"}], "]"}]}], "}"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.656342591273394*^9, 3.656342604521488*^9}}],
+
+Cell["\<\
+Now overlay both the nominal and actual ball locations. Need to zoom in on \
+each ball location to see the actual displacement of the red from the black.\
+\>", "Text",
+ CellChangeTimes->{{3.656345851292107*^9, 3.656345934664957*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Show", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"nomBalls", ",", "measBalls"}], "}"}], ",", 
+   RowBox[{"ImageSize", "\[Rule]", "100"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ GraphicsBox[{{LineBox[{{43.25, 37.83333333333333}, {0., 0.}}], 
+    LineBox[{{43.25, 37.83333333333333}, {86.5, 0.}}], 
+    LineBox[{{43.25, 37.83333333333333}, {43.25, 113.5}}], 
+    CircleBox[{0., 0.}, 0.1], CircleBox[{86.5, 0.}, 0.1], 
+    CircleBox[{43.25, 113.5}, 0.1]}, 
+   {RGBColor[1, 0, 0], 
+    CircleBox[{-0.023565280221714623`, -0.020613944548474834`}, 0.1]}, 
+   {RGBColor[1, 0, 0], 
+    CircleBox[{86.46306877134862, 0.03230593026537394}, 0.1]}, 
+   {RGBColor[1, 0, 0], CircleBox[{43.25, 113.4847336049696}, 0.1]}},
+  ImageSize->100]], "Output"]
+}, Open  ]],
+
+Cell["\<\
+Need to zoom in on each ball location to see the small displacements:\
+\>", "Text",
+ CellChangeTimes->{{3.65637309465767*^9, 3.656373132464769*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ballv1", "=", 
+   RowBox[{"Show", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"nomBalls", ",", "measBalls"}], "}"}], ",", 
+     RowBox[{"PlotRange", "\[Rule]", 
+      RowBox[{
+       RowBox[{"nomBallCenters", "[", 
+        RowBox[{"[", "1", "]"}], "]"}], "+", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"-", ".2"}], ",", ".2"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"-", ".2"}], ",", ".2"}], "}"}]}], "}"}]}]}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"ballv2", "=", 
+   RowBox[{"Show", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"nomBalls", ",", "measBalls"}], "}"}], ",", 
+     RowBox[{"PlotRange", "\[Rule]", 
+      RowBox[{
+       RowBox[{"nomBallCenters", "[", 
+        RowBox[{"[", "2", "]"}], "]"}], "+", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"-", ".2"}], ",", ".2"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"-", ".2"}], ",", ".2"}], "}"}]}], "}"}]}]}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"ballv3", "=", 
+   RowBox[{"Show", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"nomBalls", ",", "measBalls"}], "}"}], ",", 
+     RowBox[{"PlotRange", "\[Rule]", 
+      RowBox[{
+       RowBox[{"nomBallCenters", "[", 
+        RowBox[{"[", "3", "]"}], "]"}], "+", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"-", ".2"}], ",", ".2"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"-", ".2"}], ",", ".2"}], "}"}]}], "}"}]}]}]}], "]"}]}], 
+  ";"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"scaleline", "=", 
+   RowBox[{"Graphics", "[", 
+    RowBox[{"{", 
+     RowBox[{"Thick", ",", 
+      RowBox[{"Line", "[", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"0.0", ",", "0.0"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"0.05", ",", "0.0"}], "}"}]}], "}"}], "]"}], ",", 
+      RowBox[{"Text", "[", 
+       RowBox[{
+        RowBox[{"Style", "[", 
+         RowBox[{"\"\<50\[Micro]m\>\"", ",", "Large"}], "]"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"0.025", ",", "0.10"}], "}"}]}], "]"}], ",", 
+      RowBox[{"Text", "[", 
+       RowBox[{
+        RowBox[{"Style", "[", 
+         RowBox[{"run$", ",", "Medium"}], "]"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"0.025", ",", 
+          RowBox[{"-", "0.10"}]}], "}"}]}], "]"}]}], "}"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"showline", "=", 
+   RowBox[{"Show", "[", 
+    RowBox[{"scaleline", ",", 
+     RowBox[{"PlotRange", "\[Rule]", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"0", ",", "0"}], "}"}], "+", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"-", ".2"}], ",", ".2"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"-", ".2"}], ",", ".2"}], "}"}]}], "}"}]}]}]}], "]"}]}], 
+  ";"}]}], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"skewballs", "=", 
+  RowBox[{"GraphicsRow", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"ballv1", ",", "ballv2", ",", "ballv3", ",", "showline"}], "}"}],
+     ",", 
+    RowBox[{"ImageSize", "\[Rule]", "400"}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ GraphicsBox[{{}, {InsetBox[
+     GraphicsBox[{{LineBox[{{43.25, 37.83333333333333}, {0., 0.}}], 
+        LineBox[{{43.25, 37.83333333333333}, {86.5, 0.}}], 
+        LineBox[{{43.25, 37.83333333333333}, {43.25, 113.5}}], 
+        CircleBox[{0., 0.}, 0.1], CircleBox[{86.5, 0.}, 0.1], 
+        CircleBox[{43.25, 113.5}, 0.1]}, 
+       {RGBColor[1, 0, 0], 
+        CircleBox[{-0.023565280221714623`, -0.020613944548474834`}, 0.1]}, 
+       {RGBColor[1, 0, 0], 
+        CircleBox[{86.46306877134862, 0.03230593026537394}, 0.1]}, 
+       {RGBColor[1, 0, 0], CircleBox[{43.25, 113.4847336049696}, 0.1]}},
+      PlotRange->{{-0.2, 0.2}, {-0.2, 0.2}}], {194.4, -188.99999999999935`}, 
+     ImageScaled[{0.5, 0.5}], {360.00000000000006`, 359.9999999999988}], 
+    InsetBox[
+     GraphicsBox[{{LineBox[{{43.25, 37.83333333333333}, {0., 0.}}], 
+        LineBox[{{43.25, 37.83333333333333}, {86.5, 0.}}], 
+        LineBox[{{43.25, 37.83333333333333}, {43.25, 113.5}}], 
+        CircleBox[{0., 0.}, 0.1], CircleBox[{86.5, 0.}, 0.1], 
+        CircleBox[{43.25, 113.5}, 0.1]}, 
+       {RGBColor[1, 0, 0], 
+        CircleBox[{-0.023565280221714623`, -0.020613944548474834`}, 0.1]}, 
+       {RGBColor[1, 0, 0], 
+        CircleBox[{86.46306877134862, 0.03230593026537394}, 0.1]}, 
+       {RGBColor[1, 0, 0], CircleBox[{43.25, 113.4847336049696}, 0.1]}},
+      PlotRange->{{86.3, 86.7}, {-0.2, 0.2}}], {583.2, -188.99999999999935`}, 
+     ImageScaled[{0.5, 0.5}], {360.00000000000006`, 359.9999999999988}], 
+    InsetBox[
+     GraphicsBox[{{LineBox[{{43.25, 37.83333333333333}, {0., 0.}}], 
+        LineBox[{{43.25, 37.83333333333333}, {86.5, 0.}}], 
+        LineBox[{{43.25, 37.83333333333333}, {43.25, 113.5}}], 
+        CircleBox[{0., 0.}, 0.1], CircleBox[{86.5, 0.}, 0.1], 
+        CircleBox[{43.25, 113.5}, 0.1]}, 
+       {RGBColor[1, 0, 0], 
+        CircleBox[{-0.023565280221714623`, -0.020613944548474834`}, 0.1]}, 
+       {RGBColor[1, 0, 0], 
+        CircleBox[{86.46306877134862, 0.03230593026537394}, 0.1]}, 
+       {RGBColor[1, 0, 0], CircleBox[{43.25, 113.4847336049696}, 0.1]}},
+      PlotRange->{{43.05, 43.45}, {113.3, 113.7}}], {972., -188.99999999999935`},
+      ImageScaled[{0.5, 0.5}], {360., 359.9999999999988}], InsetBox[
+     GraphicsBox[
+      {Thickness[Large], LineBox[{{0., 0.}, {0.05, 0.}}], InsetBox[
+        StyleBox["\<\"50\[Micro]m\"\>",
+         StripOnInput->False,
+         FontSize->Large], {0.025, 0.1}], InsetBox[
+        StyleBox["\<\"ECM-005 run4\"\>",
+         StripOnInput->False,
+         FontSize->Medium], {0.025, -0.1}]},
+      PlotRange->{{-0.2, 0.2}, {-0.2, 0.2}}], {1360.8000000000002`, -188.99999999999935`},
+      ImageScaled[{0.5, 0.5}], {359.9999999999998, 359.9999999999988}]}, {}},
+  ContentSelectable->True,
+  ImageMargins->{{0., 0.}, {0., 0.27734375}},
+  ImageSize->400,
+  PlotRangePadding->{6, 5}]], "Output"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Export", "[", 
+  RowBox[{
+   RowBox[{
+   "$HomeDirectory", "<>", "\"\</Desktop/\>\"", "<>", 
+    "\"\<skewballs.jpg\>\""}], ",", "skewballs"}], "]"}]], "Input"],
+
+Cell[BoxData["\<\"/Users/takacs/Desktop/skewballs.jpg\"\>"], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Note that the actual displaced ball locations are along each respective \
+kinematic vee-groove line. These are the locations of the ideal vee groove \
+centers on the non-ideal balls.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"v1", "[", "t1", "]"}], "/.", "solnmb"}], ",", 
+   RowBox[{
+    RowBox[{"v2", "[", "t2", "]"}], "/.", "solnmb"}], ",", 
+   RowBox[{
+    RowBox[{"v3", "[", "t3", "]"}], "/.", "solnmb"}]}], "}"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"-", "0.023565280221714623`"}], ",", 
+     RowBox[{"-", "0.020613944548474834`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"86.46306877134862`", ",", "0.03230593026537394`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"43.25`", ",", "113.4847336049696`"}], "}"}]}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell["\<\
+Now find the angle between the nominal x - axis and the rotated x - axis. \
+Find the vector between the 2 measured points :\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"vec12m", "=", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"v2", "[", "t2", "]"}], "-", 
+     RowBox[{"v1", "[", "t1", "]"}]}], ")"}], "/.", "solnmb"}]}]], "Input",
+ CellChangeTimes->{{3.656348852348177*^9, 3.656348880954143*^9}, {
+  3.6563501010256233`*^9, 3.656350110511931*^9}, {3.656370883524157*^9, 
+  3.656370908392254*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"86.48663405157033`", ",", "0.05291987481384877`"}], 
+  "}"}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"xaxisangle", "=", 
+  RowBox[{
+   RowBox[{"ArcTan", "[", 
+    RowBox[{
+     RowBox[{"vec12m", "[", 
+      RowBox[{"[", "2", "]"}], "]"}], "/", 
+     RowBox[{"vec12m", "[", 
+      RowBox[{"[", "1", "]"}], "]"}]}], "]"}], "/", "Degree"}]}]], "Input",
+ CellChangeTimes->{{3.656350082862606*^9, 3.656350089467692*^9}, {
+  3.6563501256366*^9, 3.656350195346528*^9}}],
+
+Cell[BoxData["0.035058424160417`"], "Output"]
+}, Open  ]]
+}, Open  ]],
+
+Cell["\<\
+This is the effective rotation of non-ideal balls on the ideal kinematic \
+lines. But we actually have the opposite situation: we have an ideal raft \
+sitting on non-ideal balls, where the datum axis is defined by the non-ideal \
+ball positions. So after we measure the actual ball positions and construct \
+the datum origin at the LL ball center with the x-axis through the LR ball, \
+we need to translate and rotate the datum origin and axis direction to line \
+up with the ideal raft datums. So the axis origin gets translated by the \
+negative of the measured ball location on v1:  -mbc1\
+\>", "Text",
+ CellChangeTimes->{{3.6563462859143867`*^9, 3.656346341121827*^9}, {
+  3.6563463788859053`*^9, 3.6563463973078203`*^9}, {3.6563503332467937`*^9, 
+  3.656350359030881*^9}, {3.656350422771205*^9, 3.656350669942851*^9}, {
+  3.662671351820368*^9, 3.662671391822483*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"-", "mbc1"}]], "Input",
+ CellChangeTimes->{{3.6563469964243317`*^9, 3.656347032900597*^9}, {
+  3.656347100034007*^9, 3.656347102269259*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"0.023565280221714623`", ",", "0.020613944548474834`"}], 
+  "}"}]], "Output"]
+}, Open  ]],
+
+Cell["\<\
+And the rotation of the datum x-axis needs to be -xaxisangle:\
+\>", "Text",
+ CellChangeTimes->{{3.656350792892035*^9, 3.656350842606539*^9}, 
+   3.656350876470046*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"-", "xaxisangle"}]], "Input",
+ CellChangeTimes->{{3.656350851411089*^9, 3.656350862693881*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.035058424160417`"}]], "Output"]
+}, Open  ]],
+
+Cell["\<\
+After the datums are redefined about the ball p1, we can further move the \
+datum line to be at the edge of the raft to conform to the raft design \
+drawing offset distance.\
+\>", "Text"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["run$"], "Input",
+ CellChangeTimes->{{3.66267141732444*^9, 3.662671420522717*^9}}],
+
+Cell[BoxData["\<\"ECM-005 run4\"\>"], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Print", "[", 
+  RowBox[{
+  "\"\<Run ID: \>\"", "<>", "run$", "<>", 
+   "\"\<\\nInput measured ball locations:\\n\>\"", "<>", "\"\<LL ball: \>\"", 
+   "<>", 
+   RowBox[{"ToString", "[", "mb1", "]"}], "<>", "\"\<\\nLR ball: \>\"", "<>", 
+   
+   RowBox[{"ToString", "[", "mb2", "]"}], "<>", "\"\<\\nUC ball: \>\"", "<>", 
+   
+   RowBox[{"ToString", "[", "mb3", "]"}], "<>", "\"\<\\nDistances:\>\"", 
+   "<>", "\"\<\\nLL to LR: \>\"", "<>", 
+   RowBox[{"ToString", "[", "dmb12", "]"}], "<>", "\"\<\\nLL to UC: \>\"", "<>", 
+   RowBox[{"ToString", "[", "dmb13", "]"}], "<>", "\"\<\\nLR to UC: \>\"", "<>", 
+   RowBox[{"ToString", "[", "dmb23", "]"}], "<>", 
+   "\"\<\\nOrigin offset and x-axis offset: \>\"", "<>", 
+   RowBox[{"ToString", "[", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"-", "mbc1"}], ",", 
+      RowBox[{"-", "xaxisangle"}]}], "}"}], "]"}]}], "]"}]], "Input"],
+
+Cell[BoxData["\<\"Run ID: ECM-005 run4\\nInput measured ball locations:\\nLL \
+ball: {0.01863, 0.0028}\\nLR ball: {86.5053, -0.00367}\\nUC ball: {43.3532, \
+-113.479}\\nDistances:\\nLL to LR: 86.4867\\nLL to UC: 121.475\\nLR to UC: \
+121.404\\nOrigin offset and x-axis offset: {{0.0235653, 0.0206139}, \
+-0.0350584}\"\>"], "Print"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"126", "*", "xaxisangle", "*", "Degree"}]], "Input"],
+
+Cell[BoxData["0.0635405427901261`"], "Output"]
+}, Open  ]]
+},
+PrintingStyleEnvironment->"Working",
+CellGrouping->Manual,
+WindowSize->{792, 751},
+WindowMargins->{{141, Automatic}, {Automatic, 0}},
+PrintingCopies->1,
+PrintingStartingPageNumber->1,
+PrintingPageRange->{7, 7},
+PageHeaders->{{
+   Cell[
+    TextData[
+     StyleBox[
+      CounterBox["Page"], "PageNumber"]], "Header", 
+    CellMargins -> {{0, Inherited}, {Inherited, Inherited}}], None, 
+   Cell[
+    TextData[
+     StyleBox[
+      ValueBox["FileName"], "Header"]], "Header", 
+    CellMargins -> {{Inherited, 0}, {Inherited, Inherited}}]}, {
+   Cell[
+    TextData[
+     StyleBox[
+      ValueBox["FileName"], "Header"]], "Header", 
+    CellMargins -> {{0, Inherited}, {Inherited, Inherited}}], None, 
+   Cell[
+    TextData[{
+     "FrontEnd`CurrentValue", "[", "FrontEnd`$FrontEnd", ",", " ", "{", 
+      "PrivateFrontEndOptions", ",", " ", "\"DialogSettings\"", ",", " ", 
+      "\"HeadersFooters\"", ",", " ", "\"DateFormat\"", "}", "]"}], "Header", 
+    CellMargins -> {{Inherited, 0}, {Inherited, Inherited}}]}},
+PageFooters->{{None, None, None}, {None, None, 
+   Cell[
+    TextData[
+     CounterBox["Page", CounterFunction :> Identity]], "Footer", 
+    CellMargins -> {{Inherited, 0}, {Inherited, Inherited}}]}},
+PageHeaderLines->{True, True},
+PageFooterLines->{False, False},
+PrintingOptions->{"FacingPages"->False,
+"FirstPageFace"->Right,
+"FirstPageFooter"->True,
+"FirstPageHeader"->True,
+"PaperOrientation"->"Portrait",
+"PaperSize"->{612, 792},
+"PrintCellBrackets"->False,
+"PrintMultipleHorizontalPages"->False,
+"PrintRegistrationMarks"->False,
+"PrintingMargins"->{{54, 54}, {72, 72}}},
+TaggingRules->{"$testsRun" -> False},
+FrontEndVersion->"10.4 for Mac OS X x86 (32-bit, 64-bit Kernel) (April 11, \
+2016)",
+StyleDefinitions->"MyStyle01.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 122, 1, 77, "Title"],
+Cell[705, 25, 102, 1, 63, "Subtitle"],
+Cell[810, 28, 672, 10, 87, "Text"],
+Cell[1485, 40, 851, 13, 102, "Text"]
+}, Open  ]],
+Cell[2351, 56, 146, 2, 72, "Section"],
+Cell[CellGroupData[{
+Cell[2522, 62, 62, 0, 34, "Subsubsection"],
+Cell[2587, 64, 31, 0, 42, "Text"],
+Cell[2621, 66, 505, 12, 74, "Input"],
+Cell[CellGroupData[{
+Cell[3151, 82, 212, 4, 42, "Text"],
+Cell[3366, 88, 852, 26, 58, "Input"],
+Cell[CellGroupData[{
+Cell[4243, 118, 365, 10, 26, "Input"],
+Cell[4611, 130, 95, 2, 26, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[4733, 136, 121, 1, 42, "Text"],
+Cell[4857, 139, 671, 20, 58, "Input"],
+Cell[CellGroupData[{
+Cell[5553, 163, 156, 3, 26, "Input"],
+Cell[5712, 168, 126, 3, 26, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[5875, 176, 452, 7, 57, "Text"],
+Cell[6330, 185, 565, 19, 26, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[6932, 209, 444, 8, 72, "Text"],
+Cell[CellGroupData[{
+Cell[7401, 221, 464, 13, 26, "Input"],
+Cell[7868, 236, 436, 12, 36, "Output"]
+}, Open  ]],
+Cell[8319, 251, 375, 12, 26, "Input"],
+Cell[8697, 265, 375, 12, 26, "Input"]
+}, Open  ]],
+Cell[9087, 280, 728, 12, 102, "Text"],
+Cell[CellGroupData[{
+Cell[9840, 296, 791, 22, 58, "Input"],
+Cell[10634, 320, 176, 5, 26, "Output"]
+}, Open  ]],
+Cell[10825, 328, 222, 4, 42, "Text"],
+Cell[CellGroupData[{
+Cell[11072, 336, 314, 8, 26, "Input"],
+Cell[11389, 346, 250, 8, 26, "Output"]
+}, Open  ]],
+Cell[11654, 357, 257, 5, 42, "Text"],
+Cell[CellGroupData[{
+Cell[11936, 366, 237, 6, 26, "Input"],
+Cell[12176, 374, 79, 2, 26, "Output"]
+}, Open  ]],
+Cell[12270, 379, 157, 3, 42, "Text"],
+Cell[CellGroupData[{
+Cell[12452, 386, 398, 10, 26, "Input"],
+Cell[12853, 398, 30, 0, 25, "Output"]
+}, Open  ]],
+Cell[12898, 401, 165, 3, 42, "Text"],
+Cell[13066, 406, 321, 5, 57, "Text"],
+Cell[13390, 413, 75, 2, 25, "Input"],
+Cell[CellGroupData[{
+Cell[13490, 419, 965, 28, 42, "Input"],
+Cell[14458, 449, 344, 6, 171, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[14829, 459, 231, 4, 118, "Section"],
+Cell[15063, 465, 387, 13, 55, "Input"],
+Cell[15453, 480, 462, 15, 74, "Input"],
+Cell[15918, 497, 463, 15, 74, "Input"],
+Cell[16384, 514, 463, 15, 74, "Input"],
+Cell[16850, 531, 463, 15, 74, "Input"],
+Cell[17316, 548, 522, 17, 74, "Input"],
+Cell[17841, 567, 510, 17, 74, "Input"],
+Cell[18354, 586, 490, 16, 74, "Input"],
+Cell[18847, 604, 786, 23, 74, "Input"],
+Cell[19636, 629, 797, 23, 74, "Input"],
+Cell[20436, 654, 172, 3, 53, "Subsubsection"],
+Cell[20611, 659, 791, 26, 71, "Input"],
+Cell[21405, 687, 791, 26, 74, "Input"],
+Cell[22199, 715, 796, 26, 74, "Input"],
+Cell[CellGroupData[{
+Cell[23020, 745, 37, 0, 72, "Section"],
+Cell[CellGroupData[{
+Cell[23082, 749, 364, 11, 26, "Input"],
+Cell[23449, 762, 143, 4, 26, "Output"]
+}, Open  ]],
+Cell[23607, 769, 205, 4, 42, "Text"],
+Cell[CellGroupData[{
+Cell[23837, 777, 799, 22, 58, "Input"],
+Cell[24639, 801, 260, 6, 26, "Output"]
+}, Open  ]],
+Cell[24914, 810, 235, 4, 42, "Text"],
+Cell[CellGroupData[{
+Cell[25174, 818, 368, 10, 26, "Input"],
+Cell[25545, 830, 370, 10, 26, "Output"]
+}, Open  ]],
+Cell[25930, 843, 287, 5, 57, "Text"],
+Cell[CellGroupData[{
+Cell[26242, 852, 153, 3, 26, "Input"],
+Cell[26398, 857, 250, 8, 26, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[26685, 870, 241, 6, 26, "Input"],
+Cell[26929, 878, 418, 13, 26, "Output"]
+}, Open  ]],
+Cell[27362, 894, 250, 5, 42, "Text"],
+Cell[CellGroupData[{
+Cell[27637, 903, 926, 27, 42, "Input"],
+Cell[28566, 932, 315, 6, 141, "Output"]
+}, Open  ]],
+Cell[28896, 941, 114, 1, 42, "Text"],
+Cell[29013, 944, 722, 21, 42, "Input"],
+Cell[29738, 967, 243, 4, 57, "Text"],
+Cell[CellGroupData[{
+Cell[30006, 975, 184, 5, 26, "Input"],
+Cell[30193, 982, 574, 11, 141, "Output"]
+}, Open  ]],
+Cell[30782, 996, 158, 3, 42, "Text"],
+Cell[CellGroupData[{
+Cell[30965, 1003, 1741, 57, 58, "Input"],
+Cell[32709, 1062, 1368, 43, 74, "Input"],
+Cell[CellGroupData[{
+Cell[34102, 1109, 258, 7, 26, "Input"],
+Cell[34363, 1118, 2863, 53, 115, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[37275, 1177, 184, 5, 26, "Input"],
+Cell[37462, 1184, 70, 0, 26, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[37569, 1189, 206, 4, 57, "Text"],
+Cell[CellGroupData[{
+Cell[37800, 1197, 268, 8, 26, "Input"],
+Cell[38071, 1207, 370, 10, 26, "Output"]
+}, Open  ]],
+Cell[38456, 1220, 147, 3, 42, "Text"],
+Cell[CellGroupData[{
+Cell[38628, 1227, 364, 9, 26, "Input"],
+Cell[38995, 1238, 112, 3, 26, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[39144, 1246, 384, 10, 26, "Input"],
+Cell[39531, 1258, 45, 0, 25, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[39603, 1262, 882, 13, 102, "Text"],
+Cell[CellGroupData[{
+Cell[40510, 1279, 164, 3, 25, "Input"],
+Cell[40677, 1284, 116, 3, 26, "Output"]
+}, Open  ]],
+Cell[40808, 1290, 177, 4, 42, "Text"],
+Cell[CellGroupData[{
+Cell[41010, 1298, 119, 2, 26, "Input"],
+Cell[41132, 1302, 62, 1, 25, "Output"]
+}, Open  ]],
+Cell[41209, 1306, 197, 4, 57, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[41443, 1315, 95, 1, 25, "Input"],
+Cell[41541, 1318, 47, 0, 25, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[41625, 1323, 900, 20, 90, "Input"],
+Cell[42528, 1345, 331, 4, 163, "Print"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[42896, 1354, 75, 1, 26, "Input"],
+Cell[42974, 1357, 46, 0, 25, "Output"]
+}, Open  ]]
+}
+]
+*)
+
