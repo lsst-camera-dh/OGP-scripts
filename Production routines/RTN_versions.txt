@@ -16,4 +16,4 @@ ECM_Raft_ABholes_160818.RTN     | ECM holes
 ECM_Raft_AbsZ_160915.RTN        | ECM absolute height
 ECM_Raft_AllHoles_160920.RTN    | ECM all holes
 ECM_raft_VeeGrooves_160201.RTN  | ECM Vee Grooves
-RSA_9CCDs.RTN                   | RSA scan routine
+RSA.RTN                         | RSA scan routine
