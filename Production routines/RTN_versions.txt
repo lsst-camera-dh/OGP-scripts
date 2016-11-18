@@ -1,9 +1,9 @@
 # APPROVED PRODUCTION ROUTINES USED FOR THIS TAG
-# DATE: 20161107
+# DATE: 20161118
 # UPDATED BY: homer
 # ROUTINE                       | DESCRIPTION
 # ==========================================================================
-ITL_LatPos_161104.RTN           | ITL Lateral position
+ITL_LatPos_161117.RTN           | ITL Lateral position
 LatPos_e2V_160622.RTN           | e2V Lateral position
 e2V_Flat_AbsHgt_160629.RTN      | e2V Flatness and Absolute Height Metrology
 e2V_EdgeScan_160629.RTN         | e2V Edge Scan Metrology
